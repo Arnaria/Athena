@@ -1,12 +1,14 @@
 package arnaria.kingdoms;
 
 import arnaria.kingdoms.util.Settings;
+import arnaria.kingdoms.util.claims.ClaimManager;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import mrnavastar.sqlib.api.SqlTypes;
 import mrnavastar.sqlib.api.Table;
 import mrnavastar.sqlib.util.Database;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
@@ -47,6 +49,14 @@ public class Kingdoms implements ModInitializer {
 
             kingdomsData = new Table("KingdomsData");
         }
+
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+            ClaimManager.init();
+        });
+
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
+            ClaimManager.saveData();
+        });
     }
 
     public static void log(Level level, String message){
