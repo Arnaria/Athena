@@ -28,10 +28,20 @@ public class Kingdoms implements ModInitializer {
             validConfig = !settings.SQLITE_DIRECTORY.equals("/path/to/folder");
         }
 
+        if (settings.DATABASE_TYPE.equals(SqlTypes.MYSQL)) {
+            validConfig = (!settings.MYSQL_USERNAME.equals("username") && !settings.MYSQL_PASSWORD.equals("password"));
+        }
+
         if (validConfig) {
             Database.TYPE = settings.DATABASE_TYPE;
             Database.DATABASE_NAME = settings.DATABASE_NAME;
+
             Database.SQLITE_DIRECTORY = settings.SQLITE_DIRECTORY;
+
+            Database.MYSQL_ADDRESS = settings.MYSQL_ADDRESS;
+            Database.MYSQL_PORT = settings.MYSQL_PORT;
+            Database.MYSQL_USERNAME = settings.MYSQL_USERNAME;
+            Database.MYSQL_PASSWORD = settings.MYSQL_PASSWORD;
 
             Database.init();
 
