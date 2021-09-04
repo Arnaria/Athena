@@ -1,6 +1,8 @@
 package arnaria.kingdoms;
 
+import arnaria.kingdoms.rest.RestApi;
 import arnaria.kingdoms.util.Settings;
+import arnaria.kingdoms.util.claims.Claim;
 import arnaria.kingdoms.util.claims.ClaimManager;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
@@ -8,6 +10,9 @@ import mrnavastar.sqlib.api.SqlTypes;
 import mrnavastar.sqlib.api.Table;
 import mrnavastar.sqlib.util.Database;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.chunk.ChunkManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
@@ -49,10 +54,11 @@ public class Kingdoms implements ModInitializer {
             kingdomsData = new Table("KingdomsData");
 
             ClaimManager.init();
+            RestApi.init();
         }
     }
 
-    public static void log(Level level, String message){
+    public static void log(Level level, String message) {
         LogManager.getLogger().log(level, "[" + MODID + "] " + message);
     }
 }

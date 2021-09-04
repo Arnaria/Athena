@@ -16,8 +16,10 @@ public class ClaimManager {
 
     public static void addClaim(Claim claim) {
         claims.add(claim);
-        DataContainer claimData = new DataContainer(String.valueOf(count));
-        claimData.put("KINGDOM_ID", claim.kingdomId());
+        DataContainer claimDataContainer = new DataContainer(String.valueOf(count));
+        claimData.put(claimDataContainer);
+        claimDataContainer.put("KINGDOM_ID", claim.kingdomId());
+        claimDataContainer.put("BANNER_POS", claim.pos());
         count ++;
     }
 
@@ -42,7 +44,8 @@ public class ClaimManager {
         count = claimIds.size();
         for (String id : claimIds) {
             String kingdomId = claimData.get(id).getString("KINGDOM_ID");
-            claims.add(new Claim(kingdomId));
+            BlockPos pos = claimData.get(id).getBlockPos("BANNER_POS");
+            claims.add(new Claim(kingdomId, pos));
         }
         ClaimEvents.register();
     }

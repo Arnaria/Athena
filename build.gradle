@@ -1,7 +1,7 @@
 plugins {
     id 'fabric-loom' version '0.9.50'
     id 'maven-publish'
-    id 'org.springframework.boot' version '2.5.2'
+    id 'org.springframework.boot' version '2.5.4'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 }
 
@@ -25,8 +25,14 @@ dependencies {
         exclude(group: "net.fabricmc.fabric-api")
     }
 
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    testImplementation('org.springframework.boot:spring-boot-starter-test')
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.5.4'
+    testImplementation('org.springframework.boot:spring-boot-starter-test:2.5.4')
+}
+
+configurations {
+    all {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
 }
 
 processResources {
