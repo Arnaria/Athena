@@ -6,7 +6,7 @@
   "mixins": [
     "AxeMixin",
     "BlockItemMixin",
-    "BucketMixen",
+    "BucketMixin",
     "FlintNStealMixin",
     "HoeMixin",
     "ItemFrameMixin",

@@ -25,13 +25,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BucketItem.class)
 
-public class BucketMixen extends Item {
+public class BucketMixin extends Item {
 
     @Shadow
     @Final
     private Fluid fluid;
 
-    public BucketMixen(Settings settings) {
+    public BucketMixin(Settings settings) {
         super(settings);
     }
 
