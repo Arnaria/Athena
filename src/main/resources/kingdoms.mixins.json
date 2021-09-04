@@ -4,8 +4,14 @@
   "package": "arnaria.kingdoms.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "AxeMixin",
     "BlockItemMixin",
-    "PlayerEntityMixin"
+    "BucketMixen",
+    "FlintNStealMixin",
+    "HoeMixin",
+    "ItemFrameMixin",
+    "PlayerEntityMixin",
+    "ShovelMixin"
   ],
   "client": [
   ],
