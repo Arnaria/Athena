@@ -12,24 +12,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class PlayerEntityMixin implements PlayerEntityInf {
 
     private String kingdomId;
+    private boolean isKing = false;
 
-    @Override
     public void setKingdomId(String kingdomId) {
         this.kingdomId = kingdomId;
     }
 
-    @Override
     public String getKingdomId() {
         return this.kingdomId;
     }
 
-    @Inject(method = "writeCustomDataToNbt", at = @At("HEAD"))
-    public void writeNbt(NbtCompound nbt, CallbackInfo ci) {
-        nbt.putString("KINGDOM_ID", this.kingdomId);
+    public void setKingship(boolean isKing) {
+        this.isKing = isKing;
     }
 
-    @Inject(method = "readCustomDataFromNbt", at = @At("HEAD"))
-    public void readNbt(NbtCompound nbt, CallbackInfo ci) {
-        this.kingdomId = nbt.getString("KINGDOM_ID");
+    public boolean isKing() {
+        return isKing;
     }
 }

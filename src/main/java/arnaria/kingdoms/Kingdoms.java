@@ -4,6 +4,7 @@ import arnaria.kingdoms.rest.RestApi;
 import arnaria.kingdoms.util.Settings;
 import arnaria.kingdoms.util.claims.Claim;
 import arnaria.kingdoms.util.claims.ClaimManager;
+import arnaria.kingdoms.util.procedures.KingdomProcedures;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import mrnavastar.sqlib.api.SqlTypes;
@@ -11,15 +12,19 @@ import mrnavastar.sqlib.api.Table;
 import mrnavastar.sqlib.util.Database;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.minecraft.server.PlayerManager;
+import net.minecraft.util.UserCache;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.ChunkManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
+import java.util.UUID;
+
 public class Kingdoms implements ModInitializer {
 
     public static final String MODID = "Kingdoms";
-    public static Table kingdomsData;
+    public static PlayerManager playerManager;
     public static Settings settings;
 
     @Override
@@ -51,10 +56,16 @@ public class Kingdoms implements ModInitializer {
 
             Database.init();
 
-            kingdomsData = new Table("KingdomsData");
-
             ClaimManager.init();
             RestApi.init();
+
+            ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+                playerManager = server.getPlayerManager();
+                KingdomProcedures.createKingdom("test1", UUID.randomUUID());
+                for (int i = 0; i < 7; i++) KingdomProcedures.addMember("test1", UUID.randomUUID());
+            });
+
+
         }
     }
 
