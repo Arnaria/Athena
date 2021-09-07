@@ -23,7 +23,7 @@ public class KingdomProcedures {
 
         JsonArray members = new JsonArray();
         members.add(uuid.toString());
-        kingdom.put("KING", uuid.toString());
+        kingdom.put("KING", uuid);
         kingdom.put("MEMBERS", members);
 
         PlayerEntity executor = playerManager.getPlayer(uuid);

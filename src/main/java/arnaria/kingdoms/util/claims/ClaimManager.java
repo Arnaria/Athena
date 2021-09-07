@@ -23,7 +23,23 @@ public class ClaimManager {
         count ++;
     }
 
-    //Need drop claim method
+    public static void dropClaim(BlockPos pos) {
+        for (Claim claim : claims) {
+            //Cords are split up like this to prevent errors as banners have two block positions (top/bot)
+            //We should however check if this is necessary or not
+            int claimX = claim.pos().getX();
+            int claimZ = claim.pos().getZ();
+            int posX = pos.getX();
+            int posZ = pos.getZ();
+
+            if (claimX == posX && claimZ == posZ) {
+                claims.remove(claim);
+                DataContainer claimDataContainer = claimData.getWhere("BLOCKPOS", pos);
+                claimData.drop(claimDataContainer);
+                count--;
+            }
+        }
+    }
 
     public static ArrayList<Claim> getClaims() {
         return claims;
