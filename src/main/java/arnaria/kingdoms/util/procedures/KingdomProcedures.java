@@ -18,7 +18,6 @@ public class KingdomProcedures {
     public static final Table kingdomData = new Table("KingdomData");
 
     public static void createKingdom(String kingdomId, UUID uuid) {
-        kingdomData.beginTransaction();
         DataContainer kingdom = new DataContainer(kingdomId);
         kingdomData.put(kingdom);
 
@@ -32,10 +31,9 @@ public class KingdomProcedures {
         if (executor != null) {
             ((PlayerEntityInf) executor).setKingship(true);
         }
-        kingdomData.endTransaction();
     }
 
-    public static void disbandKingdom(String kingdomId, UUID uuid) {
+    public static void disbandKingdom(String kingdomId) {
         kingdomData.drop(kingdomId);
 
         List<ServerPlayerEntity> onlinePlayers = playerManager.getPlayerList();

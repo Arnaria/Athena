@@ -18,8 +18,8 @@ public class ClaimManager {
         claims.add(claim);
         DataContainer claimDataContainer = new DataContainer(String.valueOf(count));
         claimData.put(claimDataContainer);
-        claimDataContainer.put("KINGDOM_ID", claim.kingdomId());
-        claimDataContainer.put("BANNER_POS", claim.pos());
+        claimDataContainer.put("KINGDOM_ID", claim.getKingdomId());
+        claimDataContainer.put("BANNER_POS", claim.getPos());
         count ++;
     }
 
@@ -27,8 +27,8 @@ public class ClaimManager {
         for (Claim claim : claims) {
             //Cords are split up like this to prevent errors as banners have two block positions (top/bot)
             //We should however check if this is necessary or not
-            int claimX = claim.pos().getX();
-            int claimZ = claim.pos().getZ();
+            int claimX = claim.getPos().getX();
+            int claimZ = claim.getPos().getZ();
             int posX = pos.getX();
             int posZ = pos.getZ();
 
@@ -46,11 +46,20 @@ public class ClaimManager {
     }
 
     public static boolean actionAllowedAt(BlockPos pos, PlayerEntity player) {
+        if (pos.getY() < 0) return true;
+
         for (Claim claim : claims) {
             if (claim.contains(pos)) {
-                if (claim.kingdomId().equals("ADMIN") && !player.hasPermissionLevel(4)) return false;
-                if (!claim.kingdomId().equals(((PlayerEntityInf) player).getKingdomId())) return false;
+                if (claim.getKingdomId().equals("ADMIN") && !player.hasPermissionLevel(4)) return false;
+                if (!claim.getKingdomId().equals(((PlayerEntityInf) player).getKingdomId())) return false;
             }
+        }
+        return true;
+    }
+
+    public static boolean claimPlacementAllowedAt(int x, int z) {
+        for (Claim claim : claims) {
+            if (claim.contains(new BlockPos(x, 1, z))) return false;
         }
         return true;
     }
