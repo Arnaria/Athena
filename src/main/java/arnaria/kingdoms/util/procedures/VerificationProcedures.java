@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class RestProcedures {
+public class VerificationProcedures {
 
     private static final HashMap<String, UUID> verificationRequests = new HashMap<>();
     private static final Table linkedAccounts = new Table("LinkedAccounts");

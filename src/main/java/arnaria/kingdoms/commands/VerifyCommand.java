@@ -1,6 +1,6 @@
 package arnaria.kingdoms.commands;
 
-import arnaria.kingdoms.util.procedures.RestProcedures;
+import arnaria.kingdoms.util.procedures.VerificationProcedures;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -25,14 +25,14 @@ public class VerifyCommand {
     public static int verifyUser(CommandContext<ServerCommandSource> context, String token) throws CommandSyntaxException {
         PlayerEntity executor = context.getSource().getPlayer();
 
-        if (RestProcedures.verifyUser(token, executor.getUuid())) executor.sendMessage(new LiteralText("Your accounts have been linked!"), false);
+        if (VerificationProcedures.verifyUser(token, executor.getUuid())) executor.sendMessage(new LiteralText("Your accounts have been linked!"), false);
         else executor.sendMessage(new LiteralText("There was an error linking your account. Try again"), false);
         return 1;
     }
 
     public static int declineVerification(CommandContext<ServerCommandSource> context, String token) throws CommandSyntaxException {
         PlayerEntity executor = context.getSource().getPlayer();
-        RestProcedures.removeVerificationRequest(token);
+        VerificationProcedures.removeVerificationRequest(token);
         executor.sendMessage(new LiteralText("The verification request has been declined"), false);
         return 1;
     }
