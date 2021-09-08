@@ -5,13 +5,13 @@ import arnaria.kingdoms.util.claims.ClaimManager;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.util.ArrayList;
 
 @RestController
 public class ClaimController {
 
     @GetMapping("/claims")
-    List<Claim> claims() {
+    ArrayList<Claim> claims() {
         return ClaimManager.getClaims();
     }
 }

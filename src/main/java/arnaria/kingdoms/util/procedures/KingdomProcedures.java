@@ -15,51 +15,79 @@ import static arnaria.kingdoms.Kingdoms.playerManager;
 
 public class KingdomProcedures {
 
-    private static final Table kingdomData = new Table("KingdomData");
+    public static final Table kingdomData = new Table("KingdomData");
 
-    public static void createKingdom(String kingdomName, UUID uuid) {
-        DataContainer kingdom = new DataContainer(kingdomName);
+    public static void createKingdom(String kingdomId, UUID uuid) {
+        kingdomData.beginTransaction();
+        DataContainer kingdom = new DataContainer(kingdomId);
         kingdomData.put(kingdom);
 
-        JsonArray members = new JsonArray();
-        members.add(uuid.toString());
         kingdom.put("KING", uuid);
-        kingdom.put("MEMBERS", members);
+        kingdom.put("COLOR", "");
+        kingdom.put("MEMBERS", new JsonArray());
+
+        addMember(kingdomId, uuid);
 
         PlayerEntity executor = playerManager.getPlayer(uuid);
         if (executor != null) {
-            ((PlayerEntityInf) executor).setKingdomId(kingdomName);
             ((PlayerEntityInf) executor).setKingship(true);
         }
+        kingdomData.endTransaction();
     }
 
-    public static void disbandKingdom(String kingdomName, UUID uuid) {
-        kingdomData.drop(kingdomName);
+    public static void disbandKingdom(String kingdomId, UUID uuid) {
+        kingdomData.drop(kingdomId);
 
         List<ServerPlayerEntity> onlinePlayers = playerManager.getPlayerList();
         for (ServerPlayerEntity player : onlinePlayers) {
-            if (((PlayerEntityInf) player).getKingdomId().equals(kingdomName)) {
-                ((PlayerEntityInf) player).setKingdomId("none");
+            if (((PlayerEntityInf) player).getKingdomId().equals(kingdomId)) {
+                ((PlayerEntityInf) player).setKingdomId("");
                 ((PlayerEntityInf) player).setKingship(false);
             }
         }
     }
 
-    public static List<String> getKingdoms() {
-        return kingdomData.getIds();
+    public static void setKing(String kingdomId, UUID uuid) {
+        DataContainer kingdom = kingdomData.get(kingdomId);
+        kingdom.put("KING", uuid);
+
+        List<ServerPlayerEntity> onlinePlayers = playerManager.getPlayerList();
+        for (ServerPlayerEntity player : onlinePlayers) {
+            if (((PlayerEntityInf) player).getKingdomId().equals(kingdomId) && ((PlayerEntityInf) player).isKing()) {
+                ((PlayerEntityInf) player).setKingship(false);
+            }
+
+            if (player.getUuid().equals(uuid)) {
+                addMember(kingdomId, uuid);
+                ((PlayerEntityInf) player).setKingship(true);
+            }
+        }
     }
 
-    public static void addMember(String kingdomName, UUID uuid) {
-        DataContainer kingdom = kingdomData.get(kingdomName);
+    public static void setKingdomColor(String kingdomId, String color) {
+        DataContainer kingdom = kingdomData.get(kingdomId);
+        kingdom.put("COLOR", color);
+    }
 
+    public static void addMember(String kingdomId, UUID uuid) {
+        DataContainer kingdom = kingdomData.get(kingdomId);
         JsonArray members = kingdom.getJson("MEMBERS").getAsJsonArray();
+
+        for (JsonElement member : members) {
+            if (member.getAsString().equals(uuid.toString())) return;
+        }
+
         members.add(uuid.toString());
         kingdom.put("MEMBERS", members);
+
+        List<ServerPlayerEntity> onlinePlayers = playerManager.getPlayerList();
+        for (ServerPlayerEntity player : onlinePlayers) {
+            if (player.getUuid().equals(uuid)) ((PlayerEntityInf) player).setKingdomId(kingdomId);
+        }
     }
 
-    public static void removeMember(String kingdomName, UUID uuid) {
-        DataContainer kingdom = kingdomData.get(kingdomName);
-
+    public static void removeMember(String kingdomId, UUID uuid) {
+        DataContainer kingdom = kingdomData.get(kingdomId);
         JsonArray members = kingdom.getJson("MEMBERS").getAsJsonArray();
 
         int index = 0;
@@ -67,12 +95,6 @@ public class KingdomProcedures {
             if (member.getAsString().equals(uuid.toString())) members.remove(index);
             index++;
         }
-
         kingdom.put("MEMBERS", members);
-    }
-
-    public static JsonArray getMembers(String kingdomName) {
-        DataContainer kingdom = kingdomData.get(kingdomName);
-        return kingdom.getJson("MEMBERS").getAsJsonArray();
     }
 }

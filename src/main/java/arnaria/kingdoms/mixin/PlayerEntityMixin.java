@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(PlayerEntity.class)
 public class PlayerEntityMixin implements PlayerEntityInf {
 
-    private String kingdomId;
+    private String kingdomId = "";
     private boolean isKing = false;
 
     public void setKingdomId(String kingdomId) {
