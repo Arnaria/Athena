@@ -18,9 +18,13 @@ public class RestProcedures {
         verificationRequests.put(token, uuid);
         //Send notification to user in game
 
-        Runnable requestExpireTask = () -> verificationRequests.remove(token);
+        Runnable requestExpireTask = () -> removeVerificationRequest(token);
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduler.schedule(requestExpireTask, 15, TimeUnit.MINUTES);
+    }
+
+    public static void removeVerificationRequest(String token) {
+        verificationRequests.remove(token);
     }
 
     public static boolean verifyUser(String token, UUID uuid) {

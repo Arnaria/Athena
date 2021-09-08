@@ -15,7 +15,11 @@ public class VerifyCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("verify")
                 .then(CommandManager.argument("Token", StringArgumentType.string())
-                        .executes(context -> verifyUser(context, StringArgumentType.getString(context, "Token")))));
+                        .executes(context -> verifyUser(context, StringArgumentType.getString(context, "Token"))))
+
+                .then(CommandManager.literal("decline")
+                .then(CommandManager.argument("Token", StringArgumentType.string())
+                        .executes(context -> declineVerification(context, StringArgumentType.getString(context, "Token"))))));
     }
 
     public static int verifyUser(CommandContext<ServerCommandSource> context, String token) throws CommandSyntaxException {
@@ -23,6 +27,13 @@ public class VerifyCommand {
 
         if (RestProcedures.verifyUser(token, executor.getUuid())) executor.sendMessage(new LiteralText("Your accounts have been linked!"), false);
         else executor.sendMessage(new LiteralText("There was an error linking your account. Try again"), false);
+        return 1;
+    }
+
+    public static int declineVerification(CommandContext<ServerCommandSource> context, String token) throws CommandSyntaxException {
+        PlayerEntity executor = context.getSource().getPlayer();
+        RestProcedures.removeVerificationRequest(token);
+        executor.sendMessage(new LiteralText("The verification request has been declined"), false);
         return 1;
     }
 }
