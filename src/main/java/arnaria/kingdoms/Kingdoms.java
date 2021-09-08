@@ -1,5 +1,6 @@
 package arnaria.kingdoms;
 
+import arnaria.kingdoms.commands.VerifyCommand;
 import arnaria.kingdoms.rest.RestApi;
 import arnaria.kingdoms.util.Settings;
 import arnaria.kingdoms.util.claims.ClaimManager;
@@ -50,9 +51,14 @@ public class Kingdoms implements ModInitializer {
 
             Database.init();
 
-            ServerLifecycleEvents.SERVER_STARTING.register(server -> userCache = server.getUserCache());
-
             ServerLifecycleEvents.SERVER_STARTED.register(server -> playerManager = server.getPlayerManager());
+
+            ServerLifecycleEvents.SERVER_STARTING.register(server -> {
+                userCache = server.getUserCache();
+
+                //Command Registration
+                VerifyCommand.register(server.getCommandManager().getDispatcher());
+            });
 
             ClaimManager.init();
             RestApi.init();
