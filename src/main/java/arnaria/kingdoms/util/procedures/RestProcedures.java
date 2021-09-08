@@ -37,4 +37,11 @@ public class RestProcedures {
         }
         return false;
     }
+
+    public static UUID getUuid(String token) {
+        for (DataContainer linkedAccount : linkedAccounts.getDataContainers()) {
+            if (linkedAccount.getString("TOKEN").equals(token)) return UUID.fromString(linkedAccount.getId());
+        }
+        return null;
+    }
 }
