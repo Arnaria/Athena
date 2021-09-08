@@ -12,6 +12,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.util.UserCache;
+import net.minecraft.world.chunk.ChunkManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
@@ -20,6 +21,7 @@ public class Kingdoms implements ModInitializer {
     public static final String MODID = "Kingdoms";
     public static PlayerManager playerManager;
     public static UserCache userCache;
+    public static ChunkManager chunkManager;
     public static Settings settings;
 
     @Override
@@ -51,7 +53,10 @@ public class Kingdoms implements ModInitializer {
 
             Database.init();
 
-            ServerLifecycleEvents.SERVER_STARTED.register(server -> playerManager = server.getPlayerManager());
+            ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+                playerManager = server.getPlayerManager();
+                chunkManager = server.getOverworld().getChunkManager();
+            });
 
             ServerLifecycleEvents.SERVER_STARTING.register(server -> {
                 userCache = server.getUserCache();

@@ -1,12 +1,24 @@
 package arnaria.kingdoms.util.claims;
 
+import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.ChunkManager;
 
-public record Claim(String kingdomId, BlockPos pos) {
+import java.util.ArrayList;
+
+import static arnaria.kingdoms.Kingdoms.chunkManager;
+
+public class Claim {
+
+    private final String kingdomId;
+    private final ArrayList<Chunk> chunks = new ArrayList<>();
+
+    public Claim(String kingdomId, BlockPos pos) {
+        this.kingdomId = kingdomId;
+    }
 
     public boolean contains(BlockPos pos) {
-        int x = pos.getX();
-        int z = pos.getZ();
-        return false; //(((x1 < x || x1 == x) && (x < x2 || x == x2)) && ((z1 < z || z1 == z) && (z < z2 || z == z2)));
+        return chunks.contains(chunkManager.getWorldChunk(pos.getX(), pos.getZ()));
     }
 }
