@@ -10,14 +10,14 @@ public interface BlockPlaceCallback {
     Event<BlockPlaceCallback> EVENT = EventFactory.createArrayBacked(BlockPlaceCallback.class,
             (listeners) -> (player, context) -> {
                 for (BlockPlaceCallback listener : listeners) {
-                    ActionResult result = listener.place(player, context);
+                    boolean result = listener.place(player, context);
 
-                    if (result != ActionResult.PASS) {
-                        return result;
+                    if (!result) {
+                        return false;
                     }
                 }
-                return ActionResult.PASS;
+                return true;
             });
 
-    ActionResult place(PlayerEntity player, ItemPlacementContext context);
+    boolean place(PlayerEntity player, ItemPlacementContext context);
 }

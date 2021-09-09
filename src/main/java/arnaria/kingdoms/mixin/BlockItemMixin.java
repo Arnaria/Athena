@@ -23,9 +23,9 @@ public abstract class BlockItemMixin extends Item {
 
     @Inject(method = "place(Lnet/minecraft/item/ItemPlacementContext;Lnet/minecraft/block/BlockState;)Z", at = @At("HEAD"), cancellable = true)
     public void dlPlaceEventTrigger(ItemPlacementContext context, BlockState state, CallbackInfoReturnable<Boolean> cir) {
-        ActionResult result = BlockPlaceCallback.EVENT.invoker().place(context.getPlayer(), context);
+        boolean result = BlockPlaceCallback.EVENT.invoker().place(context.getPlayer(), context);
 
-        if (result != ActionResult.PASS) {
+        if (!result) {
             ServerPlayerEntity player = (ServerPlayerEntity) context.getPlayer();
 
             if (player != null) {

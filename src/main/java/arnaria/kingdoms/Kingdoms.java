@@ -5,8 +5,6 @@ import arnaria.kingdoms.util.rest.RestApi;
 import arnaria.kingdoms.util.Settings;
 import arnaria.kingdoms.util.claims.ClaimManager;
 import arnaria.kingdoms.util.procedures.KingdomProcedures;
-import arnaria.notifacaitonmanager.NotificationManager;
-import arnaria.notifacaitonmanager.NotificationTypes;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import mrnavastar.sqlib.api.SqlTypes;
@@ -16,13 +14,10 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.boss.BossBarManager;
 import net.minecraft.server.PlayerManager;
-import net.minecraft.text.Text;
 import net.minecraft.util.UserCache;
 import net.minecraft.world.chunk.ChunkManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
-
-import java.util.UUID;
 
 public class Kingdoms implements ModInitializer {
 
