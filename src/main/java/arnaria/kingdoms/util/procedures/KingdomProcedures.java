@@ -1,6 +1,8 @@
 package arnaria.kingdoms.util.procedures;
 
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
+import arnaria.notifacaitonmanager.NotificationManager;
+import arnaria.notifacaitonmanager.NotificationTypes;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import mrnavastar.sqlib.api.DataContainer;
@@ -35,7 +37,6 @@ public class KingdomProcedures {
 
     public static void disbandKingdom(String kingdomId) {
         kingdomData.drop(kingdomId);
-
         List<ServerPlayerEntity> onlinePlayers = playerManager.getPlayerList();
         for (ServerPlayerEntity player : onlinePlayers) {
             if (((PlayerEntityInf) player).getKingdomId().equals(kingdomId)) {
@@ -45,7 +46,16 @@ public class KingdomProcedures {
         }
     }
 
-    public static void setKing(String kingdomId, UUID uuid) {
+    public static DataContainer getKingdom(PlayerEntity player) {
+        for (DataContainer kingdom : kingdomData.getDataContainers()) {
+            for(JsonElement member : kingdom.getJson("MEMBERS").getAsJsonArray()) {
+                if (member.getAsString().equals(player.getUuidAsString())) return kingdom;
+            }
+        }
+        return null;
+    }
+
+    public static void updateKing(String kingdomId, UUID uuid) {
         DataContainer kingdom = kingdomData.get(kingdomId);
         kingdom.put("KING", uuid);
 
@@ -58,11 +68,12 @@ public class KingdomProcedures {
             if (player.getUuid().equals(uuid)) {
                 addMember(kingdomId, uuid);
                 ((PlayerEntityInf) player).setKingship(true);
+                NotificationManager.send(uuid, "You are now the king of " + kingdomId + "!", NotificationTypes.ACHIEVEMENT);
             }
         }
     }
 
-    public static void setKingdomColor(String kingdomId, String color) {
+    public static void setColor(String kingdomId, String color) {
         DataContainer kingdom = kingdomData.get(kingdomId);
         kingdom.put("COLOR", color);
     }
@@ -94,5 +105,13 @@ public class KingdomProcedures {
             index++;
         }
         kingdom.put("MEMBERS", members);
+    }
+
+    public static void setupPlayer(PlayerEntity player) {
+        DataContainer kingdom = getKingdom(player);
+        if (kingdom != null) {
+            if (kingdom.getUuid("KING").equals(player.getUuid())) ((PlayerEntityInf) player).setKingship(true);
+            ((PlayerEntityInf) player).setKingdomId(kingdom.getId());
+        }
     }
 }

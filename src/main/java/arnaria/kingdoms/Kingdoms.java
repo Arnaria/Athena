@@ -1,20 +1,28 @@
 package arnaria.kingdoms;
 
 import arnaria.kingdoms.commands.VerifyCommand;
-import arnaria.kingdoms.rest.RestApi;
+import arnaria.kingdoms.util.rest.RestApi;
 import arnaria.kingdoms.util.Settings;
 import arnaria.kingdoms.util.claims.ClaimManager;
+import arnaria.kingdoms.util.procedures.KingdomProcedures;
+import arnaria.notifacaitonmanager.NotificationManager;
+import arnaria.notifacaitonmanager.NotificationTypes;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import mrnavastar.sqlib.api.SqlTypes;
 import mrnavastar.sqlib.util.Database;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.entity.boss.BossBarManager;
 import net.minecraft.server.PlayerManager;
+import net.minecraft.text.Text;
 import net.minecraft.util.UserCache;
 import net.minecraft.world.chunk.ChunkManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
+
+import java.util.UUID;
 
 public class Kingdoms implements ModInitializer {
 
@@ -22,6 +30,7 @@ public class Kingdoms implements ModInitializer {
     public static PlayerManager playerManager;
     public static UserCache userCache;
     public static ChunkManager chunkManager;
+    public static BossBarManager bossBarManager;
     public static Settings settings;
 
     @Override
@@ -56,6 +65,7 @@ public class Kingdoms implements ModInitializer {
             ServerLifecycleEvents.SERVER_STARTED.register(server -> {
                 playerManager = server.getPlayerManager();
                 chunkManager = server.getOverworld().getChunkManager();
+                bossBarManager = server.getBossBarManager();
             });
 
             ServerLifecycleEvents.SERVER_STARTING.register(server -> {
@@ -64,6 +74,8 @@ public class Kingdoms implements ModInitializer {
                 //Command Registration
                 VerifyCommand.register(server.getCommandManager().getDispatcher());
             });
+
+            ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> KingdomProcedures.setupPlayer(handler.getPlayer()));
 
             ClaimManager.init();
             RestApi.init();

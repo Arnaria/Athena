@@ -1,6 +1,6 @@
-package arnaria.kingdoms.rest;
+package arnaria.kingdoms.util.rest;
 
-import arnaria.kingdoms.rest.templates.KingdomTemplate;
+import arnaria.kingdoms.util.rest.templates.KingdomTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 

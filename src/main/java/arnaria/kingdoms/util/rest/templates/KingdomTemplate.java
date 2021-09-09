@@ -1,4 +1,4 @@
-package arnaria.kingdoms.rest.templates;
+package arnaria.kingdoms.util.rest.templates;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

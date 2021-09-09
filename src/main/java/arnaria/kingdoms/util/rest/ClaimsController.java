@@ -1,4 +1,4 @@
-package arnaria.kingdoms.rest;
+package arnaria.kingdoms.util.rest;
 
 import arnaria.kingdoms.util.claims.Claim;
 import arnaria.kingdoms.util.claims.ClaimManager;

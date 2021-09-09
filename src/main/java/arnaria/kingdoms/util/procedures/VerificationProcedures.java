@@ -1,7 +1,10 @@
 package arnaria.kingdoms.util.procedures;
 
+import arnaria.notifacaitonmanager.NotificationManager;
+import arnaria.notifacaitonmanager.NotificationTypes;
 import mrnavastar.sqlib.api.DataContainer;
 import mrnavastar.sqlib.api.Table;
+import net.minecraft.text.Text;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -15,11 +18,16 @@ public class VerificationProcedures {
     private static final Table linkedAccounts = new Table("LinkedAccounts");
 
     public static void addVerificationRequest(String token, UUID uuid) {
+        for (DataContainer linkedAccount : linkedAccounts.getDataContainers()) {
+            if (linkedAccount.getId().equals(uuid.toString())) return;
+        }
         verificationRequests.put(token, uuid);
         //Send notification to user in game
+        NotificationManager.send(uuid, "A request has been made from our website to link to your minecraft account.", NotificationTypes.WARN);
+        NotificationManager.send(uuid, Text.Serializer.fromJson("{\"text\":\"CLICK TO LINK ACCOUNTS\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/verify\"}}"), NotificationTypes.ACHIEVEMENT);
 
-        Runnable requestExpireTask = () -> removeVerificationRequest(token);
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        Runnable requestExpireTask = () -> removeVerificationRequest(token);
         scheduler.schedule(requestExpireTask, 15, TimeUnit.MINUTES);
     }
 
