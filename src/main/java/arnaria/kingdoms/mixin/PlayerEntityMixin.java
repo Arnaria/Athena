@@ -17,7 +17,7 @@ import static arnaria.kingdoms.Kingdoms.playerManager;
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements PlayerEntityInf {
 
-    private String kingdomId = "test";
+    private String kingdomId = "";
     private boolean isKing = false;
 
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {

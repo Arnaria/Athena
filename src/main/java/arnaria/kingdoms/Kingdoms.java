@@ -12,6 +12,7 @@ import mrnavastar.sqlib.util.Database;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.impl.biome.modification.BuiltInRegistryKeys;
 import net.minecraft.entity.boss.BossBarManager;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.world.ServerWorld;
@@ -23,7 +24,7 @@ public class Kingdoms implements ModInitializer {
 
     public static final String MODID = "Kingdoms";
     public static PlayerManager playerManager;
-    public static Iterable<ServerWorld> worlds;
+    public static ServerWorld overworld;
     public static UserCache userCache;
     public static BossBarManager bossBarManager;
     public static Settings settings;
@@ -61,7 +62,7 @@ public class Kingdoms implements ModInitializer {
             ServerLifecycleEvents.SERVER_STARTED.register(server -> {
                 playerManager = server.getPlayerManager();
                 bossBarManager = server.getBossBarManager();
-                worlds = server.getWorlds();
+                overworld = server.getOverworld();
 
                 ClaimManager.init();
             });

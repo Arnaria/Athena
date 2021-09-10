@@ -1,41 +1,35 @@
 package arnaria.kingdoms.util.claims;
 
 import arnaria.kingdoms.callbacks.BlockPlaceCallback;
+import arnaria.kingdoms.interfaces.BannerBlockInf;
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.block.*;
-import net.minecraft.block.entity.BannerBlockEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.math.BlockPos;
-
-import java.util.ArrayList;
+import net.minecraft.world.World;
 
 public class ClaimEvents {
 
     public static void register() {
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, blockEntity) -> {
-            if (state.getBlock() instanceof PlayerSkullBlock) return true;
-            if (ClaimManager.actionAllowedAt(pos, player)) {
+            if (world.getRegistryKey().equals(World.OVERWORLD)) {
+                if (state.getBlock() instanceof PlayerSkullBlock) return true;
+                if (!ClaimManager.actionAllowedAt(pos, player)) return false;
                 if (state.getBlock() instanceof AbstractBannerBlock) {
-                    String kingdomId = ((PlayerEntityInf) player).getKingdomId();
-                    if (!kingdomId.isEmpty()) ClaimManager.addClaim(new Claim(kingdomId, pos));
+                    if (((BannerBlockInf) state.getBlock()).isClaimMarker()) ClaimManager.dropClaim(pos);
                 }
-                return true;
             }
-            return false;
+            return true;
         });
 
-        BlockPlaceCallback.EVENT.register((player, context, block) -> {
-            BlockPos pos = context.getBlockPos();
-            if (ClaimManager.actionAllowedAt(pos, player)) {
-                if (block instanceof AbstractBannerBlock) {
+        BlockPlaceCallback.EVENT.register((world, player, pos, block) -> {
+            if (world.getRegistryKey().equals(World.OVERWORLD)) {
+                if (!ClaimManager.actionAllowedAt(pos, player)) return false;
+                if (block instanceof AbstractBannerBlock && ((BannerBlockInf) block).isClaimMarker()) {
                     String kingdomId = ((PlayerEntityInf) player).getKingdomId();
                     if (!kingdomId.isEmpty()) ClaimManager.addClaim(new Claim(kingdomId, pos));
                 }
-                return true;
             }
-            return false;
+            return true;
         });
     }
 }

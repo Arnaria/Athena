@@ -4,9 +4,7 @@ import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import mrnavastar.sqlib.api.DataContainer;
 import mrnavastar.sqlib.api.Table;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,14 +51,8 @@ public class ClaimManager {
 
         for (Claim claim : claims) {
             if (claim.contains(pos)) {
-                if (claim.getKingdomId().equals("ADMIN") && !player.hasPermissionLevel(4)) {
-                    System.out.println("ADMIN");
-                    return false;
-                }
-                if (!claim.getKingdomId().equals(((PlayerEntityInf) player).getKingdomId())) {
-                    System.out.println("OTHER");
-                    return false;
-                }
+                if (claim.getKingdomId().equals("ADMIN") && !player.hasPermissionLevel(4)) return false;
+                if (!claim.getKingdomId().equals(((PlayerEntityInf) player).getKingdomId())) return false;
             }
         }
         return true;
@@ -68,7 +60,7 @@ public class ClaimManager {
 
     public static boolean claimPlacementAllowedAt(BlockPos pos) {
         for (Claim claim : claims) {
-            if (claim.contains(new BlockPos(pos.getX(), 1, pos.getZ()))) return false;
+            if (claim.contains(pos)) return false;
         }
         return true;
     }

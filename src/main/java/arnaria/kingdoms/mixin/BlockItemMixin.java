@@ -9,7 +9,7 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.ActionResult;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -27,7 +27,7 @@ public abstract class BlockItemMixin extends Item {
 
     @Inject(method = "place(Lnet/minecraft/item/ItemPlacementContext;Lnet/minecraft/block/BlockState;)Z", at = @At("HEAD"), cancellable = true)
     public void dlPlaceEventTrigger(ItemPlacementContext context, BlockState state, CallbackInfoReturnable<Boolean> cir) {
-        boolean result = BlockPlaceCallback.EVENT.invoker().place(context.getPlayer(), context, this.getBlock());
+        boolean result = BlockPlaceCallback.EVENT.invoker().place((ServerWorld) context.getWorld(), context.getPlayer(), context.getBlockPos(), this.getBlock());
 
         if (!result) {
             ServerPlayerEntity player = (ServerPlayerEntity) context.getPlayer();
