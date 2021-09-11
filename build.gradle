@@ -11,6 +11,20 @@ group = project.maven_group
 repositories {
     maven { url 'https://jitpack.io' }
     maven { url "https://maven.shedaniel.me/" }
+    maven {
+        url = 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
+    maven {
+        url = "https://repo.incendo.org/content/repositories/snapshots"
+    }
+    maven {
+        name = 'opencollab-release-repo'
+        url = 'https://repo.opencollab.dev/maven-releases/'
+    }
+    maven {
+        name = 'opencollab-snapshot-repo'
+        url = 'https://repo.opencollab.dev/maven-snapshots/'
+    }
 }
 
 dependencies {
@@ -25,8 +39,9 @@ dependencies {
         exclude(group: "net.fabricmc.fabric-api")
     }
 
+    implementation("org.geysermc.floodgate:common:${project.floodgate_version}")
+
     implementation 'org.springframework.boot:spring-boot-starter-web:2.5.4'
-    testImplementation('org.springframework.boot:spring-boot-starter-test:2.5.4')
 }
 
 configurations {

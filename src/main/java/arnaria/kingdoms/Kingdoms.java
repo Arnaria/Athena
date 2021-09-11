@@ -13,10 +13,11 @@ import mrnavastar.sqlib.util.Database;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.impl.biome.modification.BuiltInRegistryKeys;
 import net.minecraft.entity.boss.BossBarManager;
 import net.minecraft.server.PlayerManager;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.UserCache;
-import net.minecraft.world.chunk.ChunkManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
@@ -24,8 +25,8 @@ public class Kingdoms implements ModInitializer {
 
     public static final String MODID = "Kingdoms";
     public static PlayerManager playerManager;
+    public static ServerWorld overworld;
     public static UserCache userCache;
-    public static ChunkManager chunkManager;
     public static BossBarManager bossBarManager;
     public static Settings settings;
 
@@ -57,11 +58,14 @@ public class Kingdoms implements ModInitializer {
             Database.MYSQL_PASSWORD = settings.MYSQL_PASSWORD;
 
             Database.init();
+            RestApi.init();
 
             ServerLifecycleEvents.SERVER_STARTED.register(server -> {
                 playerManager = server.getPlayerManager();
-                chunkManager = server.getOverworld().getChunkManager();
                 bossBarManager = server.getBossBarManager();
+                overworld = server.getOverworld();
+
+                ClaimManager.init();
             });
 
             ServerLifecycleEvents.SERVER_STARTING.register(server -> {
@@ -73,9 +77,6 @@ public class Kingdoms implements ModInitializer {
             });
 
             ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> KingdomProcedures.setupPlayer(handler.getPlayer()));
-
-            ClaimManager.init();
-            RestApi.init();
         }
     }
 

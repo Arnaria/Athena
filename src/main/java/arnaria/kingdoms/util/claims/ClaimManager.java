@@ -5,6 +5,7 @@ import mrnavastar.sqlib.api.DataContainer;
 import mrnavastar.sqlib.api.Table;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,9 +58,9 @@ public class ClaimManager {
         return true;
     }
 
-    public static boolean claimPlacementAllowedAt(int x, int z) {
+    public static boolean claimPlacementAllowedAt(BlockPos pos) {
         for (Claim claim : claims) {
-            if (claim.contains(new BlockPos(x, 1, z))) return false;
+            if (claim.contains(pos)) return false;
         }
         return true;
     }
@@ -68,8 +69,9 @@ public class ClaimManager {
         List<String> claimIds = claimData.getIds();
         count = claimIds.size();
         for (String id : claimIds) {
-            String kingdomId = claimData.get(id).getString("KINGDOM_ID");
-            BlockPos pos = claimData.get(id).getBlockPos("BANNER_POS");
+            DataContainer claim = claimData.get(id);
+            String kingdomId = claim.getString("KINGDOM_ID");
+            BlockPos pos = claim.getBlockPos("BANNER_POS");
             claims.add(new Claim(kingdomId, pos));
         }
         ClaimEvents.register();
