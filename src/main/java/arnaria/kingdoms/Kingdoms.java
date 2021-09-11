@@ -1,5 +1,6 @@
 package arnaria.kingdoms;
 
+import arnaria.kingdoms.commands.CreateKingdomCommand;
 import arnaria.kingdoms.commands.VerifyCommand;
 import arnaria.kingdoms.util.rest.RestApi;
 import arnaria.kingdoms.util.Settings;
@@ -68,6 +69,7 @@ public class Kingdoms implements ModInitializer {
 
                 //Command Registration
                 VerifyCommand.register(server.getCommandManager().getDispatcher());
+                CreateKingdomCommand.register(server.getCommandManager().getDispatcher());
             });
 
             ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> KingdomProcedures.setupPlayer(handler.getPlayer()));
