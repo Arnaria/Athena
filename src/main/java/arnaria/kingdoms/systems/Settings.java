@@ -1,4 +1,4 @@
-package arnaria.kingdoms.util;
+package arnaria.kingdoms.systems;
 
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;

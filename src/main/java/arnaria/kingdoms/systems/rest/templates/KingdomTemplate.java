@@ -1,4 +1,4 @@
-package arnaria.kingdoms.util.rest.templates;
+package arnaria.kingdoms.systems.rest.templates;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
-import static arnaria.kingdoms.util.procedures.KingdomProcedures.kingdomData;
+import static arnaria.kingdoms.systems.procedures.KingdomProcedures.kingdomData;
 import static arnaria.kingdoms.Kingdoms.userCache;
 
 public class KingdomTemplate implements Serializable {

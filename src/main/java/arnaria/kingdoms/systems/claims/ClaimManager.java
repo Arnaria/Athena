@@ -1,4 +1,4 @@
-package arnaria.kingdoms.util.claims;
+package arnaria.kingdoms.systems.claims;
 
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import mrnavastar.sqlib.api.DataContainer;
@@ -63,6 +63,13 @@ public class ClaimManager {
             if (claim.contains(pos)) return false;
         }
         return true;
+    }
+
+    public static boolean isClaimMarker(BlockPos pos) {
+        for (Claim claim : claims) {
+            if (claim.getPos().equals(pos)) return true;
+        }
+        return false;
     }
 
     public static void init() {

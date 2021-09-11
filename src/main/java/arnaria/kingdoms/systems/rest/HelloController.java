@@ -1,4 +1,4 @@
-package arnaria.kingdoms.util.rest;
+package arnaria.kingdoms.systems.rest;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

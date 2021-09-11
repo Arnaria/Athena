@@ -1,14 +1,13 @@
 package arnaria.kingdoms.mixin;
 
 
-import arnaria.kingdoms.util.claims.ClaimManager;
+import arnaria.kingdoms.systems.claims.ClaimManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ArmorStandItem;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;

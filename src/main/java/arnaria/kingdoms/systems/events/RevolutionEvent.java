@@ -1,7 +1,7 @@
-package arnaria.kingdoms.util.events;
+package arnaria.kingdoms.systems.events;
 
 import arnaria.kingdoms.callbacks.PlayerDeathCallback;
-import arnaria.kingdoms.util.procedures.KingdomProcedures;
+import arnaria.kingdoms.systems.procedures.KingdomProcedures;
 import arnaria.notifacaitonmanager.NotificationManager;
 import arnaria.notifacaitonmanager.NotificationTypes;
 import com.google.gson.JsonElement;
@@ -17,7 +17,7 @@ import net.minecraft.util.Formatting;
 
 import java.util.UUID;
 
-import static arnaria.kingdoms.util.procedures.KingdomProcedures.kingdomData;
+import static arnaria.kingdoms.systems.procedures.KingdomProcedures.kingdomData;
 import static arnaria.kingdoms.Kingdoms.playerManager;
 
 public class RevolutionEvent extends Event {

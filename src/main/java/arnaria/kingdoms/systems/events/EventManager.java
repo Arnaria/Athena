@@ -1,4 +1,4 @@
-package arnaria.kingdoms.util.events;
+package arnaria.kingdoms.systems.events;
 
 import java.util.ArrayList;
 

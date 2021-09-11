@@ -1,6 +1,6 @@
 package arnaria.kingdoms.mixin;
 
-import arnaria.kingdoms.util.claims.ClaimManager;
+import arnaria.kingdoms.systems.claims.ClaimManager;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.util.ActionResult;

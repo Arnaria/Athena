@@ -2,10 +2,10 @@ package arnaria.kingdoms;
 
 import arnaria.kingdoms.commands.CreateKingdomCommand;
 import arnaria.kingdoms.commands.VerifyCommand;
-import arnaria.kingdoms.util.rest.RestApi;
-import arnaria.kingdoms.util.Settings;
-import arnaria.kingdoms.util.claims.ClaimManager;
-import arnaria.kingdoms.util.procedures.KingdomProcedures;
+import arnaria.kingdoms.systems.rest.RestApi;
+import arnaria.kingdoms.systems.Settings;
+import arnaria.kingdoms.systems.claims.ClaimManager;
+import arnaria.kingdoms.systems.procedures.KingdomProcedures;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import mrnavastar.sqlib.api.SqlTypes;
@@ -13,7 +13,6 @@ import mrnavastar.sqlib.util.Database;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.fabricmc.fabric.impl.biome.modification.BuiltInRegistryKeys;
 import net.minecraft.entity.boss.BossBarManager;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.world.ServerWorld;
@@ -22,7 +21,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
 public class Kingdoms implements ModInitializer {
-
+;
     public static final String MODID = "Kingdoms";
     public static PlayerManager playerManager;
     public static ServerWorld overworld;

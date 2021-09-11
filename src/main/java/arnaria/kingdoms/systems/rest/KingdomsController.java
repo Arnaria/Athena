@@ -1,12 +1,12 @@
-package arnaria.kingdoms.util.rest;
+package arnaria.kingdoms.systems.rest;
 
-import arnaria.kingdoms.util.rest.templates.KingdomTemplate;
+import arnaria.kingdoms.systems.rest.templates.KingdomTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 
-import static arnaria.kingdoms.util.procedures.KingdomProcedures.kingdomData;
+import static arnaria.kingdoms.systems.procedures.KingdomProcedures.kingdomData;
 
 @RestController
 public class KingdomsController {

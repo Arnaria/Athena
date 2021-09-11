@@ -1,7 +1,7 @@
-package arnaria.kingdoms.util.rest;
+package arnaria.kingdoms.systems.rest;
 
-import arnaria.kingdoms.util.claims.Claim;
-import arnaria.kingdoms.util.claims.ClaimManager;
+import arnaria.kingdoms.systems.claims.Claim;
+import arnaria.kingdoms.systems.claims.ClaimManager;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 

@@ -1,4 +1,4 @@
-package arnaria.kingdoms.util.procedures;
+package arnaria.kingdoms.systems.procedures;
 
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.notifacaitonmanager.NotificationManager;
@@ -18,6 +18,14 @@ import static arnaria.kingdoms.Kingdoms.playerManager;
 public class KingdomProcedures {
 
     public static final Table kingdomData = new Table("KingdomData");
+
+    public static void setupPlayer(PlayerEntity player) {
+        DataContainer kingdom = getKingdom(player);
+        if (kingdom != null) {
+            if (kingdom.getUuid("KING").equals(player.getUuid())) ((PlayerEntityInf) player).setKingship(true);
+            ((PlayerEntityInf) player).setKingdomId(kingdom.getId());
+        }
+    }
 
     public static void createKingdom(String kingdomId, UUID uuid) {
         DataContainer kingdom = new DataContainer(kingdomId);
@@ -107,11 +115,14 @@ public class KingdomProcedures {
         kingdom.put("MEMBERS", members);
     }
 
-    public static void setupPlayer(PlayerEntity player) {
-        DataContainer kingdom = getKingdom(player);
-        if (kingdom != null) {
-            if (kingdom.getUuid("KING").equals(player.getUuid())) ((PlayerEntityInf) player).setKingship(true);
-            ((PlayerEntityInf) player).setKingdomId(kingdom.getId());
-        }
+    public static void addClaimMarkerPoints(String kingdomId, int amount) {
+        DataContainer kingdom = kingdomData.get(kingdomId);
+        kingdom.put("CLAIM_MARKER_POINTS", amount);
+    }
+
+    public static void removeClaimMarkerPoints(String kingdomId, int amount) {
+        DataContainer kingdom = kingdomData.get(kingdomId);
+        int originalAmount = kingdom.getInt("CLAIM_MARKER_POINTS");
+        kingdom.put("CLAIM_MARKER_POINTS", originalAmount - amount);
     }
 }

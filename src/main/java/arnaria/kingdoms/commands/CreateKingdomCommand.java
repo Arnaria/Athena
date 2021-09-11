@@ -1,6 +1,6 @@
 package arnaria.kingdoms.commands;
 
-import arnaria.kingdoms.util.procedures.KingdomProcedures;
+import arnaria.kingdoms.systems.procedures.KingdomProcedures;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;

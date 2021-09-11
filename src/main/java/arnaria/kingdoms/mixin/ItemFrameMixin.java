@@ -1,11 +1,9 @@
 package arnaria.kingdoms.mixin;
 
-import arnaria.kingdoms.util.claims.ClaimManager;
+import arnaria.kingdoms.systems.claims.ClaimManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemFrameItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsageContext;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import org.spongepowered.asm.mixin.Mixin;
