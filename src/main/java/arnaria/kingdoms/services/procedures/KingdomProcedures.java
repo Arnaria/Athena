@@ -49,6 +49,8 @@ public class KingdomProcedures {
 
         PlayerEntity executor = playerManager.getPlayer(uuid);
         if (executor != null) ((PlayerEntityInf) executor).setKingship(true);
+
+        NotificationManager.send(uuid, "You are now the leader of " + kingdomId, NotificationTypes.ACHIEVEMENT);
     }
 
     public static void disbandKingdom(String kingdomId) {
