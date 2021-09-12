@@ -1,10 +1,13 @@
 package arnaria.kingdoms.services.claims;
 
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
+import arnaria.kingdoms.services.data.KingdomsData;
+import arnaria.kingdoms.util.ClaimHelpers;
 import mrnavastar.sqlib.api.DataContainer;
 import mrnavastar.sqlib.api.Table;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.chunk.Chunk;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +66,15 @@ public class ClaimManager {
             if (claim.contains(pos)) return false;
         }
         return true;
+    }
+
+    public static boolean isClaimInRange(String kingdomId, BlockPos pos) {
+        for (Claim claim : claims) {
+            if (claim.getKingdomId().equals(kingdomId)) {
+                if (claim.isOverlapping(ClaimHelpers.createChunkBox(pos, 7, 48))) return true;
+            }
+        }
+        return false;
     }
 
     public static boolean isClaimMarker(BlockPos pos) {

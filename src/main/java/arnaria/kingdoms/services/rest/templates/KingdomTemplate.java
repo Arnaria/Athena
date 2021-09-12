@@ -22,6 +22,8 @@ public class KingdomTemplate implements Serializable {
     private final String color;
     private final HashMap<String, UUID> king = new HashMap<>();
     private final HashMap<String, UUID> members = new HashMap<>();
+    private final int claimMarkerPointsTotal;
+    private final int claimMarkerPointsUsed;
 
     public KingdomTemplate(String id) {
         this.kingdomId = id;
@@ -35,6 +37,9 @@ public class KingdomTemplate implements Serializable {
             Optional<GameProfile> memberProfile = userCache.getByUuid(member);
             memberProfile.ifPresent(gameProfile -> this.king.put(gameProfile.getName(), member));
         }
+
+        this.claimMarkerPointsTotal = KingdomsData.getClaimMarkerPointsTotal(id);
+        this.claimMarkerPointsUsed = KingdomsData.getClaimMarkerPointsUsed(id);
     }
 
     public String getKingdomId() {
@@ -51,5 +56,13 @@ public class KingdomTemplate implements Serializable {
 
     public HashMap<String, UUID> getMembers() {
         return members;
+    }
+
+    public int getClaimMarkerPointsTotal() {
+        return claimMarkerPointsTotal;
+    }
+
+    public int getClaimMarkerPointsUsed() {
+        return claimMarkerPointsUsed;
     }
 }

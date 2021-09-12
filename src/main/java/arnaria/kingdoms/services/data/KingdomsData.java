@@ -35,8 +35,13 @@ public class KingdomsData {
         return members;
     }
 
-    public static int getClaimMarkerPoints(String kingdomId) {
+    public static int getClaimMarkerPointsTotal(String kingdomId) {
         DataContainer kingdom = kingdomData.get(kingdomId);
-        return kingdom.getInt("CLAIM_MARKER_POINTS");
+        return kingdom.getInt("CLAIM_MARKER_POINTS_TOTAL");
+    }
+
+    public static int getClaimMarkerPointsUsed(String kingdomId) {
+        DataContainer kingdom = kingdomData.get(kingdomId);
+        return kingdom.getInt("CLAIM_MARKER_POINTS_USED");
     }
 }

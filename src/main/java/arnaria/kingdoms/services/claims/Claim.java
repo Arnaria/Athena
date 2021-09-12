@@ -1,5 +1,6 @@
 package arnaria.kingdoms.services.claims;
 
+import arnaria.kingdoms.util.ClaimHelpers;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.Chunk;
 
@@ -12,30 +13,23 @@ public class Claim implements Serializable {
     private final String kingdomId;
     private final BlockPos pos;
 
-    private final ArrayList<Chunk> chunks = new ArrayList<>();
+    private final ArrayList<Chunk> claimChunks;
 
     public Claim(String kingdomId, BlockPos pos) {
         this.kingdomId = kingdomId;
         this.pos = pos;
+        this.claimChunks = ClaimHelpers.createChunkBox(pos, 5, 32);
+    }
 
-        int startX = pos.getX() - 32;
-        int startZ = pos.getZ() - 32;
-
-        int currentX = startX;
-        int currentZ = startZ;
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 5; j++) {
-                BlockPos chunkPos = new BlockPos(currentX, 1, currentZ);
-                if (ClaimManager.claimPlacementAllowedAt(chunkPos)) this.chunks.add(overworld.getChunk(chunkPos));
-                currentZ += 16;
-            }
-            currentX += 16;
-            currentZ = startZ;
+    public boolean isOverlapping(ArrayList<Chunk> testChunks) {
+        for (Chunk chunk : this.claimChunks) {
+            if (testChunks.contains(chunk)) return true;
         }
+        return false;
     }
 
     public boolean contains(BlockPos pos) {
-        return this.chunks.contains(overworld.getChunk(pos));
+        return this.claimChunks.contains(overworld.getChunk(pos));
     }
 
     public String getKingdomId() {

@@ -9,7 +9,6 @@ public abstract class Event {
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     public Event(int min) {
-
         Runnable loop = this::loop;
         Runnable finish = this::stopEvent;
 
