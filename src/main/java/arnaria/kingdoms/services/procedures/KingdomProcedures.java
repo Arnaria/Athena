@@ -1,6 +1,7 @@
 package arnaria.kingdoms.services.procedures;
 
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
+import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.notifacaitonmanager.NotificationManager;
 import arnaria.notifacaitonmanager.NotificationTypes;
 import com.google.gson.JsonArray;
@@ -8,6 +9,7 @@ import com.google.gson.JsonElement;
 import mrnavastar.sqlib.api.DataContainer;
 import mrnavastar.sqlib.api.Table;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.List;
@@ -28,6 +30,16 @@ public class KingdomProcedures {
     }
 
     public static void createKingdom(String kingdomId, UUID uuid) {
+        PlayerEntity executor = playerManager.getPlayer(uuid);
+        for (String kingdom : KingdomsData.getKingdomIds()) {
+            if (KingdomsData.getMembers(kingdom).contains(uuid)) {
+                NotificationManager.send(uuid, "You are already in a kingdom", NotificationTypes.ERROR);
+                return;
+            }
+        }
+
+        if (executor != null) ((PlayerEntityInf) executor).setKingship(true);
+
         DataContainer kingdom = new DataContainer(kingdomId);
         kingdomData.put(kingdom);
 
@@ -36,11 +48,6 @@ public class KingdomProcedures {
         kingdom.put("MEMBERS", new JsonArray());
 
         addMember(kingdomId, uuid);
-
-        PlayerEntity executor = playerManager.getPlayer(uuid);
-        if (executor != null) {
-            ((PlayerEntityInf) executor).setKingship(true);
-        }
     }
 
     public static void disbandKingdom(String kingdomId) {
