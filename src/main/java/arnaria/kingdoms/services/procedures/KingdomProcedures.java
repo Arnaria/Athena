@@ -12,6 +12,7 @@ import mrnavastar.sqlib.api.Table;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Formatting;
 
 import java.util.List;
 import java.util.UUID;
@@ -91,9 +92,9 @@ public class KingdomProcedures {
         }
     }
 
-    public static void setColor(String kingdomId, String color) {
+    public static void setColor(String kingdomId, Formatting color) {
         DataContainer kingdom = kingdomData.get(kingdomId);
-        kingdom.put("COLOR", color);
+        kingdom.put("COLOR", String.valueOf(color));
     }
 
     public static void addMember(String kingdomId, UUID uuid) {
