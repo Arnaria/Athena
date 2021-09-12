@@ -1,6 +1,6 @@
-package arnaria.kingdoms.systems.data;
+package arnaria.kingdoms.services.data;
 
-import arnaria.kingdoms.systems.procedures.KingdomProcedures;
+import arnaria.kingdoms.services.procedures.KingdomProcedures;
 import com.google.gson.JsonElement;
 import mrnavastar.sqlib.api.DataContainer;
 import mrnavastar.sqlib.api.Table;
@@ -12,7 +12,7 @@ public class KingdomsData {
 
     private static final Table kingdomData = KingdomProcedures.kingdomData;
 
-    public static ArrayList<String> getKingdoms() {
+    public static ArrayList<String> getKingdomIds() {
         return (ArrayList<String>) kingdomData.getIds();
     }
 
@@ -26,11 +26,11 @@ public class KingdomsData {
         return kingdom.getString("COLOR");
     }
 
-    public static ArrayList<String> getMembers(String kingdomId) {
+    public static ArrayList<UUID> getMembers(String kingdomId) {
         DataContainer kingdom = kingdomData.get(kingdomId);
-        ArrayList<String> members = new ArrayList<>();
+        ArrayList<UUID> members = new ArrayList<>();
         for (JsonElement member : kingdom.getJson("MEMBERS").getAsJsonArray()) {
-            members.add(member.getAsString());
+            members.add(UUID.fromString(member.getAsString()));
         }
         return members;
     }

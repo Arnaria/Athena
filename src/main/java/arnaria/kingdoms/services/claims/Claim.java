@@ -1,4 +1,4 @@
-package arnaria.kingdoms.systems.claims;
+package arnaria.kingdoms.services.claims;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.Chunk;

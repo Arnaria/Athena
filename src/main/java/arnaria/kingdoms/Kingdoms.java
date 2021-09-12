@@ -2,10 +2,10 @@ package arnaria.kingdoms;
 
 import arnaria.kingdoms.commands.CreateKingdomCommand;
 import arnaria.kingdoms.commands.VerifyCommand;
-import arnaria.kingdoms.systems.rest.RestApi;
-import arnaria.kingdoms.systems.Settings;
-import arnaria.kingdoms.systems.claims.ClaimManager;
-import arnaria.kingdoms.systems.procedures.KingdomProcedures;
+import arnaria.kingdoms.services.rest.RestApi;
+import arnaria.kingdoms.services.Settings;
+import arnaria.kingdoms.services.claims.ClaimManager;
+import arnaria.kingdoms.services.procedures.KingdomProcedures;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import mrnavastar.sqlib.api.SqlTypes;

@@ -1,4 +1,4 @@
-package arnaria.kingdoms.systems.procedures;
+package arnaria.kingdoms.services.procedures;
 
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.notifacaitonmanager.NotificationManager;
@@ -115,7 +115,7 @@ public class KingdomProcedures {
         kingdom.put("MEMBERS", members);
     }
 
-    public static void addClaimMarkerPoints(String kingdomId, int amount) {
+    public static void addClaimMarkerPointsTotal(String kingdomId, int amount) {
         DataContainer kingdom = kingdomData.get(kingdomId);
         kingdom.put("CLAIM_MARKER_POINTS", amount);
     }

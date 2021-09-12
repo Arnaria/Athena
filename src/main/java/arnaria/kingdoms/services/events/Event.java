@@ -1,4 +1,4 @@
-package arnaria.kingdoms.systems.events;
+package arnaria.kingdoms.services.events;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

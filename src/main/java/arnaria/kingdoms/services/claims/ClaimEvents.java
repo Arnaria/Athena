@@ -1,4 +1,4 @@
-package arnaria.kingdoms.systems.claims;
+package arnaria.kingdoms.services.claims;
 
 import arnaria.kingdoms.callbacks.BlockPlaceCallback;
 import arnaria.kingdoms.interfaces.PlayerEntityInf;

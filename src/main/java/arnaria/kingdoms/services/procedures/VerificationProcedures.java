@@ -1,4 +1,4 @@
-package arnaria.kingdoms.systems.procedures;
+package arnaria.kingdoms.services.procedures;
 
 import arnaria.notifacaitonmanager.NotificationManager;
 import arnaria.notifacaitonmanager.NotificationTypes;

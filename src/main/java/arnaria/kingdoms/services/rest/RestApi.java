@@ -1,4 +1,4 @@
-package arnaria.kingdoms.systems.rest;
+package arnaria.kingdoms.services.rest;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

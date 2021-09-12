@@ -1,16 +1,19 @@
-package arnaria.kingdoms.systems.rest.templates;
+package arnaria.kingdoms.services.rest.templates;
 
+import arnaria.kingdoms.services.data.KingdomsData;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.mojang.authlib.GameProfile;
 import mrnavastar.sqlib.api.DataContainer;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
-import static arnaria.kingdoms.systems.procedures.KingdomProcedures.kingdomData;
+import static arnaria.kingdoms.services.procedures.KingdomProcedures.kingdomData;
 import static arnaria.kingdoms.Kingdoms.userCache;
 
 public class KingdomTemplate implements Serializable {
@@ -21,19 +24,16 @@ public class KingdomTemplate implements Serializable {
     private final HashMap<String, UUID> members = new HashMap<>();
 
     public KingdomTemplate(String id) {
-        DataContainer dataContainer = kingdomData.get(id);
         this.kingdomId = id;
-        this.color = dataContainer.getString("COLOR");
+        this.color = KingdomsData.getColor(id);
 
-        UUID kingUuid = dataContainer.getUuid("KING");
-        Optional<GameProfile> kingProfile = userCache.getByUuid(kingUuid);
-        kingProfile.ifPresent(gameProfile -> this.king.put(gameProfile.getName(), kingUuid));
+        UUID king = KingdomsData.getKing(id);
+        Optional<GameProfile> kingProfile = userCache.getByUuid(king);
+        kingProfile.ifPresent(gameProfile -> this.king.put(gameProfile.getName(), king));
 
-        JsonArray jsonArray = dataContainer.getJson("MEMBERS").getAsJsonArray();
-        for (JsonElement member : jsonArray) {
-            UUID uuid = UUID.fromString(member.getAsString());
-            Optional<GameProfile> profile = userCache.getByUuid(uuid);
-            profile.ifPresent(gameProfile -> this.members.put(gameProfile.getName(), uuid));
+        for (UUID member : KingdomsData.getMembers(id)) {
+            Optional<GameProfile> memberProfile = userCache.getByUuid(member);
+            memberProfile.ifPresent(gameProfile -> this.king.put(gameProfile.getName(), member));
         }
     }
 
