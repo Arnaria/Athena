@@ -6,6 +6,9 @@ import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.kingdoms.util.ClaimHelpers;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.block.*;
+import net.minecraft.item.BannerItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -31,11 +34,12 @@ public class ClaimEvents {
                 String kingdomId = ((PlayerEntityInf) player).getKingdomId();
                 if (block instanceof AbstractBannerBlock && !kingdomId.isEmpty()) {
                     NbtCompound nbt = item.getNbt();
-                    if (nbt != null && nbt.getBoolean("IsClaimMarker")) {
-                        if (KingdomsData.getClaimMarkerPointsTotal(kingdomId) > KingdomsData.getClaimMarkerPointsUsed(kingdomId)) {
-                            if (ClaimManager.isClaimInRange(kingdomId, pos)) ClaimManager.addClaim(new Claim(kingdomId, pos));
-                        }
-                    }
+                    //if (nbt != null && nbt.getBoolean("IsClaimMarker")) {
+                        //if (KingdomsData.getClaimMarkerPointsTotal(kingdomId) > KingdomsData.getClaimMarkerPointsUsed(kingdomId)) {
+                    if (ClaimManager.isClaimInRange(kingdomId, pos)) ClaimManager.addClaim(new Claim(kingdomId, pos));
+                    else return false;
+                        //}
+                    //}
                 }
             }
             return true;
