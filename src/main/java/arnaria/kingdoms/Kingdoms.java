@@ -1,9 +1,6 @@
 package arnaria.kingdoms;
 
-import arnaria.kingdoms.commands.ClaimBannerCommand;
-import arnaria.kingdoms.commands.CreateKingdomCommand;
-import arnaria.kingdoms.commands.VerifyCommand;
-import arnaria.kingdoms.commands.setColourCommand;
+import arnaria.kingdoms.commands.*;
 import arnaria.kingdoms.services.rest.RestApi;
 import arnaria.kingdoms.services.Settings;
 import arnaria.kingdoms.services.claims.ClaimManager;
@@ -60,7 +57,6 @@ public class Kingdoms implements ModInitializer {
             Database.MYSQL_PASSWORD = settings.MYSQL_PASSWORD;
 
             Database.init();
-            RestApi.init();
 
             ServerLifecycleEvents.SERVER_STARTED.register(server -> {
                 playerManager = server.getPlayerManager();
@@ -68,6 +64,7 @@ public class Kingdoms implements ModInitializer {
                 overworld = server.getOverworld();
 
                 ClaimManager.init();
+                RestApi.init();
             });
 
             ServerLifecycleEvents.SERVER_STARTING.register(server -> {
@@ -78,6 +75,8 @@ public class Kingdoms implements ModInitializer {
                 CreateKingdomCommand.register(server.getCommandManager().getDispatcher());
                 ClaimBannerCommand.register(server.getCommandManager().getDispatcher());
                 setColourCommand.register(server.getCommandManager().getDispatcher());
+                getKingCommand.register(server.getCommandManager().getDispatcher());
+                disbandKingdomCommand.register(server.getCommandManager().getDispatcher());
             });
 
             ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> KingdomProcedures.setupPlayer(handler.getPlayer()));
