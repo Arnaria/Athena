@@ -117,12 +117,23 @@ public class KingdomProcedures {
 
     public static void addClaimMarkerPointsTotal(String kingdomId, int amount) {
         DataContainer kingdom = kingdomData.get(kingdomId);
-        kingdom.put("CLAIM_MARKER_POINTS", amount);
+        kingdom.put("CLAIM_MARKER_POINTS_TOTAL", amount);
     }
 
-    public static void removeClaimMarkerPoints(String kingdomId, int amount) {
+    public static void removeClaimMarkerPointsTotal(String kingdomId, int amount) {
         DataContainer kingdom = kingdomData.get(kingdomId);
         int originalAmount = kingdom.getInt("CLAIM_MARKER_POINTS");
-        kingdom.put("CLAIM_MARKER_POINTS", originalAmount - amount);
+        kingdom.put("CLAIM_MARKER_POINTS_TOTAL", originalAmount - amount);
+    }
+
+    public static void addClaimMarkerPointsUsed(String kingdomId, int amount) {
+        DataContainer kingdom = kingdomData.get(kingdomId);
+        kingdom.put("CLAIM_MARKER_POINTS_USED", amount);
+    }
+
+    public static void removeClaimMarkerPointsUsed(String kingdomId, int amount) {
+        DataContainer kingdom = kingdomData.get(kingdomId);
+        int originalAmount = kingdom.getInt("CLAIM_MARKER_POINTS_USED");
+        kingdom.put("CLAIM_MARKER_POINTS_TOTAL_USED", originalAmount - amount);
     }
 }

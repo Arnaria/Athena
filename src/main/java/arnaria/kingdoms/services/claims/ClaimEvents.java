@@ -2,10 +2,15 @@ package arnaria.kingdoms.services.claims;
 
 import arnaria.kingdoms.callbacks.BlockPlaceCallback;
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
+import arnaria.kingdoms.services.data.KingdomsData;
+import arnaria.kingdoms.util.ClaimHelpers;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.block.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+
+import java.util.ArrayList;
 
 public class ClaimEvents {
 
@@ -22,14 +27,16 @@ public class ClaimEvents {
         BlockPlaceCallback.EVENT.register((world, player, pos, block, item) -> {
             if (world.getRegistryKey().equals(World.OVERWORLD)) {
                 if (!ClaimManager.actionAllowedAt(pos, player)) return false;
+
                 String kingdomId = ((PlayerEntityInf) player).getKingdomId();
                 if (block instanceof AbstractBannerBlock && !kingdomId.isEmpty()) {
                     NbtCompound nbt = item.getNbt();
                     if (nbt != null && nbt.getBoolean("IsClaimMarker")) {
-                        ClaimManager.addClaim(new Claim(kingdomId, pos));
+                        if (KingdomsData.getClaimMarkerPointsTotal(kingdomId) > KingdomsData.getClaimMarkerPointsUsed(kingdomId)) {
+                            if (ClaimManager.isClaimInRange(kingdomId, pos)) ClaimManager.addClaim(new Claim(kingdomId, pos));
+                        }
                     }
                 }
-
             }
             return true;
         });
