@@ -1,5 +1,6 @@
 package arnaria.kingdoms.services.claims;
 
+import arnaria.kingdoms.services.procedures.KingdomProcedures;
 import arnaria.kingdoms.util.ClaimHelpers;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.Chunk;
@@ -18,7 +19,7 @@ public class Claim implements Serializable {
     public Claim(String kingdomId, BlockPos pos) {
         this.kingdomId = kingdomId;
         this.pos = pos;
-        this.claimChunks = ClaimHelpers.createChunkBox(pos, 5, 32);
+        this.claimChunks = ClaimHelpers.createChunkBox(pos, 5, true);
     }
 
     public boolean isOverlapping(ArrayList<Chunk> testChunks) {

@@ -19,6 +19,7 @@ import net.minecraft.entity.boss.BossBarManager;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.UserCache;
+import net.minecraft.util.math.BlockPos;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 

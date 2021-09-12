@@ -34,12 +34,12 @@ public class ClaimEvents {
                 String kingdomId = ((PlayerEntityInf) player).getKingdomId();
                 if (block instanceof AbstractBannerBlock && !kingdomId.isEmpty()) {
                     NbtCompound nbt = item.getNbt();
-                    //if (nbt != null && nbt.getBoolean("IsClaimMarker")) {
-                        //if (KingdomsData.getClaimMarkerPointsTotal(kingdomId) > KingdomsData.getClaimMarkerPointsUsed(kingdomId)) {
-                    if (ClaimManager.isClaimInRange(kingdomId, pos)) ClaimManager.addClaim(new Claim(kingdomId, pos));
-                    else return false;
-                        //}
-                    //}
+                    if (nbt != null && nbt.getBoolean("IsClaimMarker")) {
+                        if (KingdomsData.getClaimMarkerPointsTotal(kingdomId) > KingdomsData.getClaimMarkerPointsUsed(kingdomId)) {
+                            if (ClaimManager.placedFirstBanner(kingdomId) && !ClaimManager.isClaimInRange(kingdomId, pos)) return false;
+                            ClaimManager.addClaim(new Claim(kingdomId, pos));
+                        }
+                    }
                 }
             }
             return true;

@@ -45,6 +45,8 @@ public class KingdomProcedures {
         kingdom.put("KING", uuid);
         kingdom.put("COLOR", "");
         kingdom.put("MEMBERS", new JsonArray());
+        kingdom.put("CLAIM_MARKER_POINTS_TOTAL", 1);
+        kingdom.put("CLAIM_MARKER_POINTS_USED", 0);
 
         addMember(kingdomId, uuid);
 
@@ -128,18 +130,20 @@ public class KingdomProcedures {
 
     public static void addClaimMarkerPointsTotal(String kingdomId, int amount) {
         DataContainer kingdom = kingdomData.get(kingdomId);
-        kingdom.put("CLAIM_MARKER_POINTS_TOTAL", amount);
+        int originalAmount = kingdom.getInt("CLAIM_MARKER_POINTS_TOTAL");
+        kingdom.put("CLAIM_MARKER_POINTS_TOTAL", originalAmount - amount);
     }
 
     public static void removeClaimMarkerPointsTotal(String kingdomId, int amount) {
         DataContainer kingdom = kingdomData.get(kingdomId);
-        int originalAmount = kingdom.getInt("CLAIM_MARKER_POINTS");
+        int originalAmount = kingdom.getInt("CLAIM_MARKER_POINTS_TOTAL");
         kingdom.put("CLAIM_MARKER_POINTS_TOTAL", originalAmount - amount);
     }
 
     public static void addClaimMarkerPointsUsed(String kingdomId, int amount) {
         DataContainer kingdom = kingdomData.get(kingdomId);
-        kingdom.put("CLAIM_MARKER_POINTS_USED", amount);
+        int originalAmount = kingdom.getInt("CLAIM_MARKER_POINTS_USED");
+        kingdom.put("CLAIM_MARKER_POINTS_USED", originalAmount + amount);
     }
 
     public static void removeClaimMarkerPointsUsed(String kingdomId, int amount) {
