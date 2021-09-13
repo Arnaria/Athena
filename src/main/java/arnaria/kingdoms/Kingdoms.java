@@ -70,7 +70,7 @@ public class Kingdoms implements ModInitializer {
                 userCache = server.getUserCache();
 
                 //Command Registration
-                VerifyCommand.register(server.getCommandManager().getDispatcher());
+                LinkCommand.register(server.getCommandManager().getDispatcher());
                 CreateKingdomCommand.register(server.getCommandManager().getDispatcher());
                 ClaimBannerCommand.register(server.getCommandManager().getDispatcher());
                 SetColourCommand.register(server.getCommandManager().getDispatcher());
