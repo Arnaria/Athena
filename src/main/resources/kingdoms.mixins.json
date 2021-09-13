@@ -4,10 +4,12 @@
   "package": "arnaria.kingdoms.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "AbstractBannerBlockMixin",
     "ArmorStandEntityMixin",
     "ArmorStandItemMixin",
     "AxeMixin",
     "BlockItemMixin",
+    "BlockMixin",
     "BucketMixin",
     "FlintNStealMixin",
     "HoeMixin",

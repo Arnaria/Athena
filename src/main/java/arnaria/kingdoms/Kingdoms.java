@@ -56,6 +56,7 @@ public class Kingdoms implements ModInitializer {
             Database.MYSQL_PASSWORD = settings.MYSQL_PASSWORD;
 
             Database.init();
+            RestApi.init();
 
             ServerLifecycleEvents.SERVER_STARTED.register(server -> {
                 playerManager = server.getPlayerManager();
@@ -63,7 +64,6 @@ public class Kingdoms implements ModInitializer {
                 overworld = server.getOverworld();
 
                 ClaimManager.init();
-                RestApi.init();
             });
 
             ServerLifecycleEvents.SERVER_STARTING.register(server -> {

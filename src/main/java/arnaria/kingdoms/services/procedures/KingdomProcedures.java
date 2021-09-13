@@ -1,6 +1,7 @@
 package arnaria.kingdoms.services.procedures;
 
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
+import arnaria.kingdoms.services.claims.ClaimManager;
 import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.kingdoms.util.InterfaceTypes;
 import arnaria.notifacaitonmanager.NotificationManager;
@@ -58,6 +59,7 @@ public class KingdomProcedures {
 
     public static void disbandKingdom(String kingdomId) {
         kingdomData.drop(kingdomId);
+        ClaimManager.dropClaims(kingdomId);
         List<ServerPlayerEntity> onlinePlayers = playerManager.getPlayerList();
         for (ServerPlayerEntity player : onlinePlayers) {
             if (((PlayerEntityInf) player).getKingdomId().equals(kingdomId)) {
@@ -96,7 +98,8 @@ public class KingdomProcedures {
 
     public static void setColor(String kingdomId, Formatting color) {
         DataContainer kingdom = kingdomData.get(kingdomId);
-        kingdom.put("COLOR", String.valueOf(color));
+        kingdom.put("COLOR", color.getName());
+        ClaimManager.updateClaimTagColor(kingdomId, color.getName());
     }
 
     public static void addJoinRequest(Enum<InterfaceTypes> platform, String kingdomID, UUID uuid) {
