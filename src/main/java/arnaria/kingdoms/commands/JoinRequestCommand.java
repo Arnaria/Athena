@@ -18,7 +18,7 @@ import static arnaria.kingdoms.Kingdoms.playerManager;
 
 import java.util.UUID;
 
-public class joinRequestCommand {
+public class JoinRequestCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("Requests")
                 .then(CommandManager.literal("Join")

@@ -16,7 +16,6 @@ import net.minecraft.entity.boss.BossBarManager;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.UserCache;
-import net.minecraft.util.math.BlockPos;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
@@ -74,10 +73,10 @@ public class Kingdoms implements ModInitializer {
                 VerifyCommand.register(server.getCommandManager().getDispatcher());
                 CreateKingdomCommand.register(server.getCommandManager().getDispatcher());
                 ClaimBannerCommand.register(server.getCommandManager().getDispatcher());
-                setColourCommand.register(server.getCommandManager().getDispatcher());
-                getKingCommand.register(server.getCommandManager().getDispatcher());
-                disbandKingdomCommand.register(server.getCommandManager().getDispatcher());
-                joinRequestCommand.register(server.getCommandManager().getDispatcher());
+                SetColourCommand.register(server.getCommandManager().getDispatcher());
+                GetKingCommand.register(server.getCommandManager().getDispatcher());
+                DisbandKingdomCommand.register(server.getCommandManager().getDispatcher());
+                JoinRequestCommand.register(server.getCommandManager().getDispatcher());
             });
 
             ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> KingdomProcedures.setupPlayer(handler.getPlayer()));

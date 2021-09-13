@@ -11,7 +11,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import static arnaria.kingdoms.Kingdoms.playerManager;
 
-public class getKingCommand {
+public class GetKingCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("Leader")
                 .then(CommandManager.argument("Kingdom", StringArgumentType.string())

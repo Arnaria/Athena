@@ -12,7 +12,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.Formatting;
 
-public class setColourCommand {
+public class SetColourCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("colour")
                 .then(CommandManager.argument("Colour", ColorArgumentType.color())
