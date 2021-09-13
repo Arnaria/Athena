@@ -17,11 +17,12 @@ import java.util.concurrent.TimeUnit;
 
 public class LinkProcedures {
 
+    private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private static final HashMap<String, String> linkRequests = new HashMap<>();
     private static final Table linkedAccounts = new Table("LinkedAccounts");
 
     private static String getLinkToken() {
-        byte[] array = new byte[15];
+        byte[] array = new byte[12];
         new Random().nextBytes(array);
         return new String(array, StandardCharsets.UTF_8);
     }
@@ -33,8 +34,13 @@ public class LinkProcedures {
     }
 
     public static void createLinkRequest(String userToken, String linkToken, UUID uuid) {
-        linkRequests.put(linkToken, userToken);
-        NotificationManager.send(uuid, "A link request was made to your account! Run /link <linkToken> to link accounts!", NotificationTypes.INFO);
+        if (linkedAccounts.get(uuid.toString()) != null) {
+            linkRequests.put(linkToken, userToken);
+            NotificationManager.send(uuid, "A link request was made to your account! Run /link <linkToken> to link accounts!", NotificationTypes.INFO);
+
+            Runnable removeLinkRequest = () -> linkRequests.remove(linkToken);
+            scheduler.schedule(removeLinkRequest, 15, TimeUnit.MINUTES);
+        }
     }
 
     public static void linkAccounts(String linkToken, UUID uuid) {
