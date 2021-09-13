@@ -35,6 +35,15 @@ public class KingdomsData {
         return members;
     }
 
+    public static ArrayList<UUID> getJoinRequests(String kingdomID) {
+        DataContainer kingdom = kingdomData.get(kingdomID);
+        ArrayList<UUID> requests = new ArrayList<>();
+        for (JsonElement request : kingdom.getJson("REQUESTS").getAsJsonArray()) {
+            requests.add(UUID.fromString(request.getAsString()));
+        }
+        return requests;
+    }
+
     public static int getClaimMarkerPointsTotal(String kingdomId) {
         DataContainer kingdom = kingdomData.get(kingdomId);
         return kingdom.getInt("CLAIM_MARKER_POINTS_TOTAL");

@@ -77,6 +77,7 @@ public class Kingdoms implements ModInitializer {
                 setColourCommand.register(server.getCommandManager().getDispatcher());
                 getKingCommand.register(server.getCommandManager().getDispatcher());
                 disbandKingdomCommand.register(server.getCommandManager().getDispatcher());
+                joinRequestCommand.register(server.getCommandManager().getDispatcher());
             });
 
             ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> KingdomProcedures.setupPlayer(handler.getPlayer()));

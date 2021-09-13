@@ -10,7 +10,6 @@ import com.google.gson.JsonElement;
 import mrnavastar.sqlib.api.DataContainer;
 import mrnavastar.sqlib.api.Table;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Formatting;
 
@@ -45,6 +44,7 @@ public class KingdomProcedures {
         kingdom.put("KING", uuid);
         kingdom.put("COLOR", "");
         kingdom.put("MEMBERS", new JsonArray());
+        kingdom.put("REQUESTS", new JsonArray());
         kingdom.put("CLAIM_MARKER_POINTS_TOTAL", 1);
         kingdom.put("CLAIM_MARKER_POINTS_USED", 0);
 
@@ -97,6 +97,30 @@ public class KingdomProcedures {
     public static void setColor(String kingdomId, Formatting color) {
         DataContainer kingdom = kingdomData.get(kingdomId);
         kingdom.put("COLOR", String.valueOf(color));
+    }
+
+    public static void addJoinRequest(Enum<InterfaceTypes> platform, String kingdomID, UUID uuid) {
+        DataContainer kingdom = kingdomData.get(kingdomID);
+        JsonArray requests = kingdom.getJson("REQUESTS").getAsJsonArray();
+        for (JsonElement request : requests) {
+            if (request.getAsString().equals(uuid.toString())) return;
+        }
+
+        requests.add(uuid.toString());
+        kingdom.put("REQUESTS", requests);
+    }
+
+    public static void deleteJoinRequest(String kingdomID, UUID uuid) {
+        DataContainer kingdom = kingdomData.get(kingdomID);
+        JsonArray requests = kingdom.getJson("MEMBERS").getAsJsonArray();
+
+        int index = 0;
+        for (JsonElement request : requests) {
+            if (request.getAsString().equals(uuid.toString())) requests.remove(index);
+            index++;
+        }
+        kingdom.put("MEMBERS", requests);
+
     }
 
     public static void addMember(String kingdomId, UUID uuid) {
