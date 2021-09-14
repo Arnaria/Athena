@@ -11,6 +11,7 @@ import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,13 +22,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class BlockItemMixin extends Item {
     @Shadow public abstract Block getBlock();
 
+    @Shadow @Nullable protected abstract BlockState getPlacementState(ItemPlacementContext context);
+
     public BlockItemMixin(Item.Settings settings) {
         super(settings);
     }
 
     @Inject(method = "place(Lnet/minecraft/item/ItemPlacementContext;Lnet/minecraft/block/BlockState;)Z", at = @At("HEAD"), cancellable = true)
     public void dlPlaceEventTrigger(ItemPlacementContext context, BlockState state, CallbackInfoReturnable<Boolean> cir) {
-        boolean result = BlockPlaceCallback.EVENT.invoker().place((ServerWorld) context.getWorld(), context.getPlayer(), context.getBlockPos(), this.getBlock(), context.getStack());
+        boolean result = BlockPlaceCallback.EVENT.invoker().place((ServerWorld) context.getWorld(), context.getPlayer(), context.getBlockPos(), this.getPlacementState(context), this.getBlock(), context.getStack());
 
         if (!result) {
             ServerPlayerEntity player = (ServerPlayerEntity) context.getPlayer();
