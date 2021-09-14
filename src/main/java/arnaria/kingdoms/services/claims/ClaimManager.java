@@ -1,15 +1,17 @@
 package arnaria.kingdoms.services.claims;
 
+import arnaria.kingdoms.interfaces.BannerBlockInf;
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.kingdoms.util.ClaimHelpers;
 import mrnavastar.sqlib.api.DataContainer;
 import mrnavastar.sqlib.api.Table;
-import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.BannerBlock;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
+
+import static arnaria.kingdoms.Kingdoms.overworld;
 
 public class ClaimManager {
 
@@ -22,22 +24,22 @@ public class ClaimManager {
             String kingdomId = claim.getString("KINGDOM_ID");
             BlockPos pos = claim.getBlockPos("BANNER_POS");
             claims.add(new Claim(kingdomId, pos));
+
+            BannerBlock bannerBlock = (BannerBlock) overworld.getBlockState(pos).getBlock();
+            ((BannerBlockInf) bannerBlock).makeClaimMarker();
         }
         ClaimEvents.register();
     }
 
-    public static void addClaim(String kingdomId, BlockEntity banner) {
-        Claim claim = new Claim(kingdomId, banner.getPos());
+    public static void addClaim(String kingdomId, BlockPos pos, BannerBlock banner) {
+        Claim claim = new Claim(kingdomId, pos);
         claims.add(claim);
         DataContainer claimDataContainer = new DataContainer(claim.getPos().toString());
         claimData.put(claimDataContainer);
         claimDataContainer.put("KINGDOM_ID", claim.getKingdomId());
         claimDataContainer.put("BANNER_POS", claim.getPos());
 
-        NbtCompound nbt = banner.writeNbt(new NbtCompound());
-        nbt.putBoolean("IS_NBT_MARKER", true);
-        banner.readNbt(nbt);
-        System.out.println(nbt);
+        ((BannerBlockInf) banner).makeClaimMarker();
     }
 
     public static void dropClaim(BlockPos pos) {
@@ -89,7 +91,7 @@ public class ClaimManager {
         return true;
     }
 
-    public static boolean claimPlacementAllowedAt(BlockPos pos) {
+    public static boolean claimExistsAt(BlockPos pos) {
         for (Claim claim : claims) {
             if (claim.contains(pos)) return false;
         }
@@ -109,13 +111,6 @@ public class ClaimManager {
     public static boolean placedFirstBanner(String kingdomId) {
         for (Claim claim : claims) {
             if (claim.getKingdomId().equals(kingdomId)) return true;
-        }
-        return false;
-    }
-
-    public static boolean isClaimMarker(BlockPos pos) {
-        for (Claim claim : claims) {
-            if (claim.getPos().equals(pos)) return true;
         }
         return false;
     }

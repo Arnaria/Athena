@@ -23,12 +23,11 @@ public class ClaimEvents {
             if (world.getRegistryKey().equals(World.OVERWORLD)) {
                 if (!ClaimManager.actionAllowedAt(pos, player)) return false;
 
-                if (block instanceof BannerBlock) {
+                if (block instanceof BannerBlock bannerBlock) {
                     String kingdomId = ((PlayerEntityInf) player).getKingdomId();
                     if (!kingdomId.isEmpty()) {
-                        BlockEntity bannerBlock = ((BannerBlock) block).createBlockEntity(pos, state);
                         if (ClaimManager.placedFirstBanner(kingdomId) && !ClaimManager.isClaimInRange(kingdomId, pos)) return false;
-                        if (bannerBlock != null) ClaimManager.addClaim(kingdomId, bannerBlock);
+                        ClaimManager.addClaim(kingdomId, pos, bannerBlock);
                     }
                 }
             }

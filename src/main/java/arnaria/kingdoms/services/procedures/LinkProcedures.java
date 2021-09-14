@@ -2,6 +2,7 @@ package arnaria.kingdoms.services.procedures;
 
 import arnaria.notifacaitonmanager.NotificationManager;
 import arnaria.notifacaitonmanager.NotificationTypes;
+import io.leangen.geantyref.CaptureType;
 import mrnavastar.sqlib.api.DataContainer;
 import mrnavastar.sqlib.api.Table;
 import net.minecraft.text.Text;
@@ -13,6 +14,7 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class LinkProcedures {
@@ -24,7 +26,7 @@ public class LinkProcedures {
     private static String getLinkToken() {
         byte[] array = new byte[12];
         new Random().nextBytes(array);
-        return new String(array, StandardCharsets.UTF_8);
+        return new String(array, StandardCharsets.ISO_8859_1);
     }
 
     public static String getValidLinkToken() {
@@ -34,13 +36,15 @@ public class LinkProcedures {
     }
 
     public static void createLinkRequest(String userToken, String linkToken, UUID uuid) {
-        if (linkedAccounts.get(uuid.toString()) != null) {
+        if (linkedAccounts.get(uuid.toString()) == null) {
             linkRequests.put(linkToken, userToken);
             NotificationManager.send(uuid, "A link request was made to your account! Run /link <linkToken> to link accounts!", NotificationTypes.INFO);
 
             Runnable removeLinkRequest = () -> linkRequests.remove(linkToken);
-            scheduler.schedule(removeLinkRequest, 15, TimeUnit.MINUTES);
+            ScheduledFuture<?> cancelTask = scheduler.schedule(removeLinkRequest, 15, TimeUnit.MINUTES);
+            cancelTask.cancel(false);
         }
+        // we need to tell api that the uuid is already linked to an account here
     }
 
     public static void linkAccounts(String linkToken, UUID uuid) {
