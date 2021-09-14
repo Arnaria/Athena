@@ -2,8 +2,7 @@ package arnaria.kingdoms.commands;
 
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.kingdoms.services.procedures.KingdomProcedures;
-import arnaria.notifacaitonmanager.NotificationManager;
-import arnaria.notifacaitonmanager.NotificationTypes;
+import arnaria.kingdoms.util.InterfaceTypes;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -22,12 +21,8 @@ public class SetColourCommand {
 
     public static int setKingdomColour(CommandContext<ServerCommandSource> context, Formatting colour) throws CommandSyntaxException {
         PlayerEntity player = context.getSource().getPlayer();
-        String playerKingdom = ((PlayerEntityInf) player).getKingdomId();
-        if (playerKingdom == null) {
-            NotificationManager.send(player.getUuid(), "your are not part of a kingdom", NotificationTypes.WARN);
-            return 1;
-        }
-        KingdomProcedures.setColor(((PlayerEntityInf) player).getKingdomId(), colour);
+        Enum<InterfaceTypes> platform = InterfaceTypes.COMMAND;
+        KingdomProcedures.setColor(platform, ((PlayerEntityInf) player).getKingdomId(), colour, player.getUuid());
         return 1;
     }
 }

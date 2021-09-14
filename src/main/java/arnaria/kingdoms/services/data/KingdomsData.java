@@ -44,6 +44,15 @@ public class KingdomsData {
         return requests;
     }
 
+    public static ArrayList<UUID> getBlockedPlayers(String kingdomID) {
+        DataContainer kingdom = kingdomData.get(kingdomID);
+        ArrayList<UUID> blockedPlayers = new ArrayList<>();
+        for (JsonElement request : kingdom.getJson("BLOCKED").getAsJsonArray()) {
+            blockedPlayers.add(UUID.fromString(request.getAsString()));
+        }
+        return blockedPlayers;
+    }
+
     public static int getClaimMarkerPointsTotal(String kingdomId) {
         DataContainer kingdom = kingdomData.get(kingdomId);
         return kingdom.getInt("CLAIM_MARKER_POINTS_TOTAL");
