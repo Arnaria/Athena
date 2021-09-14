@@ -38,18 +38,25 @@ public class ClaimManager {
             if (claim.getPos().equals(pos)) {
                 claim.removeHologram();
                 claimToDrop = claim;
-                DataContainer claimDataContainer = claimData.get(pos.toString());
-                claimData.drop(claimDataContainer);
+                claimData.drop(pos.toString());
                 break;
             }
         }
+
         if (claimToDrop != null) claims.remove(claimToDrop);
     }
 
     public static void dropClaims(String kingdomId) {
+        ArrayList<Claim> claimsToDrop = new ArrayList<>();
         for (Claim claim : claims) {
-            if (claim.getKingdomId().equals(kingdomId)) dropClaim(claim.getPos());
+            if (claim.getKingdomId().equals(kingdomId)) {
+                claim.removeHologram();
+                claimsToDrop.add(claim);
+                claimData.drop(claim.getPos().toString());
+            }
         }
+
+        claims.removeAll(claimsToDrop);
     }
 
     public static ArrayList<Claim> getClaims() {

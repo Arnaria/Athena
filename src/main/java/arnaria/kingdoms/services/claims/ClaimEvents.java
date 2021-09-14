@@ -6,6 +6,8 @@ import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.kingdoms.util.ClaimHelpers;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.block.*;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BannerItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -19,21 +21,32 @@ import java.util.ArrayList;
 public class ClaimEvents {
 
     public static void register() {
+
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, blockEntity) -> {
             if (world.getRegistryKey().equals(World.OVERWORLD)) {
                 if (state.getBlock() instanceof PlayerSkullBlock) return true;
-                if (!ClaimManager.actionAllowedAt(pos, player)) return false;
-                /*if (state.getBlock() instanceof AbstractBannerBlock && ClaimManager.isClaimMarker(pos)) ClaimManager.dropClaim(pos);
-
-                BlockPos newPos = pos.add(0, 1,0);
-                if (world.getBlockState(newPos).getBlock() instanceof AbstractBannerBlock && ClaimManager.isClaimMarker(newPos)) ClaimManager.dropClaim(newPos);*/
+                return ClaimManager.actionAllowedAt(pos, player);
             }
             return true;
         });
 
         BlockPlaceCallback.EVENT.register((world, player, pos, block, item) -> {
             if (world.getRegistryKey().equals(World.OVERWORLD)) {
-                return ClaimManager.actionAllowedAt(pos, player);
+                if (!ClaimManager.actionAllowedAt(pos, player)) return false;
+
+                if (block instanceof AbstractBannerBlock) {
+                    String kingdomId = ((PlayerEntityInf) player).getKingdomId();
+                    if (!kingdomId.isEmpty()) {
+                        //NbtCompound nbt = item.getNbt();
+                        //if (nbt != null && nbt.getBoolean("IsClaimMarker")) {
+                        // if (KingdomsData.getClaimMarkerPointsTotal(kingdomId) > KingdomsData.getClaimMarkerPointsUsed(kingdomId)) {
+                        if (ClaimManager.placedFirstBanner(kingdomId) && !ClaimManager.isClaimInRange(kingdomId, pos))
+                            return false;
+                        ClaimManager.addClaim(new Claim(kingdomId, pos));
+                        //}
+                        //}
+                    }
+                }
             }
             return true;
         });
