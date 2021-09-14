@@ -4,7 +4,9 @@ import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.kingdoms.util.ClaimHelpers;
 import mrnavastar.sqlib.api.DataContainer;
 import mrnavastar.sqlib.api.Table;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
@@ -24,12 +26,18 @@ public class ClaimManager {
         ClaimEvents.register();
     }
 
-    public static void addClaim(Claim claim) {
+    public static void addClaim(String kingdomId, BlockEntity banner) {
+        Claim claim = new Claim(kingdomId, banner.getPos());
         claims.add(claim);
         DataContainer claimDataContainer = new DataContainer(claim.getPos().toString());
         claimData.put(claimDataContainer);
         claimDataContainer.put("KINGDOM_ID", claim.getKingdomId());
         claimDataContainer.put("BANNER_POS", claim.getPos());
+
+        NbtCompound nbt = banner.writeNbt(new NbtCompound());
+        nbt.putBoolean("IS_NBT_MARKER", true);
+        banner.readNbt(nbt);
+        System.out.println(nbt);
     }
 
     public static void dropClaim(BlockPos pos) {
