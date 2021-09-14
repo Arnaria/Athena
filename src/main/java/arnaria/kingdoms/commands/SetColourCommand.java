@@ -2,7 +2,6 @@ package arnaria.kingdoms.commands;
 
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.kingdoms.services.procedures.KingdomProcedures;
-import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.notifacaitonmanager.NotificationManager;
 import arnaria.notifacaitonmanager.NotificationTypes;
 import com.mojang.brigadier.CommandDispatcher;
