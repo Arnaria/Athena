@@ -57,15 +57,43 @@ public class KingdomProcedures {
         NotificationManager.send(uuid, "You are now the leader of " + kingdomId, NotificationTypes.ACHIEVEMENT);
     }
 
-    public static void disbandKingdom(String kingdomId) {
-        kingdomData.drop(kingdomId);
-        ClaimManager.dropClaims(kingdomId);
-        List<ServerPlayerEntity> onlinePlayers = playerManager.getPlayerList();
-        for (ServerPlayerEntity player : onlinePlayers) {
-            if (((PlayerEntityInf) player).getKingdomId().equals(kingdomId)) {
-                ((PlayerEntityInf) player).setKingdomId("");
-                ((PlayerEntityInf) player).setKingship(false);
+    public static void disbandKingdom(Enum<InterfaceTypes> platform, String kingdomId, UUID uuid) {
+        if (kingdomId != null) {
+            if (uuid == KingdomsData.getKing(kingdomId)) {
+                kingdomData.drop(kingdomId);
+                ClaimManager.dropClaims(kingdomId);
+                List<ServerPlayerEntity> onlinePlayers = playerManager.getPlayerList();
+                for (ServerPlayerEntity player : onlinePlayers) {
+                    if (((PlayerEntityInf) player).getKingdomId().equals(kingdomId)) {
+                        ((PlayerEntityInf) player).setKingdomId("");
+                        ((PlayerEntityInf) player).setKingship(false);
+                    }
+                }
+                if (platform != InterfaceTypes.API) {
+                    NotificationManager.send(uuid, kingdomId + "has been disbanded", NotificationTypes.WARN);
+                }
+                else {
+                    // API STUFF LOL!!
+                }
             }
+            else {
+                if (platform != InterfaceTypes.API) {
+                    NotificationManager.send(uuid, "Only the king can run this command", NotificationTypes.WARN);
+                }
+                else {
+                    // API STUFF LOL!!
+                }
+
+            }
+        }
+        else {
+            if (platform != InterfaceTypes.API) {
+                NotificationManager.send(uuid, "You are not in a kingdom", NotificationTypes.WARN);
+            }
+            else {
+                // API STUFF LOL!!
+            }
+
         }
     }
 
