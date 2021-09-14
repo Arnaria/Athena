@@ -1,16 +1,14 @@
 package arnaria.kingdoms.services.data;
 
-import arnaria.kingdoms.services.procedures.KingdomProcedures;
 import com.google.gson.JsonElement;
 import mrnavastar.sqlib.api.DataContainer;
-import mrnavastar.sqlib.api.Table;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class KingdomsData {
+import static arnaria.kingdoms.services.procedures.KingdomProcedures.kingdomData;
 
-    private static final Table kingdomData = KingdomProcedures.kingdomData;
+public class KingdomsData {
 
     public static ArrayList<String> getKingdomIds() {
         return (ArrayList<String>) kingdomData.getIds();
