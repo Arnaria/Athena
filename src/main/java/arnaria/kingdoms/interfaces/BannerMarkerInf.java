@@ -1,6 +1,6 @@
 package arnaria.kingdoms.interfaces;
 
-public interface BannerBlockInf {
+public interface BannerMarkerInf {
     void makeClaimMarker();
     boolean isClaimMarker();
 }

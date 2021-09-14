@@ -1,12 +1,10 @@
 package arnaria.kingdoms.mixin;
 
-import arnaria.kingdoms.interfaces.BannerBlockInf;
+import arnaria.kingdoms.interfaces.BannerMarkerInf;
 import arnaria.kingdoms.services.claims.ClaimManager;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BannerBlock;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,7 +18,7 @@ public class AbstractBlockMixin {
     @Inject(method = "onStateReplaced", at = @At("HEAD"))
     public void dropClaim(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved, CallbackInfo ci) {
         if (state.getBlock() instanceof BannerBlock bannerBlock) {
-            if (((BannerBlockInf) bannerBlock).isClaimMarker()) ClaimManager.dropClaim(pos);
+            if (((BannerMarkerInf) bannerBlock).isClaimMarker()) ClaimManager.dropClaim(pos);
         }
     }
 }

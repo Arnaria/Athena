@@ -1,6 +1,6 @@
 package arnaria.kingdoms.services.claims;
 
-import arnaria.kingdoms.interfaces.BannerBlockInf;
+import arnaria.kingdoms.interfaces.BannerMarkerInf;
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.kingdoms.util.ClaimHelpers;
 import mrnavastar.sqlib.api.DataContainer;
@@ -26,7 +26,7 @@ public class ClaimManager {
             claims.add(new Claim(kingdomId, pos));
 
             BannerBlock bannerBlock = (BannerBlock) overworld.getBlockState(pos).getBlock();
-            ((BannerBlockInf) bannerBlock).makeClaimMarker();
+            ((BannerMarkerInf) bannerBlock).makeClaimMarker();
         }
         ClaimEvents.register();
     }
@@ -39,7 +39,7 @@ public class ClaimManager {
         claimDataContainer.put("KINGDOM_ID", claim.getKingdomId());
         claimDataContainer.put("BANNER_POS", claim.getPos());
 
-        ((BannerBlockInf) banner).makeClaimMarker();
+        ((BannerMarkerInf) banner).makeClaimMarker();
     }
 
     public static void dropClaim(BlockPos pos) {

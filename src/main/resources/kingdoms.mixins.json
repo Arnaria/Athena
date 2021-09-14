@@ -9,6 +9,7 @@
     "ArmorStandItemMixin",
     "AxeMixin",
     "BannerBlockMixin",
+    "BannerItemMixin",
     "BlockItemMixin",
     "BucketMixin",
     "FlintNStealMixin",
