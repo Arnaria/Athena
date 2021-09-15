@@ -48,8 +48,8 @@ public class JoinRequestCommand {
                 NotificationManager.send(player.getUuid(), requester + " has not asked to join your kingdom.", NotificationTypes.WARN);
                 return 1;
             }
-        NotificationManager.send(player.getUuid(), "Only a leader can use this command", NotificationTypes.ERROR);
-        return 1;
+            NotificationManager.send(player.getUuid(), "Only a leader can use this command", NotificationTypes.ERROR);
+            return 1;
         }
         KingdomProcedures.addMember(kingdom, request);
         KingdomProcedures.removeJoinRequest(platform, kingdom, player.getUuid(), request);

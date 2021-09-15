@@ -1,6 +1,6 @@
 package arnaria.kingdoms.commands;
 
-import arnaria.kingdoms.interfaces.BannerMarkerInf;
+import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.notifacaitonmanager.NotificationManager;
 import arnaria.notifacaitonmanager.NotificationTypes;
 import com.mojang.brigadier.CommandDispatcher;
@@ -12,8 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-
-import java.util.function.Predicate;
+import net.minecraft.text.LiteralText;
 
 public class ClaimBannerCommand {
 
@@ -26,12 +25,14 @@ public class ClaimBannerCommand {
         PlayerEntity executor = context.getSource().getPlayer();
         ItemStack itemStack = executor.getItemsHand().iterator().next();
 
-        if (!(itemStack.getItem() instanceof BannerItem)) {
-            NotificationManager.send(executor.getUuid(), "You must be holding a banner to make a claim banner", NotificationTypes.ERROR);
-            return 1;
-        }
+        if (itemStack.getItem() instanceof BannerItem) {
+            String kingdomId = ((PlayerEntityInf) executor).getKingdomId();
+            NbtCompound nbt = new NbtCompound();
+            nbt.putBoolean("IS_CLAIM_MARKER", true);
+            itemStack.setNbt(nbt);
+            itemStack.setCustomName(new LiteralText(kingdomId.toUpperCase() + " CLAIM MARKER"));
 
-        ((BannerMarkerInf) itemStack.getItem()).makeClaimMarker();
+        } else NotificationManager.send(executor.getUuid(), "You must be holding a banner to make a claim banner", NotificationTypes.ERROR);
         return 1;
     }
 }

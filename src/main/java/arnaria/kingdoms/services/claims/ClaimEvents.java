@@ -5,6 +5,7 @@ import arnaria.kingdoms.interfaces.BannerMarkerInf;
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.block.*;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.World;
 
 public class ClaimEvents {
@@ -26,7 +27,8 @@ public class ClaimEvents {
                 if (block instanceof BannerBlock bannerBlock) {
                     String kingdomId = ((PlayerEntityInf) player).getKingdomId();
                     if (!kingdomId.isEmpty()) {
-                        if (((BannerMarkerInf) item.getItem()).isClaimMarker()) {
+                        NbtCompound nbt = item.getNbt();
+                        if (nbt != null && nbt.getBoolean("IS_CLAIM_MARKER")) {
                             if (ClaimManager.placedFirstBanner(kingdomId) && !ClaimManager.isClaimInRange(kingdomId, pos)) return false;
                             ClaimManager.addClaim(kingdomId, pos, bannerBlock);
                         }
