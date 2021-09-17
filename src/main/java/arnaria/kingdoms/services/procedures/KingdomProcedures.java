@@ -37,6 +37,11 @@ public class KingdomProcedures {
                 if (platform.equals(InterfaceTypes.COMMAND)) NotificationManager.send(uuid, "You are already in a kingdom", NotificationTypes.ERROR);
                 return;
             }
+
+            if (kingdom.equalsIgnoreCase(kingdomId)) {
+                if (platform.equals(InterfaceTypes.COMMAND)) NotificationManager.send(uuid, "There is already a kingdom with that name", NotificationTypes.ERROR);
+                return;
+            }
         }
 
         DataContainer kingdom = new DataContainer(kingdomId);
@@ -221,10 +226,8 @@ public class KingdomProcedures {
         DataContainer kingdom = kingdomData.get(kingdomId);
         JsonArray members = kingdom.getJson("MEMBERS").getAsJsonArray();
 
-        int index = 0;
         for (JsonElement member : members) {
-            if (member.getAsString().equals(uuid.toString())) members.remove(index);
-            index++;
+            if (member.getAsString().equals(uuid.toString())) members.remove(member);
         }
         kingdom.put("MEMBERS", members);
     }
