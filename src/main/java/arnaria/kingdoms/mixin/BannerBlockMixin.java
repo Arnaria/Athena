@@ -2,6 +2,8 @@ package arnaria.kingdoms.mixin;
 
 import arnaria.kingdoms.interfaces.BannerMarkerInf;
 import net.minecraft.block.BannerBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockWithEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.Inject;
 

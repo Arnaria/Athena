@@ -24,9 +24,9 @@ public class ClaimBannerCommand {
     public static int makeClaimBanner(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         PlayerEntity executor = context.getSource().getPlayer();
         ItemStack itemStack = executor.getItemsHand().iterator().next();
+        String kingdomId = ((PlayerEntityInf) executor).getKingdomId();
 
-        if (itemStack.getItem() instanceof BannerItem) {
-            String kingdomId = ((PlayerEntityInf) executor).getKingdomId();
+        if (itemStack.getItem() instanceof BannerItem && !kingdomId.isEmpty()) {
             NbtCompound nbt = new NbtCompound();
             nbt.putBoolean("IS_CLAIM_MARKER", true);
             itemStack.setNbt(nbt);

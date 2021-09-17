@@ -85,8 +85,8 @@ public class KingdomDataController {
             blockedUuids.add(member);
         }
 
-        mapping.putPOJO("memberUsernames", blockedUsernames);
-        mapping.putPOJO("memberUuids", blockedUuids);
+        mapping.putPOJO("blockedUsernames", blockedUsernames);
+        mapping.putPOJO("blockedUuids", blockedUuids);
         return mapping;
     }
 

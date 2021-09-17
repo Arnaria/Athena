@@ -105,14 +105,13 @@ public class ClaimManager {
         return true;
     }
 
-    public static boolean isClaimInRange(String kingdomId, BlockPos pos) {
+    public static boolean validBannerPos(String kingdomId, BlockPos pos) {
         for (Claim claim : claims) {
-            if (claim.getKingdomId().equalsIgnoreCase(kingdomId)) {
-                if (claim.contains(pos)) return false;
-                return claim.isOverlapping(ClaimHelpers.createChunkBox(pos, 7, false));
-            }
+            if (claim.contains(pos)) return false;
+            if (claim.getKingdomId().equalsIgnoreCase(kingdomId)
+                    && !claim.isOverlapping(ClaimHelpers.createChunkBox(pos, 7, false))) return false;
         }
-        return false;
+        return true;
     }
 
     public static boolean placedFirstBanner(String kingdomId) {
