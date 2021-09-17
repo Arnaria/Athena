@@ -6,6 +6,7 @@ import io.leangen.geantyref.CaptureType;
 import mrnavastar.sqlib.api.DataContainer;
 import mrnavastar.sqlib.api.Table;
 import net.minecraft.text.Text;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -23,15 +24,9 @@ public class LinkProcedures {
     private static final HashMap<String, String> linkRequests = new HashMap<>();
     private static final Table linkedAccounts = new Table("LinkedAccounts");
 
-    private static String getLinkToken() {
-        byte[] array = new byte[12];
-        new Random().nextBytes(array);
-        return new String(array, StandardCharsets.ISO_8859_1);
-    }
-
     public static String getValidLinkToken() {
-        String linkToken = getLinkToken();
-        while (linkRequests.containsKey(linkToken)) linkToken = getLinkToken();
+        String linkToken = RandomStringUtils.randomAlphanumeric(10);
+        while (linkRequests.containsKey(linkToken)) linkToken = RandomStringUtils.randomAlphanumeric(10);
         return linkToken;
     }
 
@@ -55,7 +50,7 @@ public class LinkProcedures {
             accounts.put("USER_TOKEN", linkRequests.get(linkToken));
             linkRequests.remove(linkToken);
 
-            NotificationManager.send(uuid, "Successfully linked acounts!", NotificationTypes.INFO);
+            NotificationManager.send(uuid, "Successfully linked accounts!", NotificationTypes.INFO);
         } else NotificationManager.send(uuid, "Invalid link token. Go to the website and try again", NotificationTypes.ERROR);
     }
 }
