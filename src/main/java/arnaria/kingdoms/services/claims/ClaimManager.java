@@ -100,9 +100,9 @@ public class ClaimManager {
 
     public static boolean claimExistsAt(BlockPos pos) {
         for (Claim claim : claims) {
-            if (claim.contains(pos)) return false;
+            if (claim.contains(pos)) return true;
         }
-        return true;
+        return false;
     }
 
     public static boolean validBannerPos(String kingdomId, BlockPos pos) {

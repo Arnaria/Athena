@@ -22,7 +22,7 @@ public class ClaimHelpers {
         for (int i = 0; i < diameter; i++) {
             for (int j = 0; j < diameter; j++) {
                 BlockPos pos = new BlockPos(currentX, 1, currentZ);
-                if (removeOverlapping && ClaimManager.claimExistsAt(pos)) chunkList.add(overworld.getChunk(pos));
+                if (removeOverlapping && !ClaimManager.claimExistsAt(pos)) chunkList.add(overworld.getChunk(pos));
                 if (!removeOverlapping) chunkList.add(overworld.getChunk(pos));
                 currentZ += 16;
             }
