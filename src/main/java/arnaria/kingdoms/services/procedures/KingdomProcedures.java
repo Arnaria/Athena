@@ -50,8 +50,6 @@ public class KingdomProcedures {
         kingdom.put("CLAIM_MARKER_POINTS_TOTAL", 1);
         kingdom.put("CLAIM_MARKER_POINTS_USED", 0);
 
-        addMember(kingdomId, uuid);
-
         PlayerEntity executor = playerManager.getPlayer(uuid);
         if (executor != null) ((PlayerEntityInf) executor).setKingship(true);
 

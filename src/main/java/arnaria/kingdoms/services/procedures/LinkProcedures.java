@@ -31,7 +31,7 @@ public class LinkProcedures {
     }
 
     public static void createLinkRequest(String userToken, String linkToken, UUID uuid) {
-        if (linkedAccounts.get(uuid.toString()) == null) {
+        if (linkedAccounts.get(userToken) == null) {
             linkRequests.put(linkToken, userToken);
             NotificationManager.send(uuid, "A link request was made to your account! Run /link <linkToken> to link accounts!", NotificationTypes.INFO);
 
@@ -44,13 +44,17 @@ public class LinkProcedures {
 
     public static void linkAccounts(String linkToken, UUID uuid) {
         if (linkRequests.containsKey(linkToken)) {
-            DataContainer accounts = new DataContainer(uuid.toString());
+            DataContainer accounts = new DataContainer(linkRequests.remove(linkToken));
             linkedAccounts.put(accounts);
 
-            accounts.put("USER_TOKEN", linkRequests.get(linkToken));
-            linkRequests.remove(linkToken);
+            accounts.put("UUID", uuid);
 
             NotificationManager.send(uuid, "Successfully linked accounts!", NotificationTypes.INFO);
         } else NotificationManager.send(uuid, "Invalid link token. Go to the website and try again", NotificationTypes.ERROR);
+    }
+
+    public static UUID getAccount(String userToken) {
+        DataContainer accounts = linkedAccounts.get(userToken);
+        return accounts.getUuid("UUID");
     }
 }

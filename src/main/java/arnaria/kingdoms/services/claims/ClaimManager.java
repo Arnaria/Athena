@@ -8,6 +8,7 @@ import mrnavastar.sqlib.api.Table;
 import net.minecraft.block.BannerBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
 
@@ -59,7 +60,7 @@ public class ClaimManager {
     public static void dropClaims(String kingdomId) {
         ArrayList<Claim> claimsToDrop = new ArrayList<>();
         for (Claim claim : claims) {
-            if (claim.getKingdomId().equals(kingdomId)) {
+            if (claim.getKingdomId().equalsIgnoreCase(kingdomId)) {
                 claim.removeHologram();
                 claimsToDrop.add(claim);
                 claimData.drop(claim.getPos().toString());
@@ -73,9 +74,15 @@ public class ClaimManager {
         return claims;
     }
 
+    public static ArrayList<Claim> getClaims(String kingdomId) {
+        ArrayList<Claim> kingdomClaims = new ArrayList<>();
+        for (Claim claim : claims) if (claim.getKingdomId().equalsIgnoreCase(kingdomId)) kingdomClaims.add(claim);
+        return kingdomClaims;
+    }
+
     public static void updateClaimTagColor(String kingdomId, String color) {
         for (Claim claim : claims) {
-            if (claim.getKingdomId().equals(kingdomId)) claim.updateColor(color);
+            if (claim.getKingdomId().equalsIgnoreCase(kingdomId)) claim.updateColor(color);
         }
     }
 
@@ -100,7 +107,7 @@ public class ClaimManager {
 
     public static boolean isClaimInRange(String kingdomId, BlockPos pos) {
         for (Claim claim : claims) {
-            if (claim.getKingdomId().equals(kingdomId)) {
+            if (claim.getKingdomId().equalsIgnoreCase(kingdomId)) {
                 if (claim.contains(pos)) return false;
                 return claim.isOverlapping(ClaimHelpers.createChunkBox(pos, 7, false));
             }
@@ -110,7 +117,7 @@ public class ClaimManager {
 
     public static boolean placedFirstBanner(String kingdomId) {
         for (Claim claim : claims) {
-            if (claim.getKingdomId().equals(kingdomId)) return true;
+            if (claim.getKingdomId().equalsIgnoreCase(kingdomId)) return true;
         }
         return false;
     }
