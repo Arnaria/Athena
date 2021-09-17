@@ -5,6 +5,7 @@ import arnaria.kingdoms.services.rest.RestApi;
 import arnaria.kingdoms.services.Settings;
 import arnaria.kingdoms.services.claims.ClaimManager;
 import arnaria.kingdoms.services.procedures.KingdomProcedures;
+import com.mojang.brigadier.CommandDispatcher;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import mrnavastar.sqlib.api.SqlTypes;
@@ -14,6 +15,8 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.boss.BossBarManager;
 import net.minecraft.server.PlayerManager;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.UserCache;
 import org.apache.logging.log4j.Level;
@@ -47,9 +50,7 @@ public class Kingdoms implements ModInitializer {
         if (validConfig) {
             Database.TYPE = settings.DATABASE_TYPE;
             Database.DATABASE_NAME = settings.DATABASE_NAME;
-
             Database.SQLITE_DIRECTORY = settings.SQLITE_DIRECTORY;
-
             Database.MYSQL_ADDRESS = settings.MYSQL_ADDRESS;
             Database.MYSQL_PORT = settings.MYSQL_PORT;
             Database.MYSQL_USERNAME = settings.MYSQL_USERNAME;
@@ -70,13 +71,14 @@ public class Kingdoms implements ModInitializer {
                 userCache = server.getUserCache();
 
                 //Command Registration
-                LinkCommand.register(server.getCommandManager().getDispatcher());
-                CreateKingdomCommand.register(server.getCommandManager().getDispatcher());
-                ClaimBannerCommand.register(server.getCommandManager().getDispatcher());
-                SetColourCommand.register(server.getCommandManager().getDispatcher());
-                GetKingCommand.register(server.getCommandManager().getDispatcher());
-                DisbandKingdomCommand.register(server.getCommandManager().getDispatcher());
-                JoinRequestCommand.register(server.getCommandManager().getDispatcher());
+                CommandDispatcher<ServerCommandSource> dispatcher = server.getCommandManager().getDispatcher();
+                LinkCommand.register(dispatcher);
+                CreateKingdomCommand.register(dispatcher);
+                ClaimBannerCommand.register(dispatcher);
+                SetColourCommand.register(dispatcher);
+                GetKingCommand.register(dispatcher);
+                DisbandKingdomCommand.register(dispatcher);
+                JoinRequestCommand.register(dispatcher);
             });
 
             ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> KingdomProcedures.setupPlayer(handler.getPlayer()));
