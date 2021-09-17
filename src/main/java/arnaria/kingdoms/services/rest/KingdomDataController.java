@@ -56,6 +56,40 @@ public class KingdomDataController {
         return mapping;
     }
 
+    @GetMapping(url + "/{kingdomId}/requests")
+    ObjectNode requests(@PathVariable String kingdomId) {
+        ObjectNode mapping = mapper.createObjectNode();
+
+        ArrayList<String> requesterUsernames = new ArrayList<>();
+        ArrayList<UUID> requesterUuids = new ArrayList<>();
+        for (UUID member : KingdomsData.getJoinRequests(kingdomId)) {
+            Optional<GameProfile> requesterProfile = userCache.getByUuid(member);
+            requesterProfile.ifPresent(gameProfile -> requesterUsernames.add(gameProfile.getName()));
+            requesterUuids.add(member);
+        }
+
+        mapping.putPOJO("memberUsernames", requesterUsernames);
+        mapping.putPOJO("memberUuids", requesterUuids);
+        return mapping;
+    }
+
+    @GetMapping(url + "/{kingdomId}/blocked")
+    ObjectNode blocked(@PathVariable String kingdomId) {
+        ObjectNode mapping = mapper.createObjectNode();
+
+        ArrayList<String> blockedUsernames = new ArrayList<>();
+        ArrayList<UUID> blockedUuids = new ArrayList<>();
+        for (UUID member : KingdomsData.getBlockedPlayers(kingdomId)) {
+            Optional<GameProfile> blockedProfile = userCache.getByUuid(member);
+            blockedProfile.ifPresent(gameProfile -> blockedUsernames.add(gameProfile.getName()));
+            blockedUuids.add(member);
+        }
+
+        mapping.putPOJO("memberUsernames", blockedUsernames);
+        mapping.putPOJO("memberUuids", blockedUuids);
+        return mapping;
+    }
+
     @GetMapping(url + "/claims")
     ArrayList<Claim> claims() {
         return ClaimManager.getClaims();
