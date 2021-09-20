@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_16",
   "mixins": [
     "AbstractBlockMixin",
+    "AbstractDecorationEntityMixin",
     "ArmorStandEntityMixin",
     "ArmorStandItemMixin",
     "AxeMixin",
@@ -13,12 +14,10 @@
     "BucketMixin",
     "FlintNStealMixin",
     "HoeMixin",
-    "ItemFrameEntititityMixin",
+    "ItemFrameEntityMixin",
     "ItemFrameMixin",
     "PlayerEntityMixin",
     "ShovelMixin"
-  ],
-  "client": [
   ],
   "injectors": {
     "defaultRequire": 1

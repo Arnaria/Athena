@@ -15,10 +15,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 
 @Mixin(ItemFrameEntity.class)
-public abstract class ItemFrameEntititityMixin extends AbstractDecorationEntity {
+public abstract class ItemFrameEntityMixin extends AbstractDecorationEntity {
 
 
-    protected ItemFrameEntititityMixin(EntityType<? extends AbstractDecorationEntity> entityType, World world) {
+    protected ItemFrameEntityMixin(EntityType<? extends AbstractDecorationEntity> entityType, World world) {
         super(entityType, world);
     }
 
@@ -27,9 +27,7 @@ public abstract class ItemFrameEntititityMixin extends AbstractDecorationEntity 
         Entity attacker = source.getAttacker();
 
         if (attacker instanceof PlayerEntity) {
-            if (!ClaimManager.actionAllowedAt(this.getBlockPos(), (PlayerEntity) attacker)) {
-                amount = 0;
-            }
+            if (!ClaimManager.actionAllowedAt(this.getBlockPos(), (PlayerEntity) attacker)) cir.setReturnValue(false);
         }
     }
 }

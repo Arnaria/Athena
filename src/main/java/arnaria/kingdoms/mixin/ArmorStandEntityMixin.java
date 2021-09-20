@@ -40,9 +40,7 @@ public abstract class ArmorStandEntityMixin extends LivingEntity {
         Entity attacker = source.getAttacker();
 
         if (attacker instanceof PlayerEntity) {
-            if (!ClaimManager.actionAllowedAt(this.getBlockPos(), (PlayerEntity) attacker)) {
-                amount = 0;
-            }
+            if (!ClaimManager.actionAllowedAt(this.getBlockPos(), (PlayerEntity) attacker)) cir.setReturnValue(false);
         }
     }
 }
