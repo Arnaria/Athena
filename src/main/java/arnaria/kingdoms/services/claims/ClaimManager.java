@@ -6,13 +6,16 @@ import arnaria.kingdoms.util.ClaimHelpers;
 import mrnavastar.sqlib.api.DataContainer;
 import mrnavastar.sqlib.api.Table;
 import net.minecraft.block.BannerBlock;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
-import org.checkerframework.checker.units.qual.C;
+import org.apache.logging.log4j.Level;
 
 import java.util.ArrayList;
 
 import static arnaria.kingdoms.Kingdoms.overworld;
+import static arnaria.kingdoms.Kingdoms.log;
 
 public class ClaimManager {
 
@@ -26,8 +29,13 @@ public class ClaimManager {
             BlockPos pos = claim.getBlockPos("BANNER_POS");
             claims.add(new Claim(kingdomId, pos));
 
-            BannerBlock bannerBlock = (BannerBlock) overworld.getBlockState(pos).getBlock();
-            ((BannerMarkerInf) bannerBlock).makeClaimMarker();
+            Block block = overworld.getBlockState(pos).getBlock();
+            if (block instanceof BannerBlock bannerBlock) ((BannerMarkerInf) bannerBlock).makeClaimMarker();
+            else {
+                log(Level.ERROR, "Mismatch in claim data and banner pos!");
+                log(Level.ERROR, "The error occurred at: " + pos + ". Suspected BannerBlock, got " + block + ".");
+                log(Level.ERROR, "This could have been caused by the server shutting down improperly");
+            }
         }
         ClaimEvents.register();
     }
@@ -119,5 +127,11 @@ public class ClaimManager {
             if (claim.getKingdomId().equalsIgnoreCase(kingdomId)) return true;
         }
         return false;
+    }
+
+    public static void viewClaims(ServerPlayerEntity player) {
+        for (Claim claim : claims) {
+            claim.showClaim(player);
+        }
     }
 }

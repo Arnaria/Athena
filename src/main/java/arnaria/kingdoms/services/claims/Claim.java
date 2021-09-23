@@ -2,7 +2,9 @@ package arnaria.kingdoms.services.claims;
 
 import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.kingdoms.util.ClaimHelpers;
+import arnaria.kingdoms.util.ClaimRenderer;
 import eu.pb4.holograms.api.holograms.WorldHologram;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
@@ -15,7 +17,7 @@ import java.util.ArrayList;
 import static arnaria.kingdoms.Kingdoms.overworld;
 public class Claim implements Serializable {
 
-    private final String kingdomId;
+    private String kingdomId;
     private final BlockPos pos;
     private final WorldHologram hologram;
 
@@ -45,6 +47,16 @@ public class Claim implements Serializable {
         this.hologram.hide();
     }
 
+    public void showClaim(ServerPlayerEntity player) {
+        BlockPos topLeftPos = this.claimChunks.get(0).getPos().getStartPos().add(0, pos.getY(), 0);
+        BlockPos botRightPos = this.claimChunks.get(claimChunks.size() - 1).getPos().getStartPos().add(16, pos.getY(), 16);
+
+        //System.out.println("top: " +   topLeftPos);
+        //System.out.println("Bot: " + botRightPos);
+
+        ClaimRenderer.render(player, botRightPos, topLeftPos, 255F, 255F, 255F);
+    }
+
     public boolean isOverlapping(ArrayList<Chunk> testChunks) {
         for (Chunk chunk : this.claimChunks) {
             if (testChunks.contains(chunk)) return true;
@@ -54,6 +66,11 @@ public class Claim implements Serializable {
 
     public boolean contains(BlockPos pos) {
         return this.claimChunks.contains(overworld.getChunk(pos));
+    }
+
+    public void rebrand(String kingdomId, String color) {
+        this.kingdomId = kingdomId;
+        updateColor(color);
     }
 
     public String getKingdomId() {

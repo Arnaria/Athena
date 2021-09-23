@@ -2,10 +2,14 @@ package arnaria.kingdoms.mixin;
 
 import arnaria.kingdoms.callbacks.PlayerDeathCallback;
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
+import arnaria.kingdoms.services.claims.ClaimManager;
+import arnaria.kingdoms.util.ClaimRenderer;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -44,5 +48,11 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerEn
     public void onDeath(DamageSource source, CallbackInfo ci) {
         PlayerEntity player = playerManager.getPlayer(this.getUuid());
         PlayerDeathCallback.EVENT.invoker().place(player, source);
+    }
+
+    @Inject(method = "tick", at = @At("HEAD"))
+    public void tick(CallbackInfo ci) {
+        ServerPlayerEntity player = playerManager.getPlayer(this.getUuid());
+        ClaimManager.viewClaims(player);
     }
 }

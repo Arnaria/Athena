@@ -5,6 +5,7 @@ import arnaria.kingdoms.services.rest.RestApi;
 import arnaria.kingdoms.services.Settings;
 import arnaria.kingdoms.services.claims.ClaimManager;
 import arnaria.kingdoms.services.procedures.KingdomProcedures;
+import arnaria.kingdoms.util.ClaimRenderer;
 import com.mojang.brigadier.CommandDispatcher;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
@@ -19,6 +20,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.UserCache;
+import net.minecraft.util.math.BlockPos;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
@@ -81,7 +83,9 @@ public class Kingdoms implements ModInitializer {
                 JoinRequestCommand.register(dispatcher);
             });
 
-            ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> KingdomProcedures.setupPlayer(handler.getPlayer()));
+            ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+                KingdomProcedures.setupPlayer(handler.getPlayer());
+            });
         }
     }
 
