@@ -34,36 +34,34 @@ public class JoinRequestCommand {
     }
 
     private static int sendJoinRequest(CommandContext<ServerCommandSource> context, String kingdom) throws CommandSyntaxException {
+        PlayerEntity player = context.getSource().getPlayer();
+        if (player == null) return 1;
         KingdomProcedures.addJoinRequest(InterfaceTypes.COMMAND, kingdom, context.getSource().getPlayer().getUuid());
         return 1;
     }
 
     private static int acceptJoinRequest(CommandContext<ServerCommandSource> context, String requester) throws CommandSyntaxException {
-        UUID request = playerManager.getPlayer(requester).getUuid();
+        PlayerEntity request = playerManager.getPlayer(requester);
+        if (request == null) return 1;
+        UUID requestUUID = request.getUuid();
         PlayerEntity player = context.getSource().getPlayer();
         Enum<InterfaceTypes> platform = InterfaceTypes.COMMAND;
         String kingdom = ((PlayerEntityInf) player).getKingdomId();
-        if (KingdomsData.getKing(kingdom) != player.getUuid()) {
-            if (!KingdomsData.getJoinRequests(kingdom).contains(request)) {
-                NotificationManager.send(player.getUuid(), requester + " has not asked to join your kingdom.", NotificationTypes.WARN);
-                return 1;
-            }
-            NotificationManager.send(player.getUuid(), "Only a leader can use this command", NotificationTypes.ERROR);
-            return 1;
-        }
-        KingdomProcedures.addMember(kingdom, request);
-        KingdomProcedures.removeJoinRequest(platform, kingdom, player.getUuid(), request);
+        KingdomProcedures.addMember(kingdom, requestUUID);
+        KingdomProcedures.removeJoinRequest(platform, kingdom, player.getUuid(), requestUUID);
         NotificationManager.send(player.getUuid(), requester + " has joined " + kingdom + "!", NotificationTypes.EVENT);
-        NotificationManager.send(request, "You have been accepted into " + kingdom, NotificationTypes.EVENT);
+        NotificationManager.send(requestUUID, "You have been accepted into " + kingdom, NotificationTypes.EVENT);
         return 1;
     }
 
     private static int declineJoinRequest(CommandContext<ServerCommandSource> context, String requester) throws CommandSyntaxException {
-        UUID request = playerManager.getPlayer(requester).getUuid();
         PlayerEntity player = context.getSource().getPlayer();
+        PlayerEntity request = playerManager.getPlayer(requester);
+        if (request == null) return 1;
+        UUID requestUUID = request.getUuid();
         Enum<InterfaceTypes> platform = InterfaceTypes.COMMAND;
         String kingdom = ((PlayerEntityInf) player).getKingdomId();
-        KingdomProcedures.removeJoinRequest(platform, kingdom, player.getUuid(), request);
+        KingdomProcedures.removeJoinRequest(platform, kingdom, player.getUuid(), requestUUID);
         return 1;
     }
 }

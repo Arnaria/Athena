@@ -1,7 +1,8 @@
 package arnaria.kingdoms.commands;
 
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
-import arnaria.kingdoms.services.procedures.KingdomProcedures;
+import arnaria.kingdoms.services.procedures.KingdomProcedureChecks;
+
 import arnaria.kingdoms.util.InterfaceTypes;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
@@ -20,7 +21,7 @@ public class DisbandKingdomCommand {
         PlayerEntity executor = context.getSource().getPlayer();
         Enum<InterfaceTypes> platform = InterfaceTypes.COMMAND;
         String kingdom = ((PlayerEntityInf) executor).getKingdomId();
-        KingdomProcedures.disbandKingdom(platform, kingdom, executor.getUuid());
+        KingdomProcedureChecks.disbandKingdom(platform, kingdom, executor.getUuid());
         return 1;
     }
 }

@@ -1,6 +1,6 @@
 package arnaria.kingdoms.commands;
 
-import arnaria.kingdoms.services.procedures.KingdomProcedures;
+import arnaria.kingdoms.services.procedures.KingdomProcedureChecks;
 import arnaria.kingdoms.util.InterfaceTypes;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -17,7 +17,7 @@ public class CreateKingdomCommand {
     }
 
     private static int createNewKingdom(CommandContext<ServerCommandSource> context, String name) throws CommandSyntaxException {
-        KingdomProcedures.createKingdom(InterfaceTypes.COMMAND, name, context.getSource().getPlayer().getUuid());
+        KingdomProcedureChecks.createKingdom(InterfaceTypes.COMMAND, name, context.getSource().getPlayer().getUuid());
         return 1;
     }
 }

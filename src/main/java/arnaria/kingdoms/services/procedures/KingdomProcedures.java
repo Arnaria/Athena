@@ -1,6 +1,7 @@
 package arnaria.kingdoms.services.procedures;
 
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
+import arnaria.kingdoms.services.claims.Claim;
 import arnaria.kingdoms.services.claims.ClaimManager;
 import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.kingdoms.util.InterfaceTypes;
@@ -31,24 +32,12 @@ public class KingdomProcedures {
         }
     }
 
-    public static void createKingdom(Enum<InterfaceTypes> platform, String kingdomId, UUID uuid) {
-        for (String kingdom : KingdomsData.getKingdomIds()) {
-            if (KingdomsData.getMembers(kingdom).contains(uuid)) {
-                if (platform.equals(InterfaceTypes.COMMAND)) NotificationManager.send(uuid, "You are already in a kingdom", NotificationTypes.ERROR);
-                return;
-            }
-
-            if (kingdom.equalsIgnoreCase(kingdomId)) {
-                if (platform.equals(InterfaceTypes.COMMAND)) NotificationManager.send(uuid, "There is already a kingdom with that name", NotificationTypes.ERROR);
-                return;
-            }
-        }
-
+    public static void createKingdom(String kingdomId, UUID uuid) {
         DataContainer kingdom = new DataContainer(kingdomId);
         kingdomData.put(kingdom);
 
         kingdom.put("KING", uuid);
-        kingdom.put("COLOR", "");
+        kingdom.put("COLOR", "white");
         kingdom.put("MEMBERS", new JsonArray());
         kingdom.put("REQUESTS", new JsonArray());
         kingdom.put("BLOCKED", new JsonArray());
@@ -59,36 +48,17 @@ public class KingdomProcedures {
 
         PlayerEntity executor = playerManager.getPlayer(uuid);
         if (executor != null) ((PlayerEntityInf) executor).setKingship(true);
-
-        NotificationManager.send(uuid, "You are now the leader of " + kingdomId, NotificationTypes.ACHIEVEMENT);
     }
 
-    public static void disbandKingdom(Enum<InterfaceTypes> platform, String kingdomId, UUID uuid) {
-        if (!kingdomId.isEmpty()) {
-            if (KingdomsData.getKing(kingdomId).equals(uuid)) {
-                kingdomData.drop(kingdomId);
-                ClaimManager.dropClaims(kingdomId);
-                List<ServerPlayerEntity> onlinePlayers = playerManager.getPlayerList();
-                for (ServerPlayerEntity player : onlinePlayers) {
-                    if (((PlayerEntityInf) player).getKingdomId().equals(kingdomId)) {
-                        ((PlayerEntityInf) player).setKingdomId("");
-                        ((PlayerEntityInf) player).setKingship(false);
-                    }
-                }
-                if (!platform.equals(InterfaceTypes.API)) NotificationManager.send(uuid, kingdomId + " has been disbanded", NotificationTypes.WARN);
-                else {
-                    // API STUFF LOL!!
-                }
-            } else {
-                if (!platform.equals(InterfaceTypes.API)) NotificationManager.send(uuid, "Only the leader can run this command", NotificationTypes.WARN);
-                else {
-                    // API STUFF LOL!!
-                }
-            }
-        } else {
-            if (!platform.equals(InterfaceTypes.API)) NotificationManager.send(uuid, "You are not in a kingdom", NotificationTypes.WARN);
-            else {
-                // API STUFF LOL!!
+    public static void removeKingdom(String kingdomId) {
+
+        kingdomData.drop(kingdomId);
+        ClaimManager.dropClaims(kingdomId);
+        List<ServerPlayerEntity> onlinePlayers = playerManager.getPlayerList();
+        for (ServerPlayerEntity player : onlinePlayers) {
+            if (((PlayerEntityInf) player).getKingdomId().equals(kingdomId)) {
+                ((PlayerEntityInf) player).setKingdomId("");
+                ((PlayerEntityInf) player).setKingship(false);
             }
         }
     }
@@ -102,21 +72,34 @@ public class KingdomProcedures {
         return null;
     }
 
-    public static void updateKing(String kingdomId, UUID uuid) {
-        DataContainer kingdom = kingdomData.get(kingdomId);
-        kingdom.put("KING", uuid);
+    public static void transferKingship() {
+
+    }
+
+    public static void updateKing(String kingdomID, UUID king) {
+        DataContainer kingdom = kingdomData.get(kingdomID);
+        kingdom.put("KING", king);
 
         List<ServerPlayerEntity> onlinePlayers = playerManager.getPlayerList();
         for (ServerPlayerEntity player : onlinePlayers) {
-            if (((PlayerEntityInf) player).getKingdomId().equals(kingdomId) && ((PlayerEntityInf) player).isKing()) {
+            if (((PlayerEntityInf) player).getKingdomId().equals(kingdomID) && ((PlayerEntityInf) player).isKing()) {
                 ((PlayerEntityInf) player).setKingship(false);
             }
 
-            if (player.getUuid().equals(uuid)) {
-                addMember(kingdomId, uuid);
+            if (player.getUuid().equals(king)) {
+                addMember(kingdomID, king);
                 ((PlayerEntityInf) player).setKingship(true);
-                NotificationManager.send(uuid, "You are now the leader of " + kingdomId + "!", NotificationTypes.ACHIEVEMENT);
+                NotificationManager.send(king, "You are now the leader of " + kingdomID + "!", NotificationTypes.ACHIEVEMENT);
             }
+        }
+    }
+
+    public static void combineKingdoms(String deletingKingdom, String keepingKingdom) {
+        for (Claim claim : ClaimManager.getClaims(deletingKingdom)) {
+            claim.rebrand(keepingKingdom, KingdomsData.getColor(keepingKingdom));
+        }
+        for (UUID player : KingdomsData.getMembers(deletingKingdom)) {
+            addMember(keepingKingdom, player);
         }
     }
 
@@ -148,15 +131,20 @@ public class KingdomProcedures {
         }
     }
 
-    public static void addJoinRequest(Enum<InterfaceTypes> platform, String kingdomID, UUID uuid) {
-        DataContainer kingdom = kingdomData.get(kingdomID);
-        JsonArray requests = kingdom.getJson("REQUESTS").getAsJsonArray();
-        for (JsonElement request : requests) {
-            if (request.getAsString().equals(uuid.toString())) return;
-        }
+    public static void addJoinRequest(Enum<InterfaceTypes> platform, String kingdomID, UUID executor) {
+        if (kingdomID.isEmpty()) {
+            if (!KingdomsData.getBlockedPlayers(kingdomID).contains(executor)) {
+                DataContainer kingdom = kingdomData.get(kingdomID);
+                JsonArray requests = kingdom.getJson("REQUESTS").getAsJsonArray();
+                for (JsonElement request : requests) {
+                    if (request.getAsString().equals(executor.toString())) return;
+                }
 
-        requests.add(uuid.toString());
-        kingdom.put("REQUESTS", requests);
+                requests.add(executor.toString());
+                kingdom.put("REQUESTS", requests);
+
+            }
+        }
     }
 
     public static void removeJoinRequest(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, UUID player) {
@@ -166,10 +154,8 @@ public class KingdomProcedures {
                     DataContainer kingdom = kingdomData.get(kingdomID);
                     JsonArray requests = kingdom.getJson("REQUESTS").getAsJsonArray();
 
-                    int index = 0;
                     for (JsonElement request : requests) {
-                        if (request.getAsString().equals(executor.toString())) requests.remove(index);
-                        index++;
+                        if (request.getAsString().equals(executor.toString())) requests.remove(requests);
                     }
                     kingdom.put("REQUESTS", requests);
 
@@ -207,6 +193,10 @@ public class KingdomProcedures {
         }
     }
 
+    public static void acceptJoinRequest() {
+
+    }
+
     public static void addMember(String kingdomId, UUID uuid) {
         DataContainer kingdom = kingdomData.get(kingdomId);
         JsonArray members = kingdom.getJson("MEMBERS").getAsJsonArray();
@@ -222,14 +212,20 @@ public class KingdomProcedures {
         for (ServerPlayerEntity player : onlinePlayers) {
             if (player.getUuid().equals(uuid)) ((PlayerEntityInf) player).setKingdomId(kingdomId);
         }
+        if (KingdomsData.getJoinRequests(kingdomId).contains(uuid)) {
+            JsonArray requests = kingdom.getJson("REQUESTS").getAsJsonArray();
+            for (JsonElement request : requests) {
+                if (request.getAsString().equals(uuid.toString())) requests.remove(requests);
+            }
+        }
     }
 
-    public static void removeMember(String kingdomId, UUID uuid) {
-        DataContainer kingdom = kingdomData.get(kingdomId);
+    public static void removeMember(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, UUID player) {
+        DataContainer kingdom = kingdomData.get(kingdomID);
         JsonArray members = kingdom.getJson("MEMBERS").getAsJsonArray();
 
         for (JsonElement member : members) {
-            if (member.getAsString().equals(uuid.toString())) members.remove(member);
+            if (member.getAsString().equals(player.toString())) members.remove(member);
         }
         kingdom.put("MEMBERS", members);
     }
@@ -241,7 +237,8 @@ public class KingdomProcedures {
                     DataContainer kingdom = kingdomData.get(kingdomID);
                     JsonArray blockedPlayer = kingdom.getJson("BLOCKED").getAsJsonArray();
 
-                    if (KingdomsData.getMembers(kingdomID).contains(player)) KingdomProcedures.removeMember(kingdomID, player);
+                    if (KingdomsData.getJoinRequests(kingdomID).contains(player)) KingdomProcedures.removeJoinRequest(platform, kingdomID, executor, player);
+                    if (KingdomsData.getMembers(kingdomID).contains(player)) KingdomProcedures.removeMember(platform, kingdomID, executor, player);
                     blockedPlayer.add(player.toString());
                     kingdom.put("BLOCKED", blockedPlayer);
 
@@ -282,7 +279,41 @@ public class KingdomProcedures {
     }
 
     public static void unblockPlayer(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, UUID player) {
+        if(!kingdomID.isEmpty()) {
+            if (KingdomsData.getKing(kingdomID).equals(executor)) {
+                if (KingdomsData.getBlockedPlayers(kingdomID).contains(player)) {
+                    DataContainer kingdom = kingdomData.get(kingdomID);
+                    JsonArray blockedPlayer = kingdom.getJson("BLOCKED").getAsJsonArray();
 
+                    for (JsonElement blocked : blockedPlayer) {
+                        if (blocked.getAsString().equals(player.toString())) blockedPlayer.remove(blocked);
+                    }
+
+                } else {
+                    if (!platform.equals(InterfaceTypes.API)) {
+                        NotificationManager.send(executor, playerManager.getPlayer(player) + " is already blocked from joining " + kingdomID, NotificationTypes.WARN);
+
+                    } else {
+                        // API STUFF LOL!!
+                    }
+
+                }
+            } else {
+                if (!platform.equals(InterfaceTypes.API)) {
+                    NotificationManager.send(executor, playerManager.getPlayer(player) + " is already blocked from joining " + kingdomID, NotificationTypes.WARN);
+
+                } else {
+                    // API STUFF LOL!!
+                }
+
+            }
+            if (!platform.equals(InterfaceTypes.API)) {
+                NotificationManager.send(executor, playerManager.getPlayer(player) + " is already blocked from joining " + kingdomID, NotificationTypes.WARN);
+
+            } else {
+                // API STUFF LOL!!
+            }
+        }
     }
 
     public static void addClaimMarkerPointsTotal(String kingdomId, int amount) {
