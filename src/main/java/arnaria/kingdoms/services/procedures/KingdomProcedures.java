@@ -14,6 +14,7 @@ import mrnavastar.sqlib.api.Table;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
 import java.util.UUID;
@@ -338,5 +339,10 @@ public class KingdomProcedures {
         DataContainer kingdom = kingdomData.get(kingdomId);
         int originalAmount = kingdom.getInt("CLAIM_MARKER_POINTS_USED");
         kingdom.put("CLAIM_MARKER_POINTS_TOTAL_USED", originalAmount - amount);
+    }
+
+    public static void addStartingBannerPos(String kingdomId, BlockPos pos) {
+        DataContainer kingdom = kingdomData.get(kingdomId);
+        kingdom.put("STARTING_BANNER_POS", pos);
     }
 }

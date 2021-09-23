@@ -131,7 +131,14 @@ public class ClaimManager {
 
     public static void viewClaims(ServerPlayerEntity player) {
         for (Claim claim : claims) {
-            claim.showClaim(player);
+            ClaimHelpers.renderClaimEdges(player, claim);
         }
+    }
+
+    public static boolean particleAllowedAt(BlockPos pos, Claim ignoreClaim) {
+        for (Claim claim : claims) {
+            if (!claim.equals(ignoreClaim) && claim.contains(pos) && claim.getKingdomId().equals(ignoreClaim.getKingdomId())) return false;
+        }
+        return true;
     }
 }

@@ -36,6 +36,7 @@ public class KingdomDataController {
         mapping.put("color", KingdomsData.getColor(kingdomId));
         mapping.put("claimMarkerPointsTotal", KingdomsData.getClaimMarkerPointsTotal(kingdomId));
         mapping.put("claimMarkerPointsUsed", KingdomsData.getClaimMarkerPointsUsed(kingdomId));
+        mapping.putPOJO("startingBannerPos", KingdomsData.getStartingBannerPos(kingdomId));
         return mapping;
     }
 
