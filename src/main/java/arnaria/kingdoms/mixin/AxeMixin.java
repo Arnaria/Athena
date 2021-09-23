@@ -1,6 +1,9 @@
 package arnaria.kingdoms.mixin;
 
 import arnaria.kingdoms.services.claims.ClaimManager;
+import arnaria.notifacaitonmanager.NotificationManager;
+import arnaria.notifacaitonmanager.NotificationTypes;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.util.ActionResult;
@@ -14,7 +17,9 @@ public class AxeMixin {
 
     @Inject(method = "useOnBlock", at = @At("HEAD"), cancellable = true)
     public void useOnBlock(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
-        if (!ClaimManager.actionAllowedAt(context.getBlockPos(), context.getPlayer())) {
+        PlayerEntity player = context.getPlayer();
+        if (player != null && !ClaimManager.actionAllowedAt(context.getBlockPos(), player)) {
+            NotificationManager.send(player.getUuid(), "You can't use axes in other kingdoms claims", NotificationTypes.ERROR);
             cir.setReturnValue(ActionResult.FAIL);
         }
     }

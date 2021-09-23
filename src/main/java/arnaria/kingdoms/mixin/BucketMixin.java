@@ -1,6 +1,8 @@
 package arnaria.kingdoms.mixin;
 
 import arnaria.kingdoms.services.claims.ClaimManager;
+import arnaria.notifacaitonmanager.NotificationManager;
+import arnaria.notifacaitonmanager.NotificationTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
@@ -41,6 +43,7 @@ public class BucketMixin extends Item {
         BlockPos pos = blockHitResult.getBlockPos();
 
         if (!ClaimManager.actionAllowedAt(pos, user)) {
+            NotificationManager.send(user.getUuid(), "You can't you buckets in other kingdoms claims", NotificationTypes.ERROR);
             cir.setReturnValue(TypedActionResult.fail(itemStack));
         }
     }

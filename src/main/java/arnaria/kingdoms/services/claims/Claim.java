@@ -3,7 +3,6 @@ package arnaria.kingdoms.services.claims;
 import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.kingdoms.util.ClaimHelpers;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import eu.pb4.holograms.api.holograms.WorldHologram;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;

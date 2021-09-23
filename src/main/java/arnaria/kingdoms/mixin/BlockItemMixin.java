@@ -1,6 +1,8 @@
 package arnaria.kingdoms.mixin;
 
 import arnaria.kingdoms.callbacks.BlockPlaceCallback;
+import arnaria.notifacaitonmanager.NotificationManager;
+import arnaria.notifacaitonmanager.NotificationTypes;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.BlockItem;
@@ -21,7 +23,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(BlockItem.class)
 public abstract class BlockItemMixin extends Item {
     @Shadow public abstract Block getBlock();
-
     @Shadow @Nullable protected abstract BlockState getPlacementState(ItemPlacementContext context);
 
     public BlockItemMixin(Item.Settings settings) {
@@ -34,13 +35,12 @@ public abstract class BlockItemMixin extends Item {
 
         if (!result) {
             ServerPlayerEntity player = (ServerPlayerEntity) context.getPlayer();
-
             if (player != null) {
                 int slot = context.getHand() == Hand.MAIN_HAND ? player.getInventory().selectedSlot : 40;
                 ItemStack stack = context.getStack();
                 player.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(-2, -2, slot, stack));
+                NotificationManager.send(player.getUuid(), "You can't place blocks in other kingdoms claims", NotificationTypes.ERROR);
             }
-
             cir.setReturnValue(false);
         }
     }
