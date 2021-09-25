@@ -7,10 +7,7 @@ import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3f;
+import net.minecraft.util.math.*;
 import net.minecraft.world.chunk.Chunk;
 
 import java.util.ArrayList;
@@ -41,13 +38,19 @@ public class ClaimHelpers {
         return chunkList;
     }
 
-    public static void renderClaimEdges(ServerPlayerEntity player, Claim claim) {
-        Formatting color = Formatting.byName(claim.getColor());
+    public static BlockPos[] getCorners(BlockPos center) {
+        return new BlockPos[] {
+            overworld.getChunk(center.add(-32, 0, -32)).getPos().getStartPos().add(-1, 0, -1),
+            overworld.getChunk(center.add(32, 0, 32)).getPos().getStartPos().add(17, 0, 17)
+        };
+    }
+
+    private static void render(ServerPlayerEntity player, ArrayList<ClaimEdge> edges, BlockPos pos, String color, int range) {
+        Formatting colorFormatting = Formatting.byName(color);
         Vec3f rgb = new Vec3f(255, 255, 255);
-        if (color != null) rgb = new Vec3f(Vec3d.unpackRgb(color.getColorValue()));
+        if (colorFormatting != null) rgb = new Vec3f(Vec3d.unpackRgb(colorFormatting.getColorValue()));
 
         ParticleEffect effect = new DustParticleEffect(rgb, 2.0F);
-        ArrayList<ClaimEdge> edges = claim.getClaimEdges();
 
         int maxInterval = 5;
         int maxCount = 20;
@@ -63,12 +66,34 @@ public class ClaimHelpers {
             int steps = (length + interval - 1) / interval;
             for (int i = 0; i <= steps; i++) {
                 double m = (double) (i * interval) / length;
-                spawnParticleIfVisible(player, effect, edge.projX(m), edge.projY(m), edge.projZ(m), claim, 200, "default");
+                spawnParticleIfVisible(player, effect, edge.projX(m), edge.projY(m), edge.projZ(m), pos, range);
             }
         }
     }
 
-    private static void spawnParticleIfVisible(ServerPlayerEntity player, ParticleEffect effect, double x, double y, double z, Claim claim, int range, String mode) {
+    public static void renderClaimEdges(ServerPlayerEntity player, Claim claim) {
+        ArrayList<ClaimEdge> edges = claim.getClaimEdges();
+        render(player, edges, claim.getPos(), claim.getColor(), 200);
+    }
+
+    public static void renderClaimForPlacement(ServerPlayerEntity player, BlockPos pos, String color) {
+        ArrayList<ClaimEdge> edges = new ArrayList<>();
+        BlockPos[] corners = getCorners(pos);
+
+        int y = pos.getY();
+        int minX = corners[0].getX();
+        int minZ = corners[0].getZ();
+        int maxX = corners[1].getX();
+        int maxZ = corners[1].getZ();
+
+        edges.add(new ClaimEdge(minX, y, minZ, minX, y, maxZ));
+        edges.add(new ClaimEdge(maxX, y, minZ, maxX, y, maxZ));
+        edges.add(new ClaimEdge(minX, y, minZ, maxX, y, minZ));
+        edges.add(new ClaimEdge(minX, y, maxZ, maxX, y, maxZ));
+        render(player, edges, pos, color, 256 * 256);
+    }
+
+    private static void spawnParticleIfVisible(ServerPlayerEntity player, ParticleEffect effect, double x, double y, double z, BlockPos ignoreClaimPos, int range) {
         var world = player.getServerWorld();
 
         var delta = player.getPos().subtract(x, y, z);
@@ -83,12 +108,12 @@ public class ClaimHelpers {
             return;
         }
 
-        if (!ClaimManager.particleAllowedAt(new BlockPos(x, y, z), claim)) return;
-        if (!mode.equals("default") && !((int) y == claim.getPos().getY())) return;
+        BlockPos particlePos = new BlockPos(x, y, z);
+        if (!ClaimManager.particleAllowedAt(particlePos, ignoreClaimPos)) return;
 
         world.spawnParticles(
                 player, effect, true,
-                x, y, z,
+                particlePos.getX(), particlePos.getY(), particlePos.getZ(),
                 1,
                 0.0, 0.0, 0.0,
                 0.0

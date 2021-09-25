@@ -22,12 +22,11 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
 public class Kingdoms implements ModInitializer {
-;
+
     public static final String MODID = "Kingdoms";
     public static PlayerManager playerManager;
     public static ServerWorld overworld;
     public static UserCache userCache;
-    public static BossBarManager bossBarManager;
     public static Settings settings;
 
     @Override
@@ -60,7 +59,6 @@ public class Kingdoms implements ModInitializer {
 
             ServerLifecycleEvents.SERVER_STARTED.register(server -> {
                 playerManager = server.getPlayerManager();
-                bossBarManager = server.getBossBarManager();
                 overworld = server.getOverworld();
 
                 ClaimManager.init();

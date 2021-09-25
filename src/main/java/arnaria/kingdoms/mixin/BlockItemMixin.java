@@ -1,8 +1,10 @@
 package arnaria.kingdoms.mixin;
 
 import arnaria.kingdoms.callbacks.BlockPlaceCallback;
+import arnaria.kingdoms.interfaces.BannerMarkerInf;
 import arnaria.notifacaitonmanager.NotificationManager;
 import arnaria.notifacaitonmanager.NotificationTypes;
+import net.minecraft.block.BannerBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.BlockItem;
@@ -39,7 +41,12 @@ public abstract class BlockItemMixin extends Item {
                 int slot = context.getHand() == Hand.MAIN_HAND ? player.getInventory().selectedSlot : 40;
                 ItemStack stack = context.getStack();
                 player.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(-2, -2, slot, stack));
-                NotificationManager.send(player.getUuid(), "You can't place blocks in other kingdoms claims", NotificationTypes.ERROR);
+
+                if (this.getBlock() instanceof BannerBlock bannerBlock) {
+                    if (((BannerMarkerInf) bannerBlock).isClaimMarker()) {
+                        NotificationManager.send(player.getUuid(), "You can't place claim banners inside claims", NotificationTypes.ERROR);
+                    }
+                } else NotificationManager.send(player.getUuid(), "You can't place blocks in other kingdoms claims", NotificationTypes.ERROR);
             }
             cir.setReturnValue(false);
         }

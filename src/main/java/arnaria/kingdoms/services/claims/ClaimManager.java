@@ -2,6 +2,7 @@ package arnaria.kingdoms.services.claims;
 
 import arnaria.kingdoms.interfaces.BannerMarkerInf;
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
+import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.kingdoms.util.ClaimHelpers;
 import mrnavastar.sqlib.api.DataContainer;
 import mrnavastar.sqlib.api.Table;
@@ -10,6 +11,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.chunk.Chunk;
 import org.apache.logging.log4j.Level;
 
 import java.util.ArrayList;
@@ -129,15 +131,22 @@ public class ClaimManager {
         return false;
     }
 
-    public static void viewClaims(ServerPlayerEntity player) {
+    public static void renderClaims(ServerPlayerEntity player) {
         for (Claim claim : claims) {
             ClaimHelpers.renderClaimEdges(player, claim);
         }
     }
 
-    public static boolean particleAllowedAt(BlockPos pos, Claim ignoreClaim) {
+    public static void renderClaimsForPlacement(ServerPlayerEntity player) {
+        //ClaimHelpers.renderClaimForPlacement(player, player.getBlockPos(), KingdomsData.getColor(((PlayerEntityInf) player).getKingdomId()));
         for (Claim claim : claims) {
-            if (!claim.equals(ignoreClaim) && claim.contains(pos) && claim.getKingdomId().equals(ignoreClaim.getKingdomId())) return false;
+            ClaimHelpers.renderClaimForPlacement(player, claim.getPos(), claim.getColor());
+        }
+    }
+
+    public static boolean particleAllowedAt(BlockPos pos, BlockPos ignoreClaimPos) {
+        for (Claim claim : claims) {
+            if (!claim.getPos().equals(ignoreClaimPos) && claim.contains(pos)) return false;
         }
         return true;
     }

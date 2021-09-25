@@ -36,14 +36,11 @@ public class Claim implements Serializable {
         this.hologram.addText(claimTag);
         this.hologram.show();
 
-
-        BlockPos corner1 = overworld.getChunk(pos.add(-32, 0, -32)).getPos().getStartPos();
-        BlockPos corner2 = overworld.getChunk(pos.add(32, 0, 32)).getPos().getStartPos().add(16, 0, 16);
-
-        int minX = corner1.getX();
-        int minZ = corner1.getZ();
-        int maxX = corner2.getX();
-        int maxZ = corner2.getZ();
+        BlockPos[] corners = ClaimHelpers.getCorners(this.pos);
+        int minX = corners[0].getX();
+        int minZ = corners[0].getZ();
+        int maxX = corners[1].getX();
+        int maxZ = corners[1].getZ();
 
         for (int i = 0; i < 256; i++) {
             if (i % 2 == 0) {
