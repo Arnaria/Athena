@@ -104,99 +104,33 @@ public class KingdomProcedures {
         }
     }
 
-    public static void setColor(Enum<InterfaceTypes> platform, String kingdomId, Formatting color, UUID uuid) {
-        if (!kingdomId.isEmpty()) {
-            if (KingdomsData.getKing(kingdomId).equals(uuid)) {
-                DataContainer kingdom = kingdomData.get(kingdomId);
-                kingdom.put("COLOR", color.getName());
-                ClaimManager.updateClaimTagColor(kingdomId, color.getName());
-                if (!platform.equals(InterfaceTypes.API))
-                    NotificationManager.send(uuid, kingdomId + "'s colour is now " + color, NotificationTypes.ACHIEVEMENT);
-                else {
-                    // API STUFF LOL!!
-                }
+    public static void setColor(String kingdomId, Formatting color) {
+        DataContainer kingdom = kingdomData.get(kingdomId);
+        kingdom.put("COLOR", color.getName());
+        ClaimManager.updateClaimTagColor(kingdomId, color.getName());
 
-            } else {
-                if (!platform.equals(InterfaceTypes.API))
-                    NotificationManager.send(uuid, "Only the leader can run this command", NotificationTypes.WARN);
-                else {
-                    // API STUFF LOL!!
-                }
+    }
+    public static void addJoinRequest(String kingdomID, UUID executor) {
+            DataContainer kingdom = kingdomData.get(kingdomID);
+            JsonArray requests = kingdom.getJson("REQUESTS").getAsJsonArray();
+            for (JsonElement request : requests) {
+                if (request.getAsString().equals(executor.toString())) return;
             }
-        } else {
-            if (!platform.equals(InterfaceTypes.API))
-                NotificationManager.send(uuid, "You are not in a kingdom", NotificationTypes.WARN);
-            else {
-                // API STUFF LOL!!
-            }
+
+            requests.add(executor.toString());
+            kingdom.put("REQUESTS", requests);
         }
-    }
 
-    public static void addJoinRequest(Enum<InterfaceTypes> platform, String kingdomID, UUID executor) {
-        if (kingdomID.isEmpty()) {
-            if (!KingdomsData.getBlockedPlayers(kingdomID).contains(executor)) {
-                DataContainer kingdom = kingdomData.get(kingdomID);
-                JsonArray requests = kingdom.getJson("REQUESTS").getAsJsonArray();
-                for (JsonElement request : requests) {
-                    if (request.getAsString().equals(executor.toString())) return;
-                }
+    public static void removeJoinRequest(String kingdomID, UUID player) {
+        DataContainer kingdom = kingdomData.get(kingdomID);
+        JsonArray requests = kingdom.getJson("REQUESTS").getAsJsonArray();
 
-                requests.add(executor.toString());
-                kingdom.put("REQUESTS", requests);
-
-            }
+        for (JsonElement request : requests) {
+            if (request.getAsString().equals(player.toString())) requests.remove(requests);
         }
+        kingdom.put("REQUESTS", requests);
     }
 
-    public static void removeJoinRequest(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, UUID player) {
-        if (!kingdomID.isEmpty()) {
-            if (KingdomsData.getKing(kingdomID).equals(executor)) {
-                if (KingdomsData.getJoinRequests(kingdomID).contains(player)) {
-                    DataContainer kingdom = kingdomData.get(kingdomID);
-                    JsonArray requests = kingdom.getJson("REQUESTS").getAsJsonArray();
-
-                    for (JsonElement request : requests) {
-                        if (request.getAsString().equals(executor.toString())) requests.remove(requests);
-                    }
-                    kingdom.put("REQUESTS", requests);
-
-                    if (!platform.equals(InterfaceTypes.API)) {
-                        NotificationManager.send(executor, playerManager.getPlayer(player) + " has been denied from joining " + kingdomID, NotificationTypes.INFO);
-                        NotificationManager.send(player, "Your request to join " + kingdomID + " has been denied", NotificationTypes.WARN);
-                    }
-                    else {
-                        // API STUFF LOL!!
-                    }
-
-                } else {
-                    if (!platform.equals(InterfaceTypes.API)) NotificationManager.send(executor,playerManager.getPlayer(player) + " has not requested to join " + kingdomID, NotificationTypes.WARN);
-                    else {
-                        //API STUFF LOL!
-                    }
-                }
-
-            } else {
-                if (!platform.equals(InterfaceTypes.API)) {
-                    NotificationManager.send(executor, "Only a Leader con run this command", NotificationTypes.WARN);
-
-                } else {
-                    // API STUFF LOL!!
-                }
-            }
-
-        } else {
-            if (!platform.equals(InterfaceTypes.API)) {
-                NotificationManager.send(executor, "You are not in a kingdom", NotificationTypes.WARN);
-
-            } else {
-                // API STUFF LOL!!
-            }
-        }
-    }
-
-    public static void acceptJoinRequest() {
-
-    }
 
     public static void addMember(String kingdomId, UUID uuid) {
         DataContainer kingdom = kingdomData.get(kingdomId);
@@ -238,7 +172,7 @@ public class KingdomProcedures {
                     DataContainer kingdom = kingdomData.get(kingdomID);
                     JsonArray blockedPlayer = kingdom.getJson("BLOCKED").getAsJsonArray();
 
-                    if (KingdomsData.getJoinRequests(kingdomID).contains(player)) KingdomProcedures.removeJoinRequest(platform, kingdomID, executor, player);
+                    if (KingdomsData.getJoinRequests(kingdomID).contains(player)) KingdomProcedures.removeJoinRequest(kingdomID, player);
                     if (KingdomsData.getMembers(kingdomID).contains(player)) KingdomProcedures.removeMember(platform, kingdomID, executor, player);
                     blockedPlayer.add(player.toString());
                     kingdom.put("BLOCKED", blockedPlayer);

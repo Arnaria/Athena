@@ -1,7 +1,7 @@
 package arnaria.kingdoms.commands;
 
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
-import arnaria.kingdoms.services.data.KingdomsData;
+import arnaria.kingdoms.services.procedures.KingdomProcedureChecks;
 import arnaria.kingdoms.services.procedures.KingdomProcedures;
 import arnaria.kingdoms.util.InterfaceTypes;
 import arnaria.notifacaitonmanager.NotificationManager;
@@ -36,7 +36,7 @@ public class JoinRequestCommand {
     private static int sendJoinRequest(CommandContext<ServerCommandSource> context, String kingdom) throws CommandSyntaxException {
         PlayerEntity player = context.getSource().getPlayer();
         if (player == null) return 1;
-        KingdomProcedures.addJoinRequest(InterfaceTypes.COMMAND, kingdom, context.getSource().getPlayer().getUuid());
+        KingdomProcedures.addJoinRequest(kingdom, context.getSource().getPlayer().getUuid());
         return 1;
     }
 
@@ -48,7 +48,7 @@ public class JoinRequestCommand {
         Enum<InterfaceTypes> platform = InterfaceTypes.COMMAND;
         String kingdom = ((PlayerEntityInf) player).getKingdomId();
         KingdomProcedures.addMember(kingdom, requestUUID);
-        KingdomProcedures.removeJoinRequest(platform, kingdom, player.getUuid(), requestUUID);
+        KingdomProcedures.removeJoinRequest(kingdom ,requestUUID);
         NotificationManager.send(player.getUuid(), requester + " has joined " + kingdom + "!", NotificationTypes.EVENT);
         NotificationManager.send(requestUUID, "You have been accepted into " + kingdom, NotificationTypes.EVENT);
         return 1;
@@ -61,7 +61,7 @@ public class JoinRequestCommand {
         UUID requestUUID = request.getUuid();
         Enum<InterfaceTypes> platform = InterfaceTypes.COMMAND;
         String kingdom = ((PlayerEntityInf) player).getKingdomId();
-        KingdomProcedures.removeJoinRequest(platform, kingdom, player.getUuid(), requestUUID);
+        KingdomProcedureChecks.declineJoinRequest(platform, kingdom, player.getUuid(), requestUUID);
         return 1;
     }
 }
