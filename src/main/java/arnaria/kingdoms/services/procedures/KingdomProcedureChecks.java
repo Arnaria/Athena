@@ -2,9 +2,8 @@ package arnaria.kingdoms.services.procedures;
 
 import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.kingdoms.util.InterfaceTypes;
-import arnaria.notifacaitonmanager.NotificationManager;
-import arnaria.notifacaitonmanager.NotificationTypes;
-import com.mojang.authlib.GameProfile;
+import arnaria.notifacaitonlib.NotificationManager;
+import arnaria.notifacaitonlib.NotificationTypes;
 import net.minecraft.util.Formatting;
 
 import static arnaria.kingdoms.Kingdoms.playerManager;
@@ -154,9 +153,10 @@ public class KingdomProcedureChecks {
                 if (!KingdomsData.getJoinRequests(kingdomID).contains(player)) {
                     KingdomProcedures.addMember(kingdomID, player);
                     KingdomProcedures.removeJoinRequest(kingdomID, player);
-                    if (!platform.equals(InterfaceTypes.API))
+                    if (!platform.equals(InterfaceTypes.API)) {
                         userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, gameProfile.getName() + " has joined your kingdom", NotificationTypes.EVENT));
                         sendNotification(platform, player, "You have been accepted into " + kingdomID, NotificationTypes.EVENT);
+                    }
                     else {
                         // API STUFF LOL!!
                     }
