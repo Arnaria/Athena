@@ -35,23 +35,23 @@ public class KingdomProcedureChecks {
                     return;
                 }
             }
+        } else {
             KingdomProcedures.createKingdom(kingdomID, executor);
+            sendNotification(platform, executor, "You have been crowned king of " + kingdomID, NotificationTypes.ACHIEVEMENT);
         }
     }
 
     public static void disbandKingdom(Enum<InterfaceTypes> platform, String kingdomId, UUID executor) {
         if (!kingdomId.isEmpty()) {
             if (KingdomsData.getKing(kingdomId).equals(executor)) {
-                for (UUID player : KingdomsData.getMembers(kingdomId))
-                    sendNotification(platform, player, kingdomId + " has been disbanded", NotificationTypes.WARN);
+                for (UUID player : KingdomsData.getMembers(kingdomId)) sendNotification(platform, player, kingdomId + " has been disbanded", NotificationTypes.WARN);
                 KingdomProcedures.removeKingdom(kingdomId);
                 sendNotification(platform, executor, kingdomId + " has been disbanded", NotificationTypes.WARN);
-            } else {
-                sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
+                return;
             }
-        } else {
-            sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
         }
+
+        sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
     }
 
     public static void transferKingShip(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, UUID player) {

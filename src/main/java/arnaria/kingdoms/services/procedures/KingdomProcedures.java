@@ -26,10 +26,11 @@ public class KingdomProcedures {
     public static final Table kingdomData = new Table("KingdomData");
 
     public static void setupPlayer(PlayerEntity player) {
-        DataContainer kingdom = getKingdom(player);
-        if (kingdom != null) {
-            if (kingdom.getUuid("KING").equals(player.getUuid())) ((PlayerEntityInf) player).setKingship(true);
-            ((PlayerEntityInf) player).setKingdomId(kingdom.getId());
+        for (DataContainer kingdom : kingdomData.getDataContainers()) {
+            if (KingdomsData.getMembers(kingdom.getId()).contains(player.getUuid())) {
+                if (kingdom.getUuid("KING").equals(player.getUuid())) ((PlayerEntityInf) player).setKingship(true);
+                ((PlayerEntityInf) player).setKingdomId(kingdom.getId());
+            }
         }
     }
 
@@ -62,15 +63,6 @@ public class KingdomProcedures {
                 ((PlayerEntityInf) player).setKingship(false);
             }
         }
-    }
-
-    public static DataContainer getKingdom(PlayerEntity player) {
-        for (DataContainer kingdom : kingdomData.getDataContainers()) {
-            for(JsonElement member : kingdom.getJson("MEMBERS").getAsJsonArray()) {
-                if (member.getAsString().equals(player.getUuidAsString())) return kingdom;
-            }
-        }
-        return null;
     }
 
     public static void updateKing(String kingdomID, UUID king) {

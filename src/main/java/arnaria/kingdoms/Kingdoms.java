@@ -2,7 +2,7 @@ package arnaria.kingdoms;
 
 import arnaria.kingdoms.commands.*;
 import arnaria.kingdoms.services.rest.RestApi;
-import arnaria.kingdoms.services.Settings;
+import arnaria.kingdoms.util.Settings;
 import arnaria.kingdoms.services.claims.ClaimManager;
 import arnaria.kingdoms.services.procedures.KingdomProcedures;
 import com.mojang.brigadier.CommandDispatcher;
@@ -13,7 +13,6 @@ import mrnavastar.sqlib.util.Database;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.minecraft.entity.boss.BossBarManager;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.world.ServerWorld;
@@ -76,12 +75,10 @@ public class Kingdoms implements ModInitializer {
                 GetKingCommand.register(dispatcher);
                 DisbandKingdomCommand.register(dispatcher);
                 JoinRequestCommand.register(dispatcher);
-                // RevolutionCommand.register(dispatcher);
+                RevolutionCommand.register(dispatcher);
             });
 
-            ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-                KingdomProcedures.setupPlayer(handler.getPlayer());
-            });
+            ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> KingdomProcedures.setupPlayer(handler.getPlayer()));
         }
     }
 

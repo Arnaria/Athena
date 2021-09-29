@@ -1,4 +1,4 @@
-package arnaria.kingdoms.services;
+package arnaria.kingdoms.util;
 
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
@@ -20,4 +20,8 @@ public class Settings implements ConfigData {
     @Comment("The mod will not start if you use these as your actual credentials - please keep your data secure")
     public String MYSQL_USERNAME = "username";
     public String MYSQL_PASSWORD = "password";
+
+    @Comment("Game Settings:")
+    public int REVOLUTION_DURATION = 15;
+    public int INVASION_DURATION = 15;
 }
