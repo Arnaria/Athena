@@ -1,8 +1,8 @@
 package arnaria.kingdoms.mixin;
 
 import arnaria.kingdoms.services.claims.ClaimManager;
-import arnaria.notifacaitonmanager.NotificationManager;
-import arnaria.notifacaitonmanager.NotificationTypes;
+import arnaria.notifacaitonlib.NotificationManager;
+import arnaria.notifacaitonlib.NotificationTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.HoeItem;
 import net.minecraft.item.ItemUsageContext;

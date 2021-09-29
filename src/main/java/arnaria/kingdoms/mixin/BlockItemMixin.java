@@ -2,8 +2,8 @@ package arnaria.kingdoms.mixin;
 
 import arnaria.kingdoms.callbacks.BlockPlaceCallback;
 import arnaria.kingdoms.interfaces.BannerMarkerInf;
-import arnaria.notifacaitonmanager.NotificationManager;
-import arnaria.notifacaitonmanager.NotificationTypes;
+import arnaria.notifacaitonlib.NotificationManager;
+import arnaria.notifacaitonlib.NotificationTypes;
 import net.minecraft.block.BannerBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
