@@ -2,8 +2,8 @@ package arnaria.kingdoms.services.events;
 
 import arnaria.kingdoms.callbacks.PlayerDeathCallback;
 import arnaria.kingdoms.services.procedures.KingdomProcedures;
-import arnaria.notifacaitonmanager.NotificationManager;
-import arnaria.notifacaitonmanager.NotificationTypes;
+import arnaria.notifacaitonlib.NotificationManager;
+import arnaria.notifacaitonlib.NotificationTypes;
 import com.google.gson.JsonElement;
 import mrnavastar.sqlib.api.DataContainer;
 import net.minecraft.entity.Entity;

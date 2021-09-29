@@ -9,7 +9,6 @@ import net.minecraft.util.Formatting;
 import static arnaria.kingdoms.Kingdoms.playerManager;
 import static arnaria.kingdoms.Kingdoms.userCache;
 
-import java.util.Objects;
 import java.util.UUID;
 
 public class KingdomProcedureChecks {
@@ -58,7 +57,7 @@ public class KingdomProcedureChecks {
     public static void transferKingShip(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, UUID player) {
         if (!kingdomID.isEmpty()) {
             if (executor.equals(KingdomsData.getKing(kingdomID))) {
-                if (!KingdomsData.getMembers(kingdomID).contains(player))
+                if (!KingdomsData.getMembers(kingdomID).contains(player)) {
                     for (String kingdom : KingdomsData.getKingdomIds()) {
                         if (KingdomsData.getMembers(kingdom).contains(player)) {
                             if (KingdomsData.getKing(kingdom).equals(player)) {
@@ -67,55 +66,33 @@ public class KingdomProcedureChecks {
                                 sendNotification(platform, player, "You have been made the leader of " + kingdomID, NotificationTypes.EVENT);
                                 return;
                             }
-                            if (platform.equals(InterfaceTypes.COMMAND)) {
-                                NotificationManager.send(executor, "You can only transfor your kingdom to a player not alligned with a kingdom, in your kingdom, or the king of another kingdom", NotificationTypes.ERROR);
-                            } else {
-                                // API STUFF LOL!!!
-                            }
+                            sendNotification(platform, executor, "You can only transfer your kingdom to a player in your kingdom, not aligned with a kingdom, or the king of another kingdom", NotificationTypes.ERROR);
                             return;
                         }
-                    } else {
-                        KingdomProcedures.updateKing(kingdomID, player);
-                    if (platform.equals(InterfaceTypes.COMMAND)) {
-                        NotificationManager.send(executor, "Leadership of " + kingdomID + " has been given to " + player, NotificationTypes.ERROR);
-                    } else {
-                        // API STUFF LOL!!!
                     }
+                    KingdomProcedures.addMember(kingdomID, player);
+                    KingdomProcedures.updateKing(kingdomID, player);
+                    userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, "Leadership of " + kingdomID + " has been transferred to " + gameProfile.getName(), NotificationTypes.EVENT));
+                    sendNotification(platform, player, "You have been made the leader of " + kingdomID, NotificationTypes.EVENT);
+
+                    } else {
+                    KingdomProcedures.updateKing(kingdomID, player);
+                    userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, "Leadership of " + kingdomID + " has been transferred to " + gameProfile.getName(), NotificationTypes.EVENT));
+                    sendNotification(platform, player, "You have been given leadership of " + kingdomID, NotificationTypes.EVENT);
                 }
-            } else {
-                if (platform.equals(InterfaceTypes.COMMAND)) {
-                    NotificationManager.send(executor, "You are not a leader of a kingdom", NotificationTypes.ERROR);
-                } else {
-                    // API STUFF LOL!!!
-                }
-            }
-        }
+            } else sendNotification(platform, executor, "You are not the leader of " + kingdomID, NotificationTypes.ERROR);
+
+        } else sendNotification(platform, executor, "You are not in a kingdom", NotificationTypes.ERROR);
     }
 
     public static void setColour(Enum<InterfaceTypes> platform, String kingdomID, Formatting color, UUID executor) {
         if(!kingdomID.isEmpty()) {
             if (KingdomsData.getKing(kingdomID).equals(executor)) {
                 KingdomProcedures.setColor(kingdomID, color);
-                if (!platform.equals(InterfaceTypes.API))
-                    NotificationManager.send(executor, kingdomID + "'s colour is now " + color.name(), NotificationTypes.EVENT);
-                else {
-                    // API STUFF LOL!!
-                }
+                sendNotification(platform, executor, kingdomID + "'s colour is now " + color.name(), NotificationTypes.EVENT);
 
-            } else {
-                if (!platform.equals(InterfaceTypes.API))
-                    NotificationManager.send(executor, "Only the leader can run this command", NotificationTypes.WARN);
-                else {
-                    // API STUFF LOL!!
-                }
-            }
-        } else {
-            if (!platform.equals(InterfaceTypes.API))
-                NotificationManager.send(executor, "You are not in a kingdom", NotificationTypes.WARN);
-            else {
-                // API STUFF LOL!!
-            }
-        }
+            } else sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
+        } else sendNotification(platform, executor, "You are not in a kingdom", NotificationTypes.WARN);
     }
 
     public static void addJoinRequest(Enum<InterfaceTypes> platform, String kingdomID, UUID executor) {
@@ -123,27 +100,16 @@ public class KingdomProcedureChecks {
             if (!KingdomsData.getMembers(kingdomID).contains(executor)) {
                 if (!KingdomsData.getBlockedPlayers(kingdomID).contains(executor)) {
                     KingdomProcedures.addJoinRequest(kingdomID, executor);
+                    sendNotification(platform, executor, "You have requested to join " + kingdomID, NotificationTypes.INFO);
 
                 } else {
-                    if (!platform.equals(InterfaceTypes.API))
-                        NotificationManager.send(executor, "You are not in a kingdom", NotificationTypes.WARN);
-                    else {
-                        // API STUFF LOL!!
-                    }
+                    sendNotification(platform, executor, "You are not in a kingdom", NotificationTypes.WARN);
                 }
             } else {
-                if (!platform.equals(InterfaceTypes.API))
-                    NotificationManager.send(executor, "You are already in " + kingdomID, NotificationTypes.WARN);
-                else {
-                    // API STUFF LOL!!
-                }
+                sendNotification(platform, executor, "You are already in " + kingdomID, NotificationTypes.WARN);
             }
         } else {
-            if (!platform.equals(InterfaceTypes.API))
-                NotificationManager.send(executor, "Please select a Kingdom", NotificationTypes.WARN);
-            else {
-                // API STUFF LOL!!
-            }
+            sendNotification(platform, executor, "Please select a Kingdom", NotificationTypes.WARN);
         }
     }
 
@@ -153,15 +119,10 @@ public class KingdomProcedureChecks {
                 if (!KingdomsData.getJoinRequests(kingdomID).contains(player)) {
                     KingdomProcedures.addMember(kingdomID, player);
                     KingdomProcedures.removeJoinRequest(kingdomID, player);
-                    if (!platform.equals(InterfaceTypes.API)) {
-                        userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, gameProfile.getName() + " has joined your kingdom", NotificationTypes.EVENT));
-                        sendNotification(platform, player, "You have been accepted into " + kingdomID, NotificationTypes.EVENT);
-                    }
-                    else {
-                        // API STUFF LOL!!
-                    }
+                    userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, gameProfile.getName() + " has joined your kingdom", NotificationTypes.EVENT));
+                    sendNotification(platform, player, "You have been accepted into " + kingdomID, NotificationTypes.EVENT);
                 }
-            }
+            } else sendNotification(platform, executor, "Only the leader can accept new members", NotificationTypes.WARN);
         }
     }
 
@@ -170,18 +131,9 @@ public class KingdomProcedureChecks {
             if (KingdomsData.getKing(kingdomID).equals(executor)) {
                 if (KingdomsData.getJoinRequests(kingdomID).contains(player)) {
                     KingdomProcedures.removeJoinRequest(kingdomID, player);
-                    if (!platform.equals(InterfaceTypes.API))
-                        NotificationManager.send(executor, playerManager.getPlayer(player).toString() + " request has been declined", NotificationTypes.WARN);
-                    else {
-                        // API STUFF LOL!!
-                    }
-                } else {
-                    if (!platform.equals(InterfaceTypes.API))
-                        NotificationManager.send(executor, playerManager.getPlayer(player).toString() + " hasnt requested to join your kingdom", NotificationTypes.WARN);
-                    else {
-                        // API STUFF LOL!!
-                    }
-                }
+                    userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, gameProfile.getName() + " request has been declined", NotificationTypes.WARN));
+                    sendNotification(platform, player, "Your request to join " + kingdomID + " has been declined", NotificationTypes.WARN);
+                } else userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, gameProfile.getName() + " request has been declined", NotificationTypes.WARN));
             }
         }
     }

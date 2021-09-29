@@ -73,10 +73,6 @@ public class KingdomProcedures {
         return null;
     }
 
-    public static void transferKingship() {
-
-    }
-
     public static void updateKing(String kingdomID, UUID king) {
         DataContainer kingdom = kingdomData.get(kingdomID);
         kingdom.put("KING", king);
