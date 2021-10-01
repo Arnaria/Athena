@@ -1,6 +1,7 @@
 package arnaria.kingdoms;
 
 import arnaria.kingdoms.commands.*;
+import arnaria.kingdoms.services.events.EventManager;
 import arnaria.kingdoms.services.rest.RestApi;
 import arnaria.kingdoms.util.Settings;
 import arnaria.kingdoms.services.claims.ClaimManager;
@@ -9,6 +10,8 @@ import com.mojang.brigadier.CommandDispatcher;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import mrnavastar.sqlib.api.SqlTypes;
+import mrnavastar.sqlib.api.databases.Database;
+import mrnavastar.sqlib.api.databases.SQLiteDatabase;
 import mrnavastar.sqlib.util.Database;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -26,6 +29,7 @@ public class Kingdoms implements ModInitializer {
     public static PlayerManager playerManager;
     public static ServerWorld overworld;
     public static UserCache userCache;
+    public static Database database;
     public static Settings settings;
 
     @Override
@@ -45,15 +49,8 @@ public class Kingdoms implements ModInitializer {
         }
 
         if (validConfig) {
-            Database.TYPE = settings.DATABASE_TYPE;
-            Database.DATABASE_NAME = settings.DATABASE_NAME;
-            Database.SQLITE_DIRECTORY = settings.SQLITE_DIRECTORY;
-            Database.MYSQL_ADDRESS = settings.MYSQL_ADDRESS;
-            Database.MYSQL_PORT = settings.MYSQL_PORT;
-            Database.MYSQL_USERNAME = settings.MYSQL_USERNAME;
-            Database.MYSQL_PASSWORD = settings.MYSQL_PASSWORD;
+           database = new SQLiteDatabase(settings.DATABASE_NAME, settings.SQLITE_DIRECTORY);
 
-            Database.init();
             RestApi.init();
 
             ServerLifecycleEvents.SERVER_STARTED.register(server -> {
@@ -79,6 +76,9 @@ public class Kingdoms implements ModInitializer {
             });
 
             ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> KingdomProcedures.setupPlayer(handler.getPlayer()));
+
+
+            log(Level.INFO, "Setup Finished");
         }
     }
 

@@ -2,7 +2,7 @@ package arnaria.kingdoms.services.claims;
 
 import arnaria.kingdoms.interfaces.BannerMarkerInf;
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
-import arnaria.kingdoms.services.data.KingdomsData;
+import arnaria.kingdoms.services.procedures.KingdomProcedures;
 import arnaria.kingdoms.util.ClaimHelpers;
 import mrnavastar.sqlib.api.DataContainer;
 import mrnavastar.sqlib.api.Table;
@@ -11,22 +11,21 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.chunk.Chunk;
 import org.apache.logging.log4j.Level;
 
 import java.util.ArrayList;
 
 import static arnaria.kingdoms.Kingdoms.overworld;
+import static arnaria.kingdoms.Kingdoms.database;
 import static arnaria.kingdoms.Kingdoms.log;
 
 public class ClaimManager {
 
-    private static final Table claimData = new Table("ClaimData");
+    private static final Table claimData = database.createTable("ClaimData");
     private static final ArrayList<Claim> claims = new ArrayList<>();
 
     public static void init() {
-        for (String id : claimData.getIds()) {
-            DataContainer claim = claimData.get(id);
+        for (DataContainer claim : claimData.getDataContainers()) {
             String kingdomId = claim.getString("KINGDOM_ID");
             BlockPos pos = claim.getBlockPos("BANNER_POS");
             claims.add(new Claim(kingdomId, pos));
@@ -43,14 +42,17 @@ public class ClaimManager {
     }
 
     public static void addClaim(String kingdomId, BlockPos pos, BannerBlock banner) {
+        claimData.beginTransaction();
         Claim claim = new Claim(kingdomId, pos);
         claims.add(claim);
-        DataContainer claimDataContainer = new DataContainer(claim.getPos().toString());
+        DataContainer claimDataContainer = claimData.createDataContainer(claim.getPos().toString());
         claimData.put(claimDataContainer);
         claimDataContainer.put("KINGDOM_ID", claim.getKingdomId());
         claimDataContainer.put("BANNER_POS", claim.getPos());
 
         ((BannerMarkerInf) banner).makeClaimMarker();
+        KingdomProcedures.addClaimMarkerPointsUsed(kingdomId, 1);
+        claimData.endTransaction();
     }
 
     public static void dropClaim(BlockPos pos) {
@@ -60,6 +62,7 @@ public class ClaimManager {
                 claim.removeHologram();
                 claimToDrop = claim;
                 claimData.drop(pos.toString());
+                KingdomProcedures.removeClaimMarkerPointsUsed(claim.getKingdomId(), 1);
                 break;
             }
         }
@@ -68,16 +71,21 @@ public class ClaimManager {
     }
 
     public static void dropClaims(String kingdomId) {
+        claimData.beginTransaction();
         ArrayList<Claim> claimsToDrop = new ArrayList<>();
         for (Claim claim : claims) {
             if (claim.getKingdomId().equalsIgnoreCase(kingdomId)) {
+                BlockPos pos = claim.getPos();
                 claim.removeHologram();
                 claimsToDrop.add(claim);
-                claimData.drop(claim.getPos().toString());
+                claimData.drop(pos.toString());
+                if (overworld.getBlockState(pos).getBlock() instanceof BannerBlock) overworld.breakBlock(pos, false);
+                KingdomProcedures.removeClaimMarkerPointsUsed(kingdomId, 1);
             }
         }
 
         claims.removeAll(claimsToDrop);
+        claimData.endTransaction();
     }
 
     public static ArrayList<Claim> getClaims() {

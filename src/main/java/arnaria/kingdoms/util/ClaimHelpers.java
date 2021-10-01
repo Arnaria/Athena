@@ -6,6 +6,7 @@ import arnaria.kingdoms.services.claims.ClaimManager;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.*;
 import net.minecraft.world.chunk.Chunk;
@@ -66,7 +67,7 @@ public class ClaimHelpers {
             int steps = (length + interval - 1) / interval;
             for (int i = 0; i <= steps; i++) {
                 double m = (double) (i * interval) / length;
-                spawnParticleIfVisible(player, effect, edge.projX(m), edge.projY(m), edge.projZ(m), pos, range);
+                 spawnParticleIfAllowed(player, effect, edge.projX(m), edge.projY(m), edge.projZ(m), pos, range);
             }
         }
     }
@@ -93,16 +94,18 @@ public class ClaimHelpers {
         render(player, edges, pos, color, 256 * 256);
     }
 
-    private static void spawnParticleIfVisible(ServerPlayerEntity player, ParticleEffect effect, double x, double y, double z, BlockPos ignoreClaimPos, int range) {
-        var world = player.getServerWorld();
+    private static void spawnParticleIfAllowed(ServerPlayerEntity player, ParticleEffect effect, double x, double y, double z, BlockPos ignoreClaimPos, int range) {
+        ServerWorld world = player.getServerWorld();
 
-        var delta = player.getPos().subtract(x, y, z);
+        if (y < 0) return;
+
+        Vec3d delta = player.getPos().subtract(x, y, z);
         double length2 = delta.lengthSquared();
         if (length2 > range) {
             return;
         }
 
-        var rotation = player.getRotationVec(1.0F);
+        Vec3d rotation = player.getRotationVec(1.0F);
         double dot = (delta.multiply(1.0 / Math.sqrt(length2))).dotProduct(rotation);
         if (dot > 0.0) {
             return;

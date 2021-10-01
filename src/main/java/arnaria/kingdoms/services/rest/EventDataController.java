@@ -7,13 +7,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-//@RestController
+@RestController
 public class EventDataController {
 
     private static final String url = "/api/events";
     private static final ObjectMapper mapper = new ObjectMapper();
 
-/*    @GetMapping(url)
+     @GetMapping(url)
     ObjectNode events() {
         ObjectNode mapping = mapper.createObjectNode();
 
@@ -22,5 +22,5 @@ public class EventDataController {
             mapping.putPOJO("members", event.getMembers());
         }
         return mapping;
-    }*/
+    }
 }

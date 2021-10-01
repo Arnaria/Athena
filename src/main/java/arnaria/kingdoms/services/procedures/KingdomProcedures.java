@@ -20,10 +20,11 @@ import java.util.List;
 import java.util.UUID;
 
 import static arnaria.kingdoms.Kingdoms.playerManager;
+import static arnaria.kingdoms.Kingdoms.database;
 
 public class KingdomProcedures {
 
-    public static final Table kingdomData = new Table("KingdomData");
+    public static final Table kingdomData = database.createTable("KingdomData");
 
     public static void setupPlayer(PlayerEntity player) {
         for (DataContainer kingdom : kingdomData.getDataContainers()) {
@@ -35,8 +36,7 @@ public class KingdomProcedures {
     }
 
     public static void createKingdom(String kingdomId, UUID uuid) {
-        DataContainer kingdom = new DataContainer(kingdomId);
-        kingdomData.put(kingdom);
+        DataContainer kingdom = kingdomData.createDataContainer(uuid);
 
         kingdom.put("KING", uuid);
         kingdom.put("COLOR", "white");
@@ -53,7 +53,6 @@ public class KingdomProcedures {
     }
 
     public static void removeKingdom(String kingdomId) {
-
         kingdomData.drop(kingdomId);
         ClaimManager.dropClaims(kingdomId);
         List<ServerPlayerEntity> onlinePlayers = playerManager.getPlayerList();
