@@ -153,52 +153,13 @@ public class KingdomProcedures {
         kingdom.put("MEMBERS", members);
     }
 
-    public static void blockPlayer(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, UUID player) {
-        if (!kingdomID.isEmpty()) {
-            if (KingdomsData.getKing(kingdomID).equals(executor)) {
-                if (!KingdomsData.getBlockedPlayers(kingdomID).contains(player)) {
-                    DataContainer kingdom = kingdomData.get(kingdomID);
-                    JsonArray blockedPlayer = kingdom.getJson("BLOCKED").getAsJsonArray();
+    public static void blockPlayer(String kingdomID, UUID player) {
+        DataContainer kingdom = kingdomData.get(kingdomID);
+        JsonArray blockedPlayer = kingdom.getJson("BLOCKED").getAsJsonArray();
 
-                    if (KingdomsData.getJoinRequests(kingdomID).contains(player)) KingdomProcedures.removeJoinRequest(kingdomID, player);
-                    if (KingdomsData.getMembers(kingdomID).contains(player)) KingdomProcedures.removeMember(platform, kingdomID, executor, player);
-                    blockedPlayer.add(player.toString());
-                    kingdom.put("BLOCKED", blockedPlayer);
+        blockedPlayer.add(player.toString());
+        kingdom.put("BLOCKED", blockedPlayer);
 
-                    if (!platform.equals(InterfaceTypes.API)) {
-                        NotificationManager.send(executor, playerManager.getPlayer(player) + " has been blocked from joining " + kingdomID, NotificationTypes.EVENT);
-                        NotificationManager.send(player, "You have been blocked from joining " + kingdomID, NotificationTypes.WARN);
-
-                    } else {
-                        // API STUFF LOL!!
-                    }
-
-                } else {
-                    if (!platform.equals(InterfaceTypes.API)) {
-                        NotificationManager.send(executor, playerManager.getPlayer(player) + " is already blocked from joining " + kingdomID, NotificationTypes.WARN);
-
-                    } else {
-                        // API STUFF LOL!!
-                    }
-                }
-
-            } else {
-                if (!platform.equals(InterfaceTypes.API)) {
-                    NotificationManager.send(executor, "Only a Leader con run this command", NotificationTypes.WARN);
-
-                } else {
-                    // API STUFF LOL!!
-                }
-            }
-
-        } else {
-            if (!platform.equals(InterfaceTypes.API)) {
-                NotificationManager.send(executor, "You are not in a kingdom", NotificationTypes.WARN);
-
-            } else {
-                // API STUFF LOL!!
-            }
-        }
     }
 
     public static void unblockPlayer(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, UUID player) {

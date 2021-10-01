@@ -152,7 +152,7 @@ public class KingdomProcedureChecks {
         if (!kingdomID.isEmpty()) {
             if (KingdomsData.getKing(kingdomID).equals(executor)){
                 if (!executor.equals(player)) {
-                    KingdomProcedures.blockPlayer();
+                    KingdomProcedures.blockPlayer(kingdomID, player);
 
                 }
             }
