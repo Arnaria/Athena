@@ -46,7 +46,8 @@ public class Kingdoms implements ModInitializer {
         }
 
         if (validConfig) {
-           database = new SQLiteDatabase(settings.DATABASE_NAME, settings.SQLITE_DIRECTORY);
+            System.out.println(settings.SQLITE_DIRECTORY);
+            database = new SQLiteDatabase(settings.DATABASE_NAME, settings.SQLITE_DIRECTORY);
 
             RestApi.init();
 
@@ -73,7 +74,6 @@ public class Kingdoms implements ModInitializer {
             });
 
             ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> KingdomProcedures.setupPlayer(handler.getPlayer()));
-
 
             log(Level.INFO, "Setup Finished");
         }
