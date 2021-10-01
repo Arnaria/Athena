@@ -39,6 +39,7 @@ public class KingdomProcedures {
         DataContainer kingdom = kingdomData.createDataContainer(uuid);
 
         kingdom.put("KING", uuid);
+        kingdom.put("ADVISERS", new JsonArray());
         kingdom.put("COLOR", "white");
         kingdom.put("MEMBERS", new JsonArray());
         kingdom.put("REQUESTS", new JsonArray());
