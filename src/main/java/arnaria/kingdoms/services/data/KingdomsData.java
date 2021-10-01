@@ -20,6 +20,15 @@ public class KingdomsData {
         return kingdom.getUuid("KING");
     }
 
+    public static ArrayList<UUID> getAdvisers(String kingdomId) {
+        DataContainer kingdom = kingdomData.get(kingdomId);
+        ArrayList<UUID> advisers = new ArrayList<>();
+        for (JsonElement adviser : kingdom.getJson("ADVISERS").getAsJsonArray()) {
+            advisers.add(UUID.fromString(adviser.getAsString()));
+        }
+        return advisers;
+    }
+
     public static String getColor(String kingdomId) {
         DataContainer kingdom = kingdomData.get(kingdomId);
         return kingdom.getString("COLOR");
