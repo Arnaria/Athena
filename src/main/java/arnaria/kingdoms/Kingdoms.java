@@ -40,11 +40,11 @@ public class Kingdoms implements ModInitializer {
         AutoConfig.register(Settings.class, JanksonConfigSerializer::new);
         settings = AutoConfig.getConfigHolder(Settings.class).getConfig();
 
-        if (settings.DATABASE_TYPE.equals(SqlTypes.SQLITE)) {
+        if (settings.DATABASE_TYPE.equals("SQLITE")) {
             validConfig = !settings.SQLITE_DIRECTORY.equals("/path/to/folder");
         }
 
-        if (settings.DATABASE_TYPE.equals(SqlTypes.MYSQL)) {
+        if (settings.DATABASE_TYPE.equals("MYSQL")) {
             validConfig = (!settings.MYSQL_USERNAME.equals("username") && !settings.MYSQL_PASSWORD.equals("password"));
         }
 
