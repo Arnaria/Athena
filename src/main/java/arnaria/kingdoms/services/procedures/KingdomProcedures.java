@@ -83,6 +83,27 @@ public class KingdomProcedures {
         }
     }
 
+    public static void addAdviser(String kingdomID, UUID player) {
+        DataContainer kingdom = kingdomData.get(kingdomID);
+        JsonArray advisers = kingdom.getJson("ADVISERS").getAsJsonArray();
+        for (JsonElement adviser : advisers) {
+            if (adviser.getAsString().equals(player.toString())) return;
+        }
+
+        advisers.add(player.toString());
+        kingdom.put("REQUESTS", advisers);
+    }
+
+    public static void removeAdviser(String kingdomID, UUID player) {
+        DataContainer kingdom = kingdomData.get(kingdomID);
+        JsonArray advisers = kingdom.getJson("REQUESTS").getAsJsonArray();
+
+        for (JsonElement adviser : advisers) {
+            if (adviser.getAsString().equals(player.toString())) advisers.remove(adviser);
+        }
+        kingdom.put("REQUESTS", advisers);
+    }
+
     public static void combineKingdoms(String deletingKingdom, String keepingKingdom) {
         for (Claim claim : ClaimManager.getClaims(deletingKingdom)) {
             claim.rebrand(keepingKingdom, KingdomsData.getColor(keepingKingdom));
@@ -114,7 +135,7 @@ public class KingdomProcedures {
         JsonArray requests = kingdom.getJson("REQUESTS").getAsJsonArray();
 
         for (JsonElement request : requests) {
-            if (request.getAsString().equals(player.toString())) requests.remove(requests);
+            if (request.getAsString().equals(player.toString())) requests.remove(request);
         }
         kingdom.put("REQUESTS", requests);
     }
@@ -143,7 +164,7 @@ public class KingdomProcedures {
         }
     }
 
-    public static void removeMember(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, UUID player) {
+    public static void removeMember(String kingdomID, UUID player) {
         DataContainer kingdom = kingdomData.get(kingdomID);
         JsonArray members = kingdom.getJson("MEMBERS").getAsJsonArray();
 

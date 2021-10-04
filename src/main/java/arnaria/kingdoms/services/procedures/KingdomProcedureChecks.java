@@ -34,10 +34,9 @@ public class KingdomProcedureChecks {
                     return;
                 }
             }
-        } else {
             KingdomProcedures.createKingdom(kingdomID, executor);
             sendNotification(platform, executor, "You have been crowned king of " + kingdomID, NotificationTypes.ACHIEVEMENT);
-        }
+        } else sendNotification(platform, executor, "Please provide a kingdom name", NotificationTypes.ERROR);
     }
 
     public static void disbandKingdom(Enum<InterfaceTypes> platform, String kingdomId, UUID executor) {
@@ -71,7 +70,7 @@ public class KingdomProcedureChecks {
                     KingdomProcedures.addMember(kingdomID, player);
                     KingdomProcedures.updateKing(kingdomID, player);
                     userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, "Leadership of " + kingdomID + " has been transferred to " + gameProfile.getName(), NotificationTypes.EVENT));
-                    sendNotification(platform, player, "You have been made the leader of " + kingdomID, NotificationTypes.EVENT);
+                    sendNotification(InterfaceTypes.COMMAND, player, "You have been made the leader of " + kingdomID, NotificationTypes.EVENT);
 
                     } else {
                     KingdomProcedures.updateKing(kingdomID, player);
@@ -92,7 +91,21 @@ public class KingdomProcedureChecks {
         if(!kingdomID.isEmpty()) {
             if (KingdomsData.getKing(kingdomID).equals(executor)) {
                 if (KingdomsData.getMembers(kingdomID).contains(player)) {
+                    KingdomProcedures.addAdviser(kingdomID, player);
+                    userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, gameProfile.getName() + " has been made a adviser of " + kingdomID, NotificationTypes.EVENT));
+                    sendNotification(InterfaceTypes.COMMAND, player, "You have been made a Adviser of " + kingdomID, NotificationTypes.EVENT);
+                } else sendNotification(platform, executor, "You can only make a member of your kingdom a adviser", NotificationTypes.WARN);
+            } else sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
+        } else sendNotification(platform, executor, "You are not part of a kingdom", NotificationTypes.WARN);
+    }
 
+    public static void removeAdviser(Enum<InterfaceTypes> platform, String kingdomID, UUID player, UUID executor) {
+        if(!kingdomID.isEmpty()) {
+            if (KingdomsData.getKing(kingdomID).equals(executor)) {
+                if (KingdomsData.getAdvisers(kingdomID).contains(player)) {
+                    KingdomProcedures.removeAdviser(kingdomID, player);
+                    userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, gameProfile.getName() + "is no longer a adviser of " + kingdomID, NotificationTypes.WARN));
+                    sendNotification(InterfaceTypes.COMMAND, player, "You have been removed as a adviser of " + kingdomID, NotificationTypes.WARN);
                 }
             }
         }
@@ -115,14 +128,14 @@ public class KingdomProcedureChecks {
                     KingdomProcedures.addJoinRequest(kingdomID, executor);
                     sendNotification(platform, executor, "You have requested to join " + kingdomID, NotificationTypes.INFO);
 
-                } else sendNotification(platform, executor, "You are not in a kingdom", NotificationTypes.WARN);
+                } else sendNotification(platform, executor, kingdomID + " has banished you from their kingdom", NotificationTypes.WARN);
             } else sendNotification(platform, executor, "You are already in " + kingdomID, NotificationTypes.WARN);
         } else sendNotification(platform, executor, "Please select a Kingdom", NotificationTypes.WARN);
     }
 
     public static void acceptJoinRequest(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, UUID player) {
         if (!kingdomID.isEmpty()) {
-            if (KingdomsData.getKing(kingdomID).equals(executor)){
+            if (KingdomsData.getKing(kingdomID).equals(executor) || KingdomsData.getAdvisers(kingdomID).contains(executor)){
                 if (!KingdomsData.getJoinRequests(kingdomID).contains(player)) {
                     KingdomProcedures.addMember(kingdomID, player);
                     KingdomProcedures.removeJoinRequest(kingdomID, player);
@@ -138,7 +151,7 @@ public class KingdomProcedureChecks {
 
     public static void declineJoinRequest(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, UUID player) {
         if (!kingdomID.isEmpty()) {
-            if (KingdomsData.getKing(kingdomID).equals(executor)) {
+            if (KingdomsData.getKing(kingdomID).equals(executor) || KingdomsData.getAdvisers(kingdomID).contains(executor)) {
                 if (KingdomsData.getJoinRequests(kingdomID).contains(player)) {
                     KingdomProcedures.removeJoinRequest(kingdomID, player);
                     userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, gameProfile.getName() + " request has been declined", NotificationTypes.WARN));
@@ -153,6 +166,11 @@ public class KingdomProcedureChecks {
             if (KingdomsData.getKing(kingdomID).equals(executor)){
                 if (!executor.equals(player)) {
                     KingdomProcedures.blockPlayer(kingdomID, player);
+                    if (KingdomsData.getMembers(kingdomID).contains(player)) KingdomProcedures.removeMember(kingdomID, player);
+                    if (KingdomsData.getJoinRequests(kingdomID).contains(player)) KingdomProcedures.removeJoinRequest(kingdomID, player);
+                    userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, gameProfile.getName() + " has been banished from " + kingdomID, NotificationTypes.WARN));
+                    sendNotification(InterfaceTypes.COMMAND, player, "You have been banished from " + kingdomID, NotificationTypes.WARN);
+
 
                 }
             }
