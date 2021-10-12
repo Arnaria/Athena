@@ -34,6 +34,7 @@ public class KingdomProcedureChecks {
                     return;
                 }
             }
+
             KingdomProcedures.createKingdom(kingdomID, executor);
             sendNotification(platform, executor, "You have been crowned king of " + kingdomID, NotificationTypes.ACHIEVEMENT);
         } else sendNotification(platform, executor, "Please provide a kingdom name", NotificationTypes.ERROR);
@@ -106,9 +107,9 @@ public class KingdomProcedureChecks {
                     KingdomProcedures.removeAdviser(kingdomID, player);
                     userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, gameProfile.getName() + "is no longer a adviser of " + kingdomID, NotificationTypes.WARN));
                     sendNotification(InterfaceTypes.COMMAND, player, "You have been removed as a adviser of " + kingdomID, NotificationTypes.WARN);
-                }
-            }
-        }
+                } else userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, gameProfile.getName() + " is not a adviser for " + kingdomID, NotificationTypes.WARN));
+            } else sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
+        } else sendNotification(platform, executor, "You are not part of a kingdom", NotificationTypes.WARN);
     }
 
     public static void setColour(Enum<InterfaceTypes> platform, String kingdomID, Formatting color, UUID executor) {
@@ -145,7 +146,7 @@ public class KingdomProcedureChecks {
                     userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, gameProfile.getName() + " has joined your kingdom", NotificationTypes.EVENT));
                     sendNotification(platform, player, "You have been accepted into " + kingdomID, NotificationTypes.EVENT);
                 }
-            } else sendNotification(platform, executor, "Only the leader can accept new members", NotificationTypes.WARN);
+            } else sendNotification(platform, executor, "Only a leader or adviser can accept new members", NotificationTypes.WARN);
         }
     }
 
@@ -157,12 +158,12 @@ public class KingdomProcedureChecks {
                     userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, gameProfile.getName() + " request has been declined", NotificationTypes.WARN));
                     sendNotification(platform, player, "Your request to join " + kingdomID + " has been declined", NotificationTypes.WARN);
                 } else userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, gameProfile.getName() + " request has been declined", NotificationTypes.WARN));
-            }
-        }
+            } else sendNotification(platform, executor, "Only a leader or adviser can decline join requests", NotificationTypes.WARN);
+        } else sendNotification(platform, executor, "You are not part of a kingdom", NotificationTypes.WARN);
     }
 
     public static void banishPlayer(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, UUID player) {
-        if (!kingdomID.isEmpty()) {
+        if (!kingdomID.isEmpty()){
             if (KingdomsData.getKing(kingdomID).equals(executor)){
                 if (!executor.equals(player)) {
                     KingdomProcedures.blockPlayer(kingdomID, player);
@@ -170,11 +171,21 @@ public class KingdomProcedureChecks {
                     if (KingdomsData.getJoinRequests(kingdomID).contains(player)) KingdomProcedures.removeJoinRequest(kingdomID, player);
                     userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, gameProfile.getName() + " has been banished from " + kingdomID, NotificationTypes.WARN));
                     sendNotification(InterfaceTypes.COMMAND, player, "You have been banished from " + kingdomID, NotificationTypes.WARN);
+                } else sendNotification(platform, executor, "You can not banish yourself", NotificationTypes.WARN);
+            } else sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
+        } else sendNotification(platform, executor, "You are not in a kingdom", NotificationTypes.WARN);
+    }
 
-
-                }
-            }
-        }
+    public static void unBanishPlayer(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, UUID player) {
+        if (!kingdomID.isEmpty()){
+            if (KingdomsData.getKing(kingdomID).equals(executor)){
+                if (KingdomsData.getBlockedPlayers(kingdomID).contains(player)){
+                    KingdomProcedures.unblockPlayer(kingdomID, player);
+                    userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, gameProfile.getName() + " has not unbanished from " + kingdomID, NotificationTypes.EVENT ));
+                    sendNotification(InterfaceTypes.COMMAND, player, "You have been unbanished from " + kingdomID, NotificationTypes.EVENT);
+                } else userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, gameProfile.getName() + " has not been banished from " + kingdomID, NotificationTypes.WARN ));
+            } else sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
+        } else sendNotification(platform, executor, "You are not in a kingdom", NotificationTypes.WARN);
     }
 
 }
