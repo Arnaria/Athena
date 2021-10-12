@@ -46,7 +46,6 @@ public class Kingdoms implements ModInitializer {
         }
 
         if (validConfig) {
-            System.out.println(settings.SQLITE_DIRECTORY);
             database = new SQLiteDatabase(settings.DATABASE_NAME, settings.SQLITE_DIRECTORY);
 
             RestApi.init();

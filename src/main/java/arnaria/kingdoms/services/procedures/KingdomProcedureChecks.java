@@ -180,9 +180,9 @@ public class KingdomProcedureChecks {
         if (!kingdomID.isEmpty()){
             if (KingdomsData.getKing(kingdomID).equals(executor)){
                 if (KingdomsData.getBlockedPlayers(kingdomID).contains(player)){
-                    KingdomProcedures.unblockPlayer(kingdomID, player);
+                    KingdomProcedures.unblockPlayer(platform, kingdomID, executor, player);
                     userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, gameProfile.getName() + " has not unbanished from " + kingdomID, NotificationTypes.EVENT ));
-                    sendNotification(InterfaceTypes.COMMAND, player, "You have been unbanished from " + kingdomID, NotificationTypes.EVENT);
+                    sendNotification(InterfaceTypes.COMMAND, player, "You are no longer banished from " + kingdomID, NotificationTypes.EVENT);
                 } else userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, gameProfile.getName() + " has not been banished from " + kingdomID, NotificationTypes.WARN ));
             } else sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
         } else sendNotification(platform, executor, "You are not in a kingdom", NotificationTypes.WARN);

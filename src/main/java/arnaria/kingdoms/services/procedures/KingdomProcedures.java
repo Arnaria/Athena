@@ -9,7 +9,6 @@ import arnaria.notifacaitonlib.NotificationManager;
 import arnaria.notifacaitonlib.NotificationTypes;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import mrnavastar.sqlib.api.DataContainer;
 import mrnavastar.sqlib.api.Table;
 import net.minecraft.entity.player.PlayerEntity;
@@ -132,15 +131,12 @@ public class KingdomProcedures {
         }
 
     public static void removeJoinRequest(String kingdomID, UUID player) {
-        int listItem = 0;
         DataContainer kingdom = kingdomData.get(kingdomID);
         JsonArray requests = kingdom.getJson("REQUESTS").getAsJsonArray();
 
         for (JsonElement request : requests) {
-            listItem++;
-            if (request.getAsString().equals(player.toString())) return;
+            if (request.getAsString().equals(player.toString())) requests.remove(request);
         }
-        requests.remove(listItem);
         kingdom.put("REQUESTS", requests);
     }
 
@@ -160,44 +156,65 @@ public class KingdomProcedures {
         for (ServerPlayerEntity player : onlinePlayers) {
             if (player.getUuid().equals(uuid)) ((PlayerEntityInf) player).setKingdomId(kingdomId);
         }
-        removeJoinRequest(kingdomId, uuid);
+
+        if (KingdomsData.getJoinRequests(kingdomId).contains(uuid)) removeJoinRequest(kingdomId, uuid);
     }
 
     public static void removeMember(String kingdomID, UUID player) {
-        int listItem = 0;
         DataContainer kingdom = kingdomData.get(kingdomID);
         JsonArray members = kingdom.getJson("MEMBERS").getAsJsonArray();
-        JsonElement item = new JsonParser().parse(player.toString()).getAsJsonObject();
 
-        if (!members.contains(item)) return;
         for (JsonElement member : members) {
-            listItem++;
-            if (member.getAsString().equals(player.toString())) break;
+            if (member.getAsString().equals(player.toString())) members.remove(member);
         }
-        members.remove(listItem);
         kingdom.put("MEMBERS", members);
     }
 
     public static void blockPlayer(String kingdomID, UUID player) {
         DataContainer kingdom = kingdomData.get(kingdomID);
-        JsonArray blockedPlayers = kingdom.getJson("BLOCKED").getAsJsonArray();
+        JsonArray blockedPlayer = kingdom.getJson("BLOCKED").getAsJsonArray();
 
-        blockedPlayers.add(player.toString());
-        kingdom.put("BLOCKED", blockedPlayers);
+        blockedPlayer.add(player.toString());
+        kingdom.put("BLOCKED", blockedPlayer);
 
     }
 
-    public static void unblockPlayer(String kingdomID, UUID player) {
-        int listItem = 0;
-        DataContainer kingdom = kingdomData.get(kingdomID);
-        JsonArray blockedPlayers = kingdom.getJson("BLOCKED").getAsJsonArray();
+    public static void unblockPlayer(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, UUID player) {
+        if(!kingdomID.isEmpty()) {
+            if (KingdomsData.getKing(kingdomID).equals(executor)) {
+                if (KingdomsData.getBlockedPlayers(kingdomID).contains(player)) {
+                    DataContainer kingdom = kingdomData.get(kingdomID);
+                    JsonArray blockedPlayer = kingdom.getJson("BLOCKED").getAsJsonArray();
 
-        for (JsonElement blocked : blockedPlayers) {
-            listItem++;
-            if (blocked.getAsString().equals(player.toString())) break;
+                    for (JsonElement blocked : blockedPlayer) {
+                        if (blocked.getAsString().equals(player.toString())) blockedPlayer.remove(blocked);
+                    }
+
+                } else {
+                    if (!platform.equals(InterfaceTypes.API)) {
+                        NotificationManager.send(executor, playerManager.getPlayer(player) + " is already blocked from joining " + kingdomID, NotificationTypes.WARN);
+
+                    } else {
+                        // API STUFF LOL!!
+                    }
+
+                }
+            } else {
+                if (!platform.equals(InterfaceTypes.API)) {
+                    NotificationManager.send(executor, playerManager.getPlayer(player) + " is already blocked from joining " + kingdomID, NotificationTypes.WARN);
+
+                } else {
+                    // API STUFF LOL!!
+                }
+
+            }
+            if (!platform.equals(InterfaceTypes.API)) {
+                NotificationManager.send(executor, playerManager.getPlayer(player) + " is already blocked from joining " + kingdomID, NotificationTypes.WARN);
+
+            } else {
+                // API STUFF LOL!!
+            }
         }
-        blockedPlayers.remove(listItem);
-        kingdom.put("BLOCKED", blockedPlayers);
     }
 
     public static void addClaimMarkerPointsTotal(String kingdomId, int amount) {
