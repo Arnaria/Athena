@@ -119,6 +119,7 @@ public class KingdomProcedures {
         ClaimManager.updateClaimTagColor(kingdomId, color.getName());
 
     }
+
     public static void addJoinRequest(String kingdomID, UUID executor) {
             DataContainer kingdom = kingdomData.get(kingdomID);
             JsonArray requests = kingdom.getJson("REQUESTS").getAsJsonArray();
@@ -128,7 +129,7 @@ public class KingdomProcedures {
 
             requests.add(executor.toString());
             kingdom.put("REQUESTS", requests);
-        }
+    }
 
     public static void removeJoinRequest(String kingdomID, UUID player) {
         DataContainer kingdom = kingdomData.get(kingdomID);
@@ -156,8 +157,6 @@ public class KingdomProcedures {
         for (ServerPlayerEntity player : onlinePlayers) {
             if (player.getUuid().equals(uuid)) ((PlayerEntityInf) player).setKingdomId(kingdomId);
         }
-
-        if (KingdomsData.getJoinRequests(kingdomId).contains(uuid)) removeJoinRequest(kingdomId, uuid);
     }
 
     public static void removeMember(String kingdomID, UUID player) {
@@ -176,7 +175,6 @@ public class KingdomProcedures {
 
         blockedPlayer.add(player.toString());
         kingdom.put("BLOCKED", blockedPlayer);
-
     }
 
     public static void unblockPlayer(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, UUID player) {
