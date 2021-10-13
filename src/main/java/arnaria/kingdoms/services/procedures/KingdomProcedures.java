@@ -156,8 +156,6 @@ public class KingdomProcedures {
         for (ServerPlayerEntity player : onlinePlayers) {
             if (player.getUuid().equals(uuid)) ((PlayerEntityInf) player).setKingdomId(kingdomId);
         }
-
-        if (KingdomsData.getJoinRequests(kingdomId).contains(uuid)) removeJoinRequest(kingdomId, uuid);
     }
 
     public static void removeMember(String kingdomID, UUID player) {
