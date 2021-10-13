@@ -32,7 +32,8 @@ public class Claim implements Serializable {
         this.hologram = new WorldHologram(overworld, new Vec3d(pos.getX() + 0.5, pos.getY() + 2, pos.getZ() + 0.5));
 
         LiteralText claimTag = new LiteralText(kingdomId.toUpperCase());
-        claimTag.formatted(Formatting.byName(color));
+        Formatting formatting = Formatting.byName(color);
+        if (formatting != null) claimTag.formatted(formatting);
         this.hologram.addText(claimTag);
         this.hologram.show();
 
