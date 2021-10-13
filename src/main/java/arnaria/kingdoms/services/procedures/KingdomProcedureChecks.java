@@ -44,7 +44,6 @@ public class KingdomProcedureChecks {
         if (!kingdomId.isEmpty()) {
             if (KingdomsData.getKing(kingdomId).equals(executor)) {
                 for (UUID player : KingdomsData.getMembers(kingdomId)) {
-                    if (player.equals(executor)) sendNotification(platform, executor, kingdomId + " has been disbanded", NotificationTypes.WARN);
                     sendNotification(InterfaceTypes.COMMAND, player, kingdomId + " has been disbanded", NotificationTypes.WARN);
                 }
                 KingdomProcedures.removeKingdom(kingdomId);

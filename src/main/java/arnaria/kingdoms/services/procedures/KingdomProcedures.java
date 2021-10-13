@@ -16,6 +16,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,23 +28,43 @@ public class KingdomProcedures {
     public static final Table kingdomData = database.createTable("KingdomData");
 
     public static void setupPlayer(PlayerEntity player) {
+        kingdomData.beginTransaction();
         for (DataContainer kingdom : kingdomData.getDataContainers()) {
             if (KingdomsData.getMembers(kingdom.getId()).contains(player.getUuid())) {
                 if (kingdom.getUuid("KING").equals(player.getUuid())) ((PlayerEntityInf) player).setKingship(true);
                 ((PlayerEntityInf) player).setKingdomId(kingdom.getId());
             }
         }
+        kingdomData.beginTransaction();
+    }
+
+    public static void reload() {
+
+        for (String kingdomId : kingdomData.getIds()) {
+            Formatting formatting = Formatting.byName(KingdomsData.getColor(kingdomId));
+            if (formatting != null) setColor(kingdomId, formatting);
+
+            updateKing(kingdomId, KingdomsData.getKing(kingdomId));
+        }
+
+        List<ServerPlayerEntity> onlinePlayers = playerManager.getPlayerList();
+        for (ServerPlayerEntity player : onlinePlayers) {
+            ((PlayerEntityInf) player).setKingdomId("");
+            ((PlayerEntityInf) player).setKingship(false);
+            setupPlayer(player);
+        }
     }
 
     public static void createKingdom(String kingdomId, UUID uuid) {
-        DataContainer kingdom = kingdomData.createDataContainer(uuid);
+        kingdomData.beginTransaction();
+        DataContainer kingdom = kingdomData.createDataContainer(kingdomId);
 
         kingdom.put("KING", uuid);
-        kingdom.put("ADVISERS", new JsonArray());
         kingdom.put("COLOR", "white");
         kingdom.put("MEMBERS", new JsonArray());
         kingdom.put("REQUESTS", new JsonArray());
         kingdom.put("BLOCKED", new JsonArray());
+        kingdom.put("ADVISERS", new JsonArray());
         kingdom.put("CLAIM_MARKER_POINTS_TOTAL", 1);
         kingdom.put("CLAIM_MARKER_POINTS_USED", 0);
 
@@ -51,6 +72,7 @@ public class KingdomProcedures {
 
         PlayerEntity executor = playerManager.getPlayer(uuid);
         if (executor != null) ((PlayerEntityInf) executor).setKingship(true);
+        kingdomData.endTransaction();
     }
 
     public static void removeKingdom(String kingdomId) {
