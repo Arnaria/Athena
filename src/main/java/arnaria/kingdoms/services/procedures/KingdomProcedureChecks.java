@@ -36,6 +36,7 @@ public class KingdomProcedureChecks {
             }
 
             KingdomProcedures.createKingdom(kingdomID, executor);
+            KingdomProcedures.addMember(kingdomID, executor);
             sendNotification(platform, executor, "You have been crowned king of " + kingdomID, NotificationTypes.ACHIEVEMENT);
         } else sendNotification(platform, executor, "Please provide a kingdom name", NotificationTypes.ERROR);
     }
@@ -179,7 +180,7 @@ public class KingdomProcedureChecks {
         if (!kingdomID.isEmpty()){
             if (KingdomsData.getKing(kingdomID).equals(executor)){
                 if (KingdomsData.getBlockedPlayers(kingdomID).contains(player)){
-                    KingdomProcedures.unblockPlayer(platform, kingdomID, executor, player);
+                    KingdomProcedures.unblockPlayer(kingdomID, player);
                     userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, gameProfile.getName() + " has not unbanished from " + kingdomID, NotificationTypes.EVENT ));
                     sendNotification(InterfaceTypes.COMMAND, player, "You are no longer banished from " + kingdomID, NotificationTypes.EVENT);
                 } else userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, gameProfile.getName() + " has not been banished from " + kingdomID, NotificationTypes.WARN ));
