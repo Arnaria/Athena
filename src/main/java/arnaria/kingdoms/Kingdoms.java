@@ -77,6 +77,7 @@ public class Kingdoms implements ModInitializer {
                 RevolutionCommand.register(dispatcher);
                 TransferKingshipCommand.register(dispatcher);
                 ManageAdviserCommand.register(dispatcher);
+                PopulationManagerCommands.register(dispatcher);
             });
 
             ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> KingdomProcedures.setupPlayer(handler.getPlayer()));

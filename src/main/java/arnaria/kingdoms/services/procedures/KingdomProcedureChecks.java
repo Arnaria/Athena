@@ -162,6 +162,27 @@ public class KingdomProcedureChecks {
         } else sendNotification(platform, executor, "You are not part of a kingdom", NotificationTypes.WARN);
     }
 
+    public static void removePlayer(Enum<InterfaceTypes> platform, String kingdomID, UUID player, UUID executor) {
+        if (!kingdomID.isEmpty()){
+            if (!executor.equals(player)) {
+                if (KingdomsData.getKing(kingdomID).equals(executor)) {
+                    KingdomProcedures.removeMember(kingdomID, player);
+                    if (KingdomsData.getAdvisers(kingdomID).contains(player)) KingdomProcedures.removeAdviser(kingdomID, player);
+                    if (KingdomsData.getJoinRequests(kingdomID).contains(player)) KingdomProcedures.removeJoinRequest(kingdomID, player);
+                    userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, gameProfile.getName() + " has been removed from" + kingdomID, NotificationTypes.EVENT));
+                    sendNotification(InterfaceTypes.COMMAND, player, "You have been removed from" + kingdomID, NotificationTypes.WARN);
+                } else if (KingdomsData.getAdvisers(kingdomID).contains(executor)) {
+                    if (KingdomsData.getAdvisers(kingdomID).contains(player)) {
+                        KingdomProcedures.removeMember(kingdomID, player);
+                        if (KingdomsData.getJoinRequests(kingdomID).contains(player)) KingdomProcedures.removeJoinRequest(kingdomID, player);
+                        userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, gameProfile.getName() + " has been removed from" + kingdomID, NotificationTypes.EVENT));
+                        sendNotification(InterfaceTypes.COMMAND, player, "You have been removed from" + kingdomID, NotificationTypes.WARN);
+                    } else sendNotification(platform, executor, "Only the king can remove advisers", NotificationTypes.WARN);
+                } else sendNotification(platform, executor, "Only a king or adviser can rus with command", NotificationTypes.WARN);
+            } else sendNotification(platform, executor, "You cant not remove yourself", NotificationTypes.ERROR);
+        } else sendNotification(platform, executor, "You are not part of a kingdom", NotificationTypes.ERROR);
+    }
+
     public static void banishPlayer(Enum<InterfaceTypes> platform, String kingdomID, UUID player, UUID executor) {
         if (!kingdomID.isEmpty()){
             if (KingdomsData.getKing(kingdomID).equals(executor)){
