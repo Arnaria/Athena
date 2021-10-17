@@ -48,8 +48,8 @@ public class KingdomProcedureChecks {
                     sendNotification(InterfaceTypes.COMMAND, player, kingdomId + " has been disbanded", NotificationTypes.WARN);
                 }
                 KingdomProcedures.removeKingdom(kingdomId);
-            }
-        } else sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
+            } else sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
+        } else sendNotification(platform, executor, "You are not in a kingdom", NotificationTypes.WARN);
     }
 
     public static void transferKingShip(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, UUID player) {
@@ -134,7 +134,7 @@ public class KingdomProcedureChecks {
         } else sendNotification(platform, executor, "Please select a Kingdom", NotificationTypes.WARN);
     }
 
-    public static void acceptJoinRequest(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, UUID player) {
+    public static void acceptJoinRequest(Enum<InterfaceTypes> platform, String kingdomID, UUID player, UUID executor) {
         if (!kingdomID.isEmpty()) {
             if (KingdomsData.getKing(kingdomID).equals(executor) || KingdomsData.getAdvisers(kingdomID).contains(executor)){
                 if (!KingdomsData.getJoinRequests(kingdomID).contains(player)) {
@@ -150,7 +150,7 @@ public class KingdomProcedureChecks {
         }
     }
 
-    public static void declineJoinRequest(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, UUID player) {
+    public static void declineJoinRequest(Enum<InterfaceTypes> platform, String kingdomID, UUID player, UUID executor) {
         if (!kingdomID.isEmpty()) {
             if (KingdomsData.getKing(kingdomID).equals(executor) || KingdomsData.getAdvisers(kingdomID).contains(executor)) {
                 if (KingdomsData.getJoinRequests(kingdomID).contains(player)) {
@@ -162,11 +162,12 @@ public class KingdomProcedureChecks {
         } else sendNotification(platform, executor, "You are not part of a kingdom", NotificationTypes.WARN);
     }
 
-    public static void banishPlayer(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, UUID player) {
+    public static void banishPlayer(Enum<InterfaceTypes> platform, String kingdomID, UUID player, UUID executor) {
         if (!kingdomID.isEmpty()){
             if (KingdomsData.getKing(kingdomID).equals(executor)){
                 if (!executor.equals(player)) {
                     KingdomProcedures.blockPlayer(kingdomID, player);
+                    if (KingdomsData.getAdvisers(kingdomID).contains(player))
                     if (KingdomsData.getMembers(kingdomID).contains(player)) KingdomProcedures.removeMember(kingdomID, player);
                     if (KingdomsData.getJoinRequests(kingdomID).contains(player)) KingdomProcedures.removeJoinRequest(kingdomID, player);
                     userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, gameProfile.getName() + " has been banished from " + kingdomID, NotificationTypes.WARN));
@@ -176,7 +177,7 @@ public class KingdomProcedureChecks {
         } else sendNotification(platform, executor, "You are not in a kingdom", NotificationTypes.WARN);
     }
 
-    public static void unBanishPlayer(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, UUID player) {
+    public static void unBanishPlayer(Enum<InterfaceTypes> platform, String kingdomID, UUID player, UUID executor) {
         if (!kingdomID.isEmpty()){
             if (KingdomsData.getKing(kingdomID).equals(executor)){
                 if (KingdomsData.getBlockedPlayers(kingdomID).contains(player)){

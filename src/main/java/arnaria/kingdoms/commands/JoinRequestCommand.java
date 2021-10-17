@@ -2,7 +2,6 @@ package arnaria.kingdoms.commands;
 
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.kingdoms.services.procedures.KingdomProcedureChecks;
-import arnaria.kingdoms.services.procedures.KingdomProcedures;
 import arnaria.kingdoms.util.InterfaceTypes;
 import arnaria.notifacaitonlib.NotificationManager;
 import arnaria.notifacaitonlib.NotificationTypes;
@@ -14,8 +13,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
-import static arnaria.kingdoms.Kingdoms.playerManager;
 
+import static arnaria.kingdoms.Kingdoms.playerManager;
 import java.util.UUID;
 
 public class JoinRequestCommand {
@@ -36,7 +35,8 @@ public class JoinRequestCommand {
     private static int sendJoinRequest(CommandContext<ServerCommandSource> context, String kingdom) throws CommandSyntaxException {
         PlayerEntity player = context.getSource().getPlayer();
         if (player == null) return 1;
-        KingdomProcedures.addJoinRequest(kingdom, context.getSource().getPlayer().getUuid());
+        Enum<InterfaceTypes> platform = InterfaceTypes.COMMAND;
+        KingdomProcedureChecks.addJoinRequest(platform, kingdom, context.getSource().getPlayer().getUuid());
         return 1;
     }
 
@@ -47,8 +47,7 @@ public class JoinRequestCommand {
         PlayerEntity player = context.getSource().getPlayer();
         Enum<InterfaceTypes> platform = InterfaceTypes.COMMAND;
         String kingdom = ((PlayerEntityInf) player).getKingdomId();
-        KingdomProcedures.addMember(kingdom, requestUUID);
-        KingdomProcedures.removeJoinRequest(kingdom ,requestUUID);
+        KingdomProcedureChecks.acceptJoinRequest(platform, kingdom, requestUUID, player.getUuid());
         NotificationManager.send(player.getUuid(), requester + " has joined " + kingdom + "!", NotificationTypes.EVENT);
         NotificationManager.send(requestUUID, "You have been accepted into " + kingdom, NotificationTypes.EVENT);
         return 1;
@@ -61,7 +60,7 @@ public class JoinRequestCommand {
         UUID requestUUID = request.getUuid();
         Enum<InterfaceTypes> platform = InterfaceTypes.COMMAND;
         String kingdom = ((PlayerEntityInf) player).getKingdomId();
-        KingdomProcedureChecks.declineJoinRequest(platform, kingdom, player.getUuid(), requestUUID);
+        KingdomProcedureChecks.declineJoinRequest(platform, kingdom, requestUUID, player.getUuid());
         return 1;
     }
 }

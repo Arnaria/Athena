@@ -4,7 +4,6 @@ import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.kingdoms.services.claims.Claim;
 import arnaria.kingdoms.services.claims.ClaimManager;
 import arnaria.kingdoms.services.data.KingdomsData;
-import arnaria.kingdoms.util.InterfaceTypes;
 import arnaria.notifacaitonlib.NotificationManager;
 import arnaria.notifacaitonlib.NotificationTypes;
 import com.google.gson.JsonArray;
@@ -34,7 +33,7 @@ public class KingdomProcedures {
                 ((PlayerEntityInf) player).setKingdomId(kingdom.getId());
             }
         }
-        kingdomData.beginTransaction();
+        kingdomData.endTransaction();
     }
 
     public static void reload() {
