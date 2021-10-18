@@ -80,9 +80,9 @@ public class KingdomProcedures {
     }
 
     public static void removeKingdom(String kingdomId) {
+        ClaimManager.dropClaims(kingdomId);
         kingdomData.drop(kingdomId);
         scoreboard.removeTeam(scoreboard.getTeam(kingdomId));
-        ClaimManager.dropClaims(kingdomId);
         for (ServerPlayerEntity player : BetterPlayerManager.getOnlinePlayers()) {
             if (((PlayerEntityInf) player).getKingdomId().equals(kingdomId)) {
                 ((PlayerEntityInf) player).setKingdomId("");

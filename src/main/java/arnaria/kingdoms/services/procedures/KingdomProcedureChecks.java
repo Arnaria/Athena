@@ -186,8 +186,10 @@ public class KingdomProcedureChecks {
     public static void leaveKingdom(Enum<InterfaceTypes> platform, String kingdomID, UUID executor) {
         if (!kingdomID.isEmpty()) {
             if (KingdomsData.getMembers(kingdomID).contains(executor)) {
-                KingdomProcedures.removeMember(kingdomID, executor);
-                sendNotification(platform, executor, "You have left " + kingdomID, NotificationTypes.EVENT);
+                if (KingdomsData.getKing(kingdomID).equals(executor)) {
+                    KingdomProcedures.removeMember(kingdomID, executor);
+                    sendNotification(platform, executor, "You have left " + kingdomID, NotificationTypes.EVENT);
+                } else sendNotification(platform, executor, "A leader can not leave their kingdom, they must either disband their kingdom or trasfer their leadership", NotificationTypes.WARN);
             } else sendNotification(platform, executor, "You are not part of this kingdom", NotificationTypes.WARN);
         } else sendNotification(platform, executor, "You are not in a kingdom", NotificationTypes.WARN);
     }
@@ -197,7 +199,7 @@ public class KingdomProcedureChecks {
             if (KingdomsData.getKing(kingdomID).equals(executor)){
                 if (!executor.equals(player)) {
                     KingdomProcedures.blockPlayer(kingdomID, player);
-                    if (KingdomsData.getAdvisers(kingdomID).contains(player))
+                    if (KingdomsData.getAdvisers(kingdomID).contains(player)) KingdomProcedures.removeAdviser(kingdomID, player);
                     if (KingdomsData.getMembers(kingdomID).contains(player)) KingdomProcedures.removeMember(kingdomID, player);
                     if (KingdomsData.getJoinRequests(kingdomID).contains(player)) KingdomProcedures.removeJoinRequest(kingdomID, player);
                     userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, gameProfile.getName() + " has been banished from " + kingdomID, NotificationTypes.WARN));
