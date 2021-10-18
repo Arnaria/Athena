@@ -173,7 +173,6 @@ public class KingdomProcedures {
         kingdom.put("REQUESTS", requests);
     }
 
-
     public static void addMember(String kingdomId, UUID uuid) {
         DataContainer kingdom = kingdomData.get(kingdomId);
         JsonArray members = kingdom.getJson("MEMBERS").getAsJsonArray();
