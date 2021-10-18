@@ -3,8 +3,6 @@ package arnaria.kingdoms.commands;
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.kingdoms.services.procedures.KingdomProcedureChecks;
 import arnaria.kingdoms.util.InterfaceTypes;
-import arnaria.notifacaitonlib.NotificationManager;
-import arnaria.notifacaitonlib.NotificationTypes;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -14,14 +12,14 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
 
-import static arnaria.kingdoms.Kingdoms.playerManager;
-import java.util.UUID;
-
-public class JoinRequestCommand {
+public class ManageSelfCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        dispatcher.register(CommandManager.literal("Join")
-                        .then(CommandManager.argument("Kingdom", StringArgumentType.string())
-                                .executes(context -> sendJoinRequest(context, StringArgumentType.getString(context,"Kingdom")))));
+        dispatcher.register(CommandManager.literal("self")
+                        .then(CommandManager.literal("join")
+                                .then(CommandManager.argument("Kingdom", StringArgumentType.string())
+                                        .executes(context -> sendJoinRequest(context, StringArgumentType.getString(context,"Kingdom")))))
+                .then(CommandManager.literal("leave")
+                        .executes(ManageSelfCommand::leaveKingdom)));
     }
 
     private static int sendJoinRequest(CommandContext<ServerCommandSource> context, String kingdom) throws CommandSyntaxException {
@@ -29,6 +27,13 @@ public class JoinRequestCommand {
         if (player == null) return 1;
         Enum<InterfaceTypes> platform = InterfaceTypes.COMMAND;
         KingdomProcedureChecks.addJoinRequest(platform, kingdom, context.getSource().getPlayer().getUuid());
+        return 1;
+    }
+
+    private static int leaveKingdom(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        PlayerEntity executor = context.getSource().getPlayer();
+        if (executor == null) return 1;
+        KingdomProcedureChecks.leaveKingdom(InterfaceTypes.COMMAND, ((PlayerEntityInf) executor).getKingdomId(), executor.getUuid());
         return 1;
     }
 

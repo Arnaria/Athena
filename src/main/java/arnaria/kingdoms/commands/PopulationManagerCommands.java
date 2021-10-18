@@ -15,20 +15,23 @@ import static arnaria.kingdoms.Kingdoms.playerManager;
 
 public class PopulationManagerCommands {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        dispatcher.register(CommandManager.literal("Population")
-                .then(CommandManager.literal("Requests")
-                        .then(CommandManager.literal("Accept")
+        dispatcher.register(CommandManager.literal("population")
+                .then(CommandManager.literal("requests")
+                        .then(CommandManager.literal("accept")
                                 .then(CommandManager.argument("Requester", StringArgumentType.string())
                                         .executes(context -> acceptJoinRequest(context, StringArgumentType.getString(context, "Requester")))))
-                        .then(CommandManager.literal("Decline")
+                        .then(CommandManager.literal("decline")
                                 .then(CommandManager.argument("Requester", StringArgumentType.string())
                                         .executes(context -> declineJoinRequest(context, StringArgumentType.getString(context, "Requester"))))))
-                .then(CommandManager.literal("Kick")
+                .then(CommandManager.literal("kick")
                         .then(CommandManager.argument("Player", StringArgumentType.string())
                                 .executes(context -> kickMember(context, StringArgumentType.getString(context, "Player")))))
-                .then(CommandManager.literal("Banish")
+                .then(CommandManager.literal("banish")
                         .then(CommandManager.argument("Player", StringArgumentType.string())
-                                .executes(context -> banishMember(context, StringArgumentType.getString(context, "Player"))))));
+                                .executes(context -> banishMember(context, StringArgumentType.getString(context, "Player")))))
+                .then(CommandManager.literal("unbanish")
+                        .then(CommandManager.argument("Player", StringArgumentType.string())
+                                .executes(context -> unbanishMember(context, StringArgumentType.getString(context, "Player"))))));
     }
 
     private static int acceptJoinRequest(CommandContext<ServerCommandSource> context, String requester) throws CommandSyntaxException {
@@ -63,4 +66,11 @@ public class PopulationManagerCommands {
         return 1;
     }
 
+    private static int unbanishMember(CommandContext<ServerCommandSource> context, String member) throws CommandSyntaxException {
+        PlayerEntity executor = context.getSource().getPlayer();
+        PlayerEntity player = playerManager.getPlayer(member);
+        if (executor == null || player == null) return 1;
+        KingdomProcedureChecks.unBanishPlayer(InterfaceTypes.COMMAND, ((PlayerEntityInf) executor).getKingdomId(), player.getUuid(), executor.getUuid());
+        return 1;
+    }
 }

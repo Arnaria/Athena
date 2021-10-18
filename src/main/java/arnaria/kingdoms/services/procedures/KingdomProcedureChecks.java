@@ -16,7 +16,7 @@ public class KingdomProcedureChecks {
         if (platform.equals(InterfaceTypes.COMMAND)) {
             NotificationManager.send(receiver, message, notificationType);
         } else {
-            // API STUFF LOL!!!
+            System.out.println("API go brrrrrrr");
         }
     }
 
@@ -181,6 +181,15 @@ public class KingdomProcedureChecks {
                 } else sendNotification(platform, executor, "Only a king or adviser can rus with command", NotificationTypes.WARN);
             } else sendNotification(platform, executor, "You cant not remove yourself", NotificationTypes.ERROR);
         } else sendNotification(platform, executor, "You are not part of a kingdom", NotificationTypes.ERROR);
+    }
+
+    public static void leaveKingdom(Enum<InterfaceTypes> platform, String kingdomID, UUID executor) {
+        if (!kingdomID.isEmpty()) {
+            if (KingdomsData.getMembers(kingdomID).contains(executor)) {
+                KingdomProcedures.removeMember(kingdomID, executor);
+                sendNotification(platform, executor, "You have left " + kingdomID, NotificationTypes.EVENT);
+            } else sendNotification(platform, executor, "You are not part of this kingdom", NotificationTypes.WARN);
+        } else sendNotification(platform, executor, "You are not in a kingdom", NotificationTypes.WARN);
     }
 
     public static void banishPlayer(Enum<InterfaceTypes> platform, String kingdomID, UUID player, UUID executor) {
