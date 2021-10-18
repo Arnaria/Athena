@@ -4,6 +4,7 @@ import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.kingdoms.services.claims.Claim;
 import arnaria.kingdoms.services.claims.ClaimManager;
 import arnaria.kingdoms.services.data.KingdomsData;
+import arnaria.kingdoms.util.BetterPlayerManager;
 import arnaria.notifacaitonlib.NotificationManager;
 import arnaria.notifacaitonlib.NotificationTypes;
 import com.google.gson.JsonArray;
@@ -11,15 +12,16 @@ import com.google.gson.JsonElement;
 import mrnavastar.sqlib.api.DataContainer;
 import mrnavastar.sqlib.api.Table;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.scoreboard.AbstractTeam;
+import net.minecraft.scoreboard.Team;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.List;
 import java.util.UUID;
 
-import static arnaria.kingdoms.Kingdoms.playerManager;
 import static arnaria.kingdoms.Kingdoms.database;
+import static arnaria.kingdoms.Kingdoms.scoreboard;
 
 public class KingdomProcedures {
 
@@ -46,8 +48,7 @@ public class KingdomProcedures {
             updateKing(kingdomId, KingdomsData.getKing(kingdomId));
         }
 
-        List<ServerPlayerEntity> onlinePlayers = playerManager.getPlayerList();
-        for (ServerPlayerEntity player : onlinePlayers) {
+        for (ServerPlayerEntity player : BetterPlayerManager.getOnlinePlayers()) {
             ((PlayerEntityInf) player).setKingdomId("");
             ((PlayerEntityInf) player).setKingship(false);
             setupPlayer(player);
@@ -59,7 +60,9 @@ public class KingdomProcedures {
     public static void createKingdom(String kingdomId, UUID uuid) {
         kingdomData.beginTransaction();
         DataContainer kingdom = kingdomData.createDataContainer(kingdomId);
+        Team kingdomTeam = scoreboard.addTeam(kingdomId);
 
+        kingdomTeam.setNameTagVisibilityRule(AbstractTeam.VisibilityRule.HIDE_FOR_OTHER_TEAMS);
         kingdom.put("KING", uuid);
         kingdom.put("COLOR", "white");
         kingdom.put("MEMBERS", new JsonArray());
@@ -71,16 +74,16 @@ public class KingdomProcedures {
 
         addMember(kingdomId, uuid);
 
-        PlayerEntity executor = playerManager.getPlayer(uuid);
+        PlayerEntity executor = BetterPlayerManager.getPlayer(uuid);
         if (executor != null) ((PlayerEntityInf) executor).setKingship(true);
         kingdomData.endTransaction();
     }
 
     public static void removeKingdom(String kingdomId) {
         kingdomData.drop(kingdomId);
+        scoreboard.removeTeam(scoreboard.getTeam(kingdomId));
         ClaimManager.dropClaims(kingdomId);
-        List<ServerPlayerEntity> onlinePlayers = playerManager.getPlayerList();
-        for (ServerPlayerEntity player : onlinePlayers) {
+        for (ServerPlayerEntity player : BetterPlayerManager.getOnlinePlayers()) {
             if (((PlayerEntityInf) player).getKingdomId().equals(kingdomId)) {
                 ((PlayerEntityInf) player).setKingdomId("");
                 ((PlayerEntityInf) player).setKingship(false);
@@ -92,8 +95,7 @@ public class KingdomProcedures {
         DataContainer kingdom = kingdomData.get(kingdomID);
         kingdom.put("KING", king);
 
-        List<ServerPlayerEntity> onlinePlayers = playerManager.getPlayerList();
-        for (ServerPlayerEntity player : onlinePlayers) {
+        for (ServerPlayerEntity player : BetterPlayerManager.getOnlinePlayers()) {
             if (((PlayerEntityInf) player).getKingdomId().equals(kingdomID) && ((PlayerEntityInf) player).isKing()) {
                 ((PlayerEntityInf) player).setKingship(false);
             }
@@ -141,9 +143,10 @@ public class KingdomProcedures {
 
     public static void setColor(String kingdomId, Formatting color) {
         DataContainer kingdom = kingdomData.get(kingdomId);
+        Team kingdomTeam = scoreboard.getTeam(kingdomId);
         kingdom.put("COLOR", color.getName());
+        if (kingdomTeam != null) kingdomTeam.setColor(color);
         ClaimManager.updateClaimTagColor(kingdomId, color.getName());
-
     }
 
     public static void addJoinRequest(String kingdomID, UUID executor) {
@@ -181,24 +184,25 @@ public class KingdomProcedures {
 
         members.add(uuid.toString());
         kingdom.put("MEMBERS", members);
+        scoreboard.addPlayerToTeam(BetterPlayerManager.getName(uuid), scoreboard.getTeam(kingdomId));
 
-        List<ServerPlayerEntity> onlinePlayers = playerManager.getPlayerList();
-        for (ServerPlayerEntity player : onlinePlayers) {
+        for (ServerPlayerEntity player : BetterPlayerManager.getOnlinePlayers()) {
             if (player.getUuid().equals(uuid)) ((PlayerEntityInf) player).setKingdomId(kingdomId);
         }
     }
 
-    public static void removeMember(String kingdomID, UUID player) {
+    public static void removeMember(String kingdomID, UUID uuid) {
         DataContainer kingdom = kingdomData.get(kingdomID);
         JsonArray members = kingdom.getJson("MEMBERS").getAsJsonArray();
         int count = 0;
 
         for (JsonElement member : members) {
-            if (member.getAsString().equals(player.toString())) break;
+            if (member.getAsString().equals(uuid.toString())) break;
             count++;
         }
         members.remove(count);
         kingdom.put("MEMBERS", members);
+        scoreboard.removePlayerFromTeam(BetterPlayerManager.getName(uuid), scoreboard.getTeam(kingdomID));
     }
 
     public static void blockPlayer(String kingdomID, UUID player) {

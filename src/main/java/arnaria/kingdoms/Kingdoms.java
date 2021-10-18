@@ -13,6 +13,7 @@ import mrnavastar.sqlib.api.databases.SQLiteDatabase;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.world.ServerWorld;
@@ -31,6 +32,7 @@ public class Kingdoms implements ModInitializer {
     public static PlayerManager playerManager;
     public static ServerWorld overworld;
     public static UserCache userCache;
+    public static Scoreboard scoreboard;
     public static Database database;
     public static Settings settings;
 
@@ -58,6 +60,7 @@ public class Kingdoms implements ModInitializer {
             ServerLifecycleEvents.SERVER_STARTED.register(server -> {
                 playerManager = server.getPlayerManager();
                 overworld = server.getOverworld();
+                scoreboard = server.getScoreboard();
 
                 ClaimManager.init();
             });

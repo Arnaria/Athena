@@ -3,6 +3,7 @@ package arnaria.kingdoms.services.rest;
 import arnaria.kingdoms.services.claims.Claim;
 import arnaria.kingdoms.services.claims.ClaimManager;
 import arnaria.kingdoms.services.data.KingdomsData;
+import arnaria.kingdoms.util.BetterPlayerManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mojang.authlib.GameProfile;
@@ -29,9 +30,7 @@ public class KingdomDataController {
         ObjectNode mapping = mapper.createObjectNode();
 
         UUID king = KingdomsData.getKing(kingdomId);
-        Optional<GameProfile> kingProfile = userCache.getByUuid(king);
-        kingProfile.ifPresent(gameProfile -> mapping.put("kingUsername", gameProfile.getName()));
-        mapping.put("kingUuid", king.toString());
+        mapping.put("kingUuid", BetterPlayerManager.getName(king));
 
         mapping.put("color", KingdomsData.getColor(kingdomId));
         mapping.put("claimMarkerPointsTotal", KingdomsData.getClaimMarkerPointsTotal(kingdomId));
@@ -47,8 +46,7 @@ public class KingdomDataController {
         ArrayList<String> memberUsernames = new ArrayList<>();
         ArrayList<UUID> memberUuids = new ArrayList<>();
         for (UUID member : KingdomsData.getMembers(kingdomId)) {
-            Optional<GameProfile> memberProfile = userCache.getByUuid(member);
-            memberProfile.ifPresent(gameProfile -> memberUsernames.add(gameProfile.getName()));
+            memberUsernames.add(BetterPlayerManager.getName(member));
             memberUuids.add(member);
         }
 
@@ -64,8 +62,7 @@ public class KingdomDataController {
         ArrayList<String> requesterUsernames = new ArrayList<>();
         ArrayList<UUID> requesterUuids = new ArrayList<>();
         for (UUID member : KingdomsData.getJoinRequests(kingdomId)) {
-            Optional<GameProfile> requesterProfile = userCache.getByUuid(member);
-            requesterProfile.ifPresent(gameProfile -> requesterUsernames.add(gameProfile.getName()));
+            requesterUsernames.add(BetterPlayerManager.getName(member));
             requesterUuids.add(member);
         }
 
@@ -81,8 +78,7 @@ public class KingdomDataController {
         ArrayList<String> blockedUsernames = new ArrayList<>();
         ArrayList<UUID> blockedUuids = new ArrayList<>();
         for (UUID member : KingdomsData.getBlockedPlayers(kingdomId)) {
-            Optional<GameProfile> blockedProfile = userCache.getByUuid(member);
-            blockedProfile.ifPresent(gameProfile -> blockedUsernames.add(gameProfile.getName()));
+            blockedUsernames.add(BetterPlayerManager.getName(member));
             blockedUuids.add(member);
         }
 
