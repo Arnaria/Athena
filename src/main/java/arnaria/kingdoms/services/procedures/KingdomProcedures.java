@@ -62,6 +62,7 @@ public class KingdomProcedures {
         Team kingdomTeam = scoreboard.addTeam(kingdomId);
 
         kingdomTeam.setNameTagVisibilityRule(AbstractTeam.VisibilityRule.HIDE_FOR_OTHER_TEAMS);
+        kingdomTeam.setFriendlyFireAllowed(false);
         kingdom.put("KING", uuid);
         kingdom.put("COLOR", "white");
         kingdom.put("MEMBERS", new JsonArray());

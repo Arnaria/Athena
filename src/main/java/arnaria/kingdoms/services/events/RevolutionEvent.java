@@ -5,22 +5,27 @@ import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.kingdoms.services.procedures.KingdomProcedures;
 import arnaria.notifacaitonlib.NotificationManager;
 import arnaria.notifacaitonlib.NotificationTypes;
-import com.google.gson.JsonElement;
-import mrnavastar.sqlib.api.DataContainer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.scoreboard.Team;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 
 import java.util.UUID;
 
 import static arnaria.kingdoms.Kingdoms.playerManager;
+import static arnaria.kingdoms.Kingdoms.scoreboard;
 import static arnaria.kingdoms.Kingdoms.settings;
 
 public class RevolutionEvent extends Event {
 
+    private final Team kingdomTeam;
+
     public RevolutionEvent(String kingdomId) {
         super(settings.REVOLUTION_DURATION, "REVOLUTION");
+
+        this.kingdomTeam = scoreboard.getTeam(kingdomId);
+        if (this.kingdomTeam != null) this.kingdomTeam.setFriendlyFireAllowed(true);
 
         for (UUID member : KingdomsData.getMembers(kingdomId)) {
             ServerPlayerEntity player = playerManager.getPlayer(member);
@@ -46,6 +51,8 @@ public class RevolutionEvent extends Event {
 
     @Override
     public void finish() {
+        if (this.kingdomTeam != null) this.kingdomTeam.setFriendlyFireAllowed(false);
+
         for (PlayerEntity member : this.getMembers()) {
             NotificationManager.send(member.getUuid(), "The revolution has ended and the king remains in power", NotificationTypes.WARN);
         }
