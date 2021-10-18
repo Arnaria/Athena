@@ -73,7 +73,7 @@ public class KingdomProcedureChecks {
                     userCache.getByUuid(player).ifPresent(gameProfile -> sendNotification(platform, executor, "Leadership of " + kingdomID + " has been transferred to " + gameProfile.getName(), NotificationTypes.EVENT));
                     sendNotification(InterfaceTypes.COMMAND, player, "You have been made the leader of " + kingdomID, NotificationTypes.EVENT);
 
-                    } else {
+                } else {
                     KingdomProcedures.updateKing(kingdomID, player);
                     for (UUID member : KingdomsData.getMembers(kingdomID)) {
                         if (!member.equals(executor) || !member.equals(player)) {

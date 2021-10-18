@@ -25,6 +25,7 @@ public class ClaimManager {
     private static final ArrayList<Claim> claims = new ArrayList<>();
 
     public static void init() {
+        claimData.beginTransaction();
         for (DataContainer claim : claimData.getDataContainers()) {
             String kingdomId = claim.getString("KINGDOM_ID");
             BlockPos pos = claim.getBlockPos("BANNER_POS");
@@ -39,20 +40,21 @@ public class ClaimManager {
             }
         }
         ClaimEvents.register();
+        claimData.endTransaction();
     }
 
     public static void addClaim(String kingdomId, BlockPos pos, BannerBlock banner) {
-        claimData.beginTransaction();
         Claim claim = new Claim(kingdomId, pos);
         claims.add(claim);
-        DataContainer claimDataContainer = claimData.createDataContainer(claim.getPos().toString());
-        claimData.put(claimDataContainer);
+
+        claimData.beginTransaction();
+        DataContainer claimDataContainer = claimData.createDataContainer(claim.getPos().toShortString());
         claimDataContainer.put("KINGDOM_ID", claim.getKingdomId());
         claimDataContainer.put("BANNER_POS", claim.getPos());
+        claimData.endTransaction();
 
         ((BannerMarkerInf) banner).makeClaimMarker();
         KingdomProcedures.addClaimMarkerPointsUsed(kingdomId, 1);
-        claimData.endTransaction();
     }
 
     public static void dropClaim(BlockPos pos) {
@@ -61,7 +63,7 @@ public class ClaimManager {
             if (claim.getPos().equals(pos)) {
                 claim.removeHologram();
                 claimToDrop = claim;
-                claimData.drop(pos.toString());
+                claimData.drop(pos.toShortString());
                 KingdomProcedures.removeClaimMarkerPointsUsed(claim.getKingdomId(), 1);
                 break;
             }
@@ -80,12 +82,12 @@ public class ClaimManager {
                 claimsToDrop.add(claim);
                 claimData.drop(pos.toString());
                 if (overworld.getBlockState(pos).getBlock() instanceof BannerBlock) overworld.breakBlock(pos, false);
-                KingdomProcedures.removeClaimMarkerPointsUsed(kingdomId, 1);
             }
         }
+        claimData.endTransaction();
 
         claims.removeAll(claimsToDrop);
-        claimData.endTransaction();
+        KingdomProcedures.removeClaimMarkerPointsUsed(kingdomId, claimsToDrop.size());
     }
 
     public static ArrayList<Claim> getClaims() {

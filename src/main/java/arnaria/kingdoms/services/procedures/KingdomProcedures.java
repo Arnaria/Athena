@@ -37,6 +37,7 @@ public class KingdomProcedures {
     }
 
     public static void reload() {
+        kingdomData.beginTransaction();
 
         for (String kingdomId : kingdomData.getIds()) {
             Formatting formatting = Formatting.byName(KingdomsData.getColor(kingdomId));
@@ -51,6 +52,8 @@ public class KingdomProcedures {
             ((PlayerEntityInf) player).setKingship(false);
             setupPlayer(player);
         }
+
+        kingdomData.endTransaction();
     }
 
     public static void createKingdom(String kingdomId, UUID uuid) {
