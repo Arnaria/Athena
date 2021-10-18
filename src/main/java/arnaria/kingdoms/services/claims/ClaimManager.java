@@ -25,7 +25,6 @@ public class ClaimManager {
     private static final ArrayList<Claim> claims = new ArrayList<>();
 
     public static void init() {
-        claimData.beginTransaction();
         for (DataContainer claim : claimData.getDataContainers()) {
             String kingdomId = claim.getString("KINGDOM_ID");
             BlockPos pos = claim.getBlockPos("BANNER_POS");
@@ -40,7 +39,6 @@ public class ClaimManager {
             }
         }
         ClaimEvents.register();
-        claimData.endTransaction();
     }
 
     public static void addClaim(String kingdomId, BlockPos pos, BannerBlock banner) {
