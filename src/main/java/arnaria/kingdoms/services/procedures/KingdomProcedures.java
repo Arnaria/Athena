@@ -53,7 +53,6 @@ public class KingdomProcedures {
             ((PlayerEntityInf) player).setKingship(false);
             setupPlayer(player);
         }
-
         kingdomData.endTransaction();
     }
 
@@ -69,8 +68,7 @@ public class KingdomProcedures {
         kingdom.put("REQUESTS", new JsonArray());
         kingdom.put("BLOCKED", new JsonArray());
         kingdom.put("ADVISERS", new JsonArray());
-        kingdom.put("CLAIM_MARKER_POINTS_TOTAL", 1);
-        kingdom.put("CLAIM_MARKER_POINTS_USED", 0);
+        kingdom.put("BANNER_COUNT", 0);
 
         addMember(kingdomId, uuid);
 
@@ -221,32 +219,26 @@ public class KingdomProcedures {
         }
     }
 
-    public static void addClaimMarkerPointsTotal(String kingdomId, int amount) {
+    public static void addToBannerCount(String kingdomId, int amount) {
         DataContainer kingdom = kingdomData.get(kingdomId);
-        int originalAmount = kingdom.getInt("CLAIM_MARKER_POINTS_TOTAL");
-        kingdom.put("CLAIM_MARKER_POINTS_TOTAL", originalAmount - amount);
+        int originalAmount = kingdom.getInt("BANNER_COUNT");
+        kingdom.put("BANNER_COUNT", originalAmount + amount);
     }
 
-    public static void removeClaimMarkerPointsTotal(String kingdomId, int amount) {
+    public static void removeFromBannerCount(String kingdomId, int amount) {
         DataContainer kingdom = kingdomData.get(kingdomId);
-        int originalAmount = kingdom.getInt("CLAIM_MARKER_POINTS_TOTAL");
-        kingdom.put("CLAIM_MARKER_POINTS_TOTAL", originalAmount - amount);
+        int originalAmount = kingdom.getInt("BANNER_COUNT");
+        kingdom.put("BANNER_COUNT", originalAmount - amount);
     }
 
-    public static void addClaimMarkerPointsUsed(String kingdomId, int amount) {
-        DataContainer kingdom = kingdomData.get(kingdomId);
-        int originalAmount = kingdom.getInt("CLAIM_MARKER_POINTS_USED");
-        kingdom.put("CLAIM_MARKER_POINTS_USED", originalAmount + amount);
-    }
-
-    public static void removeClaimMarkerPointsUsed(String kingdomId, int amount) {
-        DataContainer kingdom = kingdomData.get(kingdomId);
-        int originalAmount = kingdom.getInt("CLAIM_MARKER_POINTS_USED");
-        kingdom.put("CLAIM_MARKER_POINTS_TOTAL_USED", originalAmount - amount);
-    }
-
-    public static void addStartingBannerPos(String kingdomId, BlockPos pos) {
+    public static void setStartingBannerPos(String kingdomId, BlockPos pos) {
         DataContainer kingdom = kingdomData.get(kingdomId);
         kingdom.put("STARTING_BANNER_POS", pos);
+    }
+
+    public static void addXp(String kingdomId, int amount) {
+        DataContainer kingdom = kingdomData.get(kingdomId);
+        int newAmount = kingdom.getInt("XP") + amount;
+        kingdom.put("XP", newAmount);
     }
 }

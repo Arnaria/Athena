@@ -2,6 +2,9 @@ package arnaria.kingdoms.services.claims;
 
 import arnaria.kingdoms.callbacks.BlockPlaceCallback;
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
+import arnaria.kingdoms.services.data.KingdomsData;
+import arnaria.notifacaitonlib.NotificationManager;
+import arnaria.notifacaitonlib.NotificationTypes;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.block.*;
 import net.minecraft.nbt.NbtCompound;
@@ -29,7 +32,8 @@ public class ClaimEvents {
                         NbtCompound nbt = item.getNbt();
                         if (nbt != null && nbt.getBoolean("IS_CLAIM_MARKER")) {
                             if (ClaimManager.placedFirstBanner(kingdomId) && !ClaimManager.validBannerPos(kingdomId, pos)) return false;
-                            ClaimManager.addClaim(kingdomId, pos, bannerBlock);
+                            if (ClaimManager.canAffordBanner(kingdomId)) ClaimManager.addClaim(kingdomId, pos, bannerBlock);
+                            else NotificationManager.send(player.getUuid(), "Your kingdom does not have enough xp", NotificationTypes.ERROR);
                         }
                     }
                 }

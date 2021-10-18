@@ -61,18 +61,18 @@ public class KingdomsData {
         return blockedPlayers;
     }
 
-    public static int getClaimMarkerPointsTotal(String kingdomId) {
+    public static int getBannerCount(String kingdomId) {
         DataContainer kingdom = kingdomData.get(kingdomId);
-        return kingdom.getInt("CLAIM_MARKER_POINTS_TOTAL");
-    }
-
-    public static int getClaimMarkerPointsUsed(String kingdomId) {
-        DataContainer kingdom = kingdomData.get(kingdomId);
-        return kingdom.getInt("CLAIM_MARKER_POINTS_USED");
+        return kingdom.getInt("BANNER_COUNT");
     }
 
     public static BlockPos getStartingBannerPos(String kingdomId) {
         DataContainer kingdom = kingdomData.get(kingdomId);
         return kingdom.getBlockPos("STARTING_BANNER_POS");
+    }
+
+    public static int getXp(String kingdomId) {
+        DataContainer kingdom = kingdomData.get(kingdomId);
+        return kingdom.getInt("XP");
     }
 }

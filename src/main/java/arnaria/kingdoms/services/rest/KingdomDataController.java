@@ -6,13 +6,10 @@ import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.kingdoms.util.BetterPlayerManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.mojang.authlib.GameProfile;
 import net.minecraft.util.math.BlockPos;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-
-import static arnaria.kingdoms.Kingdoms.userCache;
 
 @RestController
 public class KingdomDataController {
@@ -33,8 +30,8 @@ public class KingdomDataController {
         mapping.put("kingUuid", BetterPlayerManager.getName(king));
 
         mapping.put("color", KingdomsData.getColor(kingdomId));
-        mapping.put("claimMarkerPointsTotal", KingdomsData.getClaimMarkerPointsTotal(kingdomId));
-        mapping.put("claimMarkerPointsUsed", KingdomsData.getClaimMarkerPointsUsed(kingdomId));
+        mapping.put("xp", KingdomsData.getXp(kingdomId));
+        mapping.put("bannerCount", KingdomsData.getBannerCount(kingdomId));
         mapping.putPOJO("startingBannerPos", KingdomsData.getStartingBannerPos(kingdomId));
         return mapping;
     }

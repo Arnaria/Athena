@@ -2,6 +2,7 @@ package arnaria.kingdoms.services.claims;
 
 import arnaria.kingdoms.interfaces.BannerMarkerInf;
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
+import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.kingdoms.services.procedures.KingdomProcedures;
 import arnaria.kingdoms.util.ClaimHelpers;
 import mrnavastar.sqlib.api.DataContainer;
@@ -52,7 +53,8 @@ public class ClaimManager {
         claimData.endTransaction();
 
         ((BannerMarkerInf) banner).makeClaimMarker();
-        KingdomProcedures.addClaimMarkerPointsUsed(kingdomId, 1);
+        KingdomProcedures.addToBannerCount(kingdomId, 1);
+        if (!placedFirstBanner(kingdomId)) KingdomProcedures.setStartingBannerPos(kingdomId, pos);
     }
 
     public static void dropClaim(BlockPos pos) {
@@ -62,7 +64,7 @@ public class ClaimManager {
                 claim.removeHologram();
                 claimToDrop = claim;
                 claimData.drop(pos.toShortString());
-                KingdomProcedures.removeClaimMarkerPointsUsed(claim.getKingdomId(), 1);
+                KingdomProcedures.removeFromBannerCount(claim.getKingdomId(), 1);
                 break;
             }
         }
@@ -70,6 +72,7 @@ public class ClaimManager {
         if (claimToDrop != null) claims.remove(claimToDrop);
     }
 
+    //Only use when dropping kingdoms
     public static void dropClaims(String kingdomId) {
         claimData.beginTransaction();
         ArrayList<Claim> claimsToDrop = new ArrayList<>();
@@ -83,9 +86,7 @@ public class ClaimManager {
             }
         }
         claimData.endTransaction();
-
         claims.removeAll(claimsToDrop);
-        KingdomProcedures.removeClaimMarkerPointsUsed(kingdomId, claimsToDrop.size());
     }
 
     public static ArrayList<Claim> getClaims() {
@@ -133,10 +134,7 @@ public class ClaimManager {
     }
 
     public static boolean placedFirstBanner(String kingdomId) {
-        for (Claim claim : claims) {
-            if (claim.getKingdomId().equalsIgnoreCase(kingdomId)) return true;
-        }
-        return false;
+        return KingdomsData.getBannerCount(kingdomId) > 0;
     }
 
     public static void renderClaims(ServerPlayerEntity player) {
@@ -157,5 +155,10 @@ public class ClaimManager {
             if (!claim.getPos().equals(ignoreClaimPos) && claim.contains(pos)) return false;
         }
         return true;
+    }
+
+    public static boolean canAffordBanner(String kingdomId) {
+        int bannersAllowed = (int) Math.floor((float) KingdomsData.getXp(kingdomId) / 1000) + 1;
+        return bannersAllowed > KingdomsData.getBannerCount(kingdomId);
     }
 }
