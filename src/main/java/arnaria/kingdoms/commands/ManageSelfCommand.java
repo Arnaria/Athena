@@ -26,7 +26,8 @@ public class ManageSelfCommand {
         PlayerEntity player = context.getSource().getPlayer();
         if (player == null) return 1;
         Enum<InterfaceTypes> platform = InterfaceTypes.COMMAND;
-        KingdomProcedureChecks.addJoinRequest(platform, kingdom, context.getSource().getPlayer().getUuid());
+        System.out.println(kingdom);
+        KingdomProcedureChecks.addJoinRequest(platform, kingdom, player.getUuid());
         return 1;
     }
 
