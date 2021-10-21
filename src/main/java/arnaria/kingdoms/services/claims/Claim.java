@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import static arnaria.kingdoms.Kingdoms.overworld;
+
 public class Claim implements Serializable {
 
     private String kingdomId;

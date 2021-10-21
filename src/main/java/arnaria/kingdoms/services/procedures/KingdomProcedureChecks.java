@@ -194,7 +194,7 @@ public class KingdomProcedureChecks {
     public static void leaveKingdom(Enum<InterfaceTypes> platform, String kingdomID, UUID executor) {
         if (!kingdomID.isEmpty()) {
             if (KingdomsData.getMembers(kingdomID).contains(executor)) {
-                if (KingdomsData.getKing(kingdomID).equals(executor)) {
+                if (!KingdomsData.getKing(kingdomID).equals(executor)) {
                     KingdomProcedures.removeMember(kingdomID, executor);
                     sendNotification(platform, executor, "You have left " + kingdomID, NotificationTypes.EVENT);
                 } else sendNotification(platform, executor, "A leader can not leave their kingdom, they must either disband their kingdom or transfer their leadership", NotificationTypes.WARN);

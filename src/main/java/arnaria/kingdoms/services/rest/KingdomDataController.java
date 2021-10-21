@@ -26,8 +26,7 @@ public class KingdomDataController {
     ObjectNode kingdom(@PathVariable String kingdomId) {
         ObjectNode mapping = mapper.createObjectNode();
 
-        UUID king = KingdomsData.getKing(kingdomId);
-        mapping.put("kingUuid", BetterPlayerManager.getName(king));
+        mapping.put("kingUuid", KingdomsData.getKing(kingdomId).toString());
 
         mapping.put("color", KingdomsData.getColor(kingdomId));
         mapping.put("xp", KingdomsData.getXp(kingdomId));
