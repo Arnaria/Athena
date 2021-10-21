@@ -7,6 +7,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -52,10 +53,6 @@ public abstract class Event {
     }
 
     protected abstract void finish();
-
-    public String getName() {
-        return this.name;
-    }
 
     public ArrayList<ServerPlayerEntity> getMembers() {
         return this.members;

@@ -158,7 +158,7 @@ public class ClaimManager {
     }
 
     public static boolean canAffordBanner(String kingdomId) {
-        int bannersAllowed = (int) Math.floor((float) KingdomsData.getXp(kingdomId) / 1000) + 1;
+        int bannersAllowed = (int) Math.ceil((float) KingdomsData.getXp(kingdomId) / 1000);
         return bannersAllowed > KingdomsData.getBannerCount(kingdomId);
     }
 }

@@ -11,6 +11,7 @@ import net.minecraft.scoreboard.Team;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 import static arnaria.kingdoms.Kingdoms.playerManager;

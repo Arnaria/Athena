@@ -1,7 +1,7 @@
 package arnaria.kingdoms;
 
 import arnaria.kingdoms.commands.*;
-import arnaria.kingdoms.services.rest.RestApi;
+import arnaria.kingdoms.services.api.RestAPI;
 import arnaria.kingdoms.util.Settings;
 import arnaria.kingdoms.services.claims.ClaimManager;
 import arnaria.kingdoms.services.procedures.KingdomProcedures;
@@ -17,11 +17,6 @@ import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.NbtText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.UserCache;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -55,14 +50,13 @@ public class Kingdoms implements ModInitializer {
         if (validConfig) {
             database = new SQLiteDatabase(settings.DATABASE_NAME, settings.SQLITE_DIRECTORY);
 
-            RestApi.init();
-
             ServerLifecycleEvents.SERVER_STARTED.register(server -> {
                 playerManager = server.getPlayerManager();
                 overworld = server.getOverworld();
                 scoreboard = server.getScoreboard();
 
                 ClaimManager.init();
+                RestAPI.init();
             });
 
             ServerLifecycleEvents.SERVER_STARTING.register(server -> {

@@ -2,7 +2,7 @@ package arnaria.kingdoms.services.claims;
 
 import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.kingdoms.util.ClaimHelpers;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.gson.annotations.JsonAdapter;
 import eu.pb4.holograms.api.holograms.WorldHologram;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import static arnaria.kingdoms.Kingdoms.overworld;
+
 public class Claim implements Serializable {
 
     private String kingdomId;
@@ -91,7 +92,6 @@ public class Claim implements Serializable {
         return this.color;
     }
 
-    @JsonIgnore
     public ArrayList<ClaimEdge> getClaimEdges() {
         return this.edges;
     }
