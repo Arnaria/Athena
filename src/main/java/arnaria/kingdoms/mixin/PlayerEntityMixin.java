@@ -3,11 +3,11 @@ package arnaria.kingdoms.mixin;
 import arnaria.kingdoms.callbacks.PlayerDeathCallback;
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.kingdoms.services.claims.ClaimManager;
+import arnaria.kingdoms.util.BetterPlayerManager;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.BannerItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -18,8 +18,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import static arnaria.kingdoms.Kingdoms.playerManager;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements PlayerEntityInf {
@@ -51,13 +49,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerEn
 
     @Inject(method = "onDeath", at = @At("HEAD"))
     public void onDeath(DamageSource source, CallbackInfo ci) {
-        PlayerEntity player = playerManager.getPlayer(this.getUuid());
+        PlayerEntity player = BetterPlayerManager.getPlayer(this.uuid);
         PlayerDeathCallback.EVENT.invoker().place(player, source);
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
-        ServerPlayerEntity player = playerManager.getPlayer(this.getUuid());
+        ServerPlayerEntity player = (ServerPlayerEntity) BetterPlayerManager.getPlayer(this.uuid);
         ItemStack stack = this.getItemsHand().iterator().next();
         if (stack.getItem() instanceof BannerItem) {
             NbtCompound nbt = stack.getNbt();

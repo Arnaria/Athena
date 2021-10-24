@@ -1,10 +1,8 @@
 package arnaria.kingdoms.util;
 
 import arnaria.kingdoms.services.claims.Claim;
-import arnaria.kingdoms.services.claims.ClaimEdge;
 import arnaria.kingdoms.services.claims.ClaimManager;
 import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.particle.ParticleEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Formatting;
@@ -25,8 +23,8 @@ public class ClaimHelpers {
         int startZ = center.getZ() - startingOffset;
 
         int currentX = startX;
-        int currentZ = startZ;
         for (int i = 0; i < diameter; i++) {
+            int currentZ = startZ;
             for (int j = 0; j < diameter; j++) {
                 BlockPos pos = new BlockPos(currentX, 1, currentZ);
                 if (removeOverlapping && !ClaimManager.claimExistsAt(pos)) chunkList.add(overworld.getChunk(pos));
@@ -34,7 +32,6 @@ public class ClaimHelpers {
                 currentZ += 16;
             }
             currentX += 16;
-            currentZ = startZ;
         }
         return chunkList;
     }
@@ -46,80 +43,33 @@ public class ClaimHelpers {
         };
     }
 
-    private static void render(ServerPlayerEntity player, ArrayList<ClaimEdge> edges, BlockPos pos, String color, int range) {
-        Formatting colorFormatting = Formatting.byName(color);
+    public static void spawnParticle(ServerPlayerEntity player, BlockPos pos, double offset, Formatting color, int range) {
+        if (ClaimManager.claimExistsAt(pos)) return;
+        if (pos.getSquaredDistance(player.getBlockPos()) > range) return;
+
         Vec3f rgb = new Vec3f(255, 255, 255);
-        if (colorFormatting != null) rgb = new Vec3f(Vec3d.unpackRgb(colorFormatting.getColorValue()));
-
-        ParticleEffect effect = new DustParticleEffect(rgb, 2.0F);
-
-        int maxInterval = 5;
-        int maxCount = 20;
-
-        for (ClaimEdge edge : edges) {
-            int length = edge.length();
-
-            int interval = 1;
-            if (length > 0) {
-                interval = MathHelper.clamp(length / Math.min(maxCount, length), 1, maxInterval);
-            }
-
-            int steps = (length + interval - 1) / interval;
-            for (int i = 0; i <= steps; i++) {
-                double m = (double) (i * interval) / length;
-                 spawnParticleIfAllowed(player, effect, edge.projX(m), edge.projY(m), edge.projZ(m), pos, range);
-            }
-        }
-    }
-
-    public static void renderClaimEdges(ServerPlayerEntity player, Claim claim) {
-        ArrayList<ClaimEdge> edges = claim.getClaimEdges();
-        render(player, edges, claim.getPos(), claim.getColor(), 200);
-    }
-
-    public static void renderClaimForPlacement(ServerPlayerEntity player, BlockPos pos, String color) {
-        ArrayList<ClaimEdge> edges = new ArrayList<>();
-        BlockPos[] corners = getCorners(pos);
-
-        int y = pos.getY();
-        int minX = corners[0].getX();
-        int minZ = corners[0].getZ();
-        int maxX = corners[1].getX();
-        int maxZ = corners[1].getZ();
-
-        edges.add(new ClaimEdge(minX, y, minZ, minX, y, maxZ));
-        edges.add(new ClaimEdge(maxX, y, minZ, maxX, y, maxZ));
-        edges.add(new ClaimEdge(minX, y, minZ, maxX, y, minZ));
-        edges.add(new ClaimEdge(minX, y, maxZ, maxX, y, maxZ));
-        render(player, edges, pos, color, 256 * 256);
-    }
-
-    private static void spawnParticleIfAllowed(ServerPlayerEntity player, ParticleEffect effect, double x, double y, double z, BlockPos ignoreClaimPos, int range) {
+        if (color != null) rgb = new Vec3f(Vec3d.unpackRgb(color.getColorValue()));
+        DustParticleEffect effect = new DustParticleEffect(rgb, 2.0F);
         ServerWorld world = player.getServerWorld();
 
-        if (y < 0) return;
+        world.spawnParticles(player, effect, true, pos.getX() + offset, pos.getY(), pos.getZ() + offset, 1,0, 0, 0, 0);
+    }
 
-        Vec3d delta = player.getPos().subtract(x, y, z);
-        double length2 = delta.lengthSquared();
-        if (length2 > range) {
-            return;
+    public static void renderClaimLayer(ServerPlayerEntity player, BlockPos bannerPos, int y, Formatting color, int range) {
+        if (bannerPos.getSquaredDistance(player.getBlockPos()) > 256 * 256) return;
+        BlockPos[] corners = getCorners(bannerPos);
+
+        for (int j = 0; j < 82; j+= 2) {
+            spawnParticle(player, corners[0].add(j, y, 0), 0.5, color, range);
+            spawnParticle(player, corners[0].add(0, y, j), 0.5, color, range);
+            spawnParticle(player, corners[1].add(-j, y, 0), -0.5, color, range);
+            spawnParticle(player, corners[1].add(0, y, -j), -0.5, color, range);
         }
+    }
 
-        Vec3d rotation = player.getRotationVec(1.0F);
-        double dot = (delta.multiply(1.0 / Math.sqrt(length2))).dotProduct(rotation);
-        if (dot > 0.0) {
-            return;
+    public static void renderClaim(ServerPlayerEntity player, Claim claim) {
+        for (int i = 0; i < 256; i += 2) {
+            renderClaimLayer(player, claim.getPos(), i, Formatting.byName(claim.getColor()), 100);
         }
-
-        BlockPos particlePos = new BlockPos(x, y, z);
-        if (!ClaimManager.particleAllowedAt(particlePos, ignoreClaimPos)) return;
-
-        world.spawnParticles(
-                player, effect, true,
-                particlePos.getX(), particlePos.getY(), particlePos.getZ(),
-                1,
-                0.0, 0.0, 0.0,
-                0.0
-        );
     }
 }

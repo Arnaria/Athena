@@ -38,24 +38,6 @@ public class KingdomProcedures {
         kingdomData.endTransaction();
     }
 
-    public static void reload() {
-        kingdomData.beginTransaction();
-
-        for (String kingdomId : kingdomData.getIds()) {
-            Formatting formatting = Formatting.byName(KingdomsData.getColor(kingdomId));
-            if (formatting != null) setColor(kingdomId, formatting);
-
-            updateKing(kingdomId, KingdomsData.getKing(kingdomId));
-        }
-
-        for (ServerPlayerEntity player : BetterPlayerManager.getOnlinePlayers()) {
-            ((PlayerEntityInf) player).setKingdomId("");
-            ((PlayerEntityInf) player).setKingship(false);
-            setupPlayer(player);
-        }
-        kingdomData.endTransaction();
-    }
-
     public static void createKingdom(String kingdomId, UUID uuid) {
         kingdomData.beginTransaction();
         DataContainer kingdom = kingdomData.createDataContainer(kingdomId);
@@ -65,11 +47,12 @@ public class KingdomProcedures {
         kingdomTeam.setFriendlyFireAllowed(false);
         kingdom.put("KING", uuid);
         kingdom.put("COLOR", "white");
+        kingdom.put("BANNER_COUNT", 0);
+        kingdom.put("XP", 0);
         kingdom.put("MEMBERS", new JsonArray());
         kingdom.put("REQUESTS", new JsonArray());
         kingdom.put("BLOCKED", new JsonArray());
         kingdom.put("ADVISERS", new JsonArray());
-        kingdom.put("BANNER_COUNT", 0);
 
         addMember(kingdomId, uuid);
 

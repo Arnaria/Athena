@@ -2,7 +2,6 @@ package arnaria.kingdoms.services.claims;
 
 import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.kingdoms.util.ClaimHelpers;
-import com.google.gson.annotations.JsonAdapter;
 import eu.pb4.holograms.api.holograms.WorldHologram;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
@@ -22,14 +21,13 @@ public class Claim implements Serializable {
     private final BlockPos pos;
     private final WorldHologram hologram;
 
-    private final ArrayList<Chunk> claimChunks;
-    private final ArrayList<ClaimEdge> edges = new ArrayList<>();
+    private final ArrayList<Chunk> chunks;
 
     public Claim(String kingdomId, BlockPos pos) {
         this.kingdomId = kingdomId;
         this.color = KingdomsData.getColor(kingdomId);
         this.pos = pos;
-        this.claimChunks = ClaimHelpers.createChunkBox(pos, 5, true);
+        this.chunks = ClaimHelpers.createChunkBox(pos, 5, true);
         this.hologram = new WorldHologram(overworld, new Vec3d(pos.getX() + 0.5, pos.getY() + 2, pos.getZ() + 0.5));
 
         LiteralText claimTag = new LiteralText(kingdomId.toUpperCase());
@@ -37,32 +35,17 @@ public class Claim implements Serializable {
         if (formatting != null) claimTag.formatted(formatting);
         this.hologram.addText(claimTag);
         this.hologram.show();
-
-        BlockPos[] corners = ClaimHelpers.getCorners(this.pos);
-        int minX = corners[0].getX();
-        int minZ = corners[0].getZ();
-        int maxX = corners[1].getX();
-        int maxZ = corners[1].getZ();
-
-        for (int i = 0; i < 256; i++) {
-            if (i % 2 == 0) {
-                edges.add(new ClaimEdge(minX, i, minZ, minX, i, maxZ));
-                edges.add(new ClaimEdge(maxX, i, minZ, maxX, i, maxZ));
-                edges.add(new ClaimEdge(minX, i, minZ, maxX, i, minZ));
-                edges.add(new ClaimEdge(minX, i, maxZ, maxX, i, maxZ));
-            }
-        }
     }
 
     public boolean isOverlapping(ArrayList<Chunk> testChunks) {
-        for (Chunk chunk : this.claimChunks) {
+        for (Chunk chunk : this.chunks) {
             if (testChunks.contains(chunk)) return true;
         }
         return false;
     }
 
     public boolean contains(BlockPos pos) {
-        return this.claimChunks.contains(overworld.getChunk(pos));
+        return this.chunks.contains(overworld.getChunk(pos));
     }
 
     public void updateColor(String color) {
@@ -90,9 +73,5 @@ public class Claim implements Serializable {
 
     public String getColor() {
         return this.color;
-    }
-
-    public ArrayList<ClaimEdge> getClaimEdges() {
-        return this.edges;
     }
 }

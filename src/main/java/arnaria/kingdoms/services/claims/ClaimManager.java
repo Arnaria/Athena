@@ -11,6 +11,7 @@ import net.minecraft.block.BannerBlock;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import org.apache.logging.log4j.Level;
 
@@ -81,7 +82,7 @@ public class ClaimManager {
                 BlockPos pos = claim.getPos();
                 claim.removeHologram();
                 claimsToDrop.add(claim);
-                claimData.drop(pos.toString());
+                claimData.drop(pos.toShortString());
                 if (overworld.getBlockState(pos).getBlock() instanceof BannerBlock) overworld.breakBlock(pos, false);
             }
         }
@@ -138,27 +139,18 @@ public class ClaimManager {
     }
 
     public static void renderClaims(ServerPlayerEntity player) {
-        for (Claim claim : claims) {
-            ClaimHelpers.renderClaimEdges(player, claim);
-        }
+        for (Claim claim : claims) ClaimHelpers.renderClaim(player, claim);
     }
 
     public static void renderClaimsForPlacement(ServerPlayerEntity player) {
-        //ClaimHelpers.renderClaimForPlacement(player, player.getBlockPos(), KingdomsData.getColor(((PlayerEntityInf) player).getKingdomId()));
+        if (!claimExistsAt(player.getBlockPos())) ClaimHelpers.renderClaimLayer(player, player.getBlockPos(), (int) player.getY(), Formatting.WHITE, 256 * 256);
         for (Claim claim : claims) {
-            ClaimHelpers.renderClaimForPlacement(player, claim.getPos(), claim.getColor());
+            ClaimHelpers.renderClaimLayer(player, claim.getPos(), (int) player.getY(), Formatting.byName(claim.getColor()), 256 * 256);
         }
-    }
-
-    public static boolean particleAllowedAt(BlockPos pos, BlockPos ignoreClaimPos) {
-        for (Claim claim : claims) {
-            if (!claim.getPos().equals(ignoreClaimPos) && claim.contains(pos)) return false;
-        }
-        return true;
     }
 
     public static boolean canAffordBanner(String kingdomId) {
-        int bannersAllowed = (int) Math.ceil((float) KingdomsData.getXp(kingdomId) / 1000);
+        int bannersAllowed = (int) Math.floor((float) KingdomsData.getXp(kingdomId) / 1000) + 1;
         return bannersAllowed > KingdomsData.getBannerCount(kingdomId);
     }
 }
