@@ -57,21 +57,24 @@ public class ClaimHelpers {
 
     public static void renderClaimLayer(ServerPlayerEntity player, BlockPos bannerPos, int y, Formatting color, int range) {
         if (bannerPos.getSquaredDistance(player.getBlockPos()) > 256 * 256) return;
+        if (player.getBlockY() < 0) return;
         BlockPos[] corners = getCorners(bannerPos);
 
         for (int j = 0; j < 82; j+= 2) {
-            spawnParticle(player, corners[0].add(j, y, 0), 0.5, color, range);
-            spawnParticle(player, corners[0].add(0, y, j), 0.5, color, range);
-            spawnParticle(player, corners[1].add(-j, y, 0), -0.5, color, range);
-            spawnParticle(player, corners[1].add(0, y, -j), -0.5, color, range);
+            spawnParticle(player, corners[0].add(j, y, 0), 1, color, range);
+            spawnParticle(player, corners[0].add(0, y, j), 1, color, range);
+            spawnParticle(player, corners[1].add(-j, y, 0), -1, color, range);
+            spawnParticle(player, corners[1].add(0, y, -j), -1, color, range);
         }
     }
 
-    public static void renderClaim(ServerPlayerEntity player, Claim kingdomClaim) {
-        for (int i = 0; i < 256; i += 2) {
-            renderClaimLayer(player, kingdomClaim.getPos(), i, Formatting.byName(kingdomClaim.getColor()), 100);
+    public static void renderClaim(ServerPlayerEntity player, Claim claim) {
+        if (claim.getPos().getSquaredDistance(player.getBlockPos()) > 64 * 64) return;
+
+        int y = player.getBlockY() + 1;
+        if (y % 2 == 0) y += 1;
+        for (int i = y - 8; i < y + 8; i += 2) {
+            renderClaimLayer(player, claim.getPos(), i, Formatting.byName(claim.getColor()), 100);
         }
-
-
     }
 }

@@ -44,13 +44,13 @@ public class ClaimManager {
     }
 
     public static void addClaim(String kingdomId, BlockPos pos, BannerBlock banner) {
-        Claim kingdomClaim = new Claim(kingdomId, pos);
-        claims.add(kingdomClaim);
+        Claim claim = new Claim(kingdomId, pos);
+        claims.add(claim);
 
         claimData.beginTransaction();
-        DataContainer claimDataContainer = claimData.createDataContainer(kingdomClaim.getPos().toShortString());
-        claimDataContainer.put("KINGDOM_ID", kingdomClaim.getKingdomId());
-        claimDataContainer.put("BANNER_POS", kingdomClaim.getPos());
+        DataContainer claimDataContainer = claimData.createDataContainer(claim.getPos().toShortString());
+        claimDataContainer.put("KINGDOM_ID", claim.getKingdomId());
+        claimDataContainer.put("BANNER_POS", claim.getPos());
         claimData.endTransaction();
 
         ((BannerMarkerInf) banner).makeClaimMarker();
@@ -59,29 +59,29 @@ public class ClaimManager {
     }
 
     public static void dropClaim(BlockPos pos) {
-        Claim kingdomClaimToDrop = null;
-        for (Claim kingdomClaim : claims) {
-            if (kingdomClaim.getPos().equals(pos)) {
-                kingdomClaim.removeHologram();
-                kingdomClaimToDrop = kingdomClaim;
+        Claim claimToDrop = null;
+        for (Claim claim : claims) {
+            if (claim.getPos().equals(pos)) {
+                claim.removeHologram();
+                claimToDrop = claim;
                 claimData.drop(pos.toShortString());
-                KingdomProcedures.removeFromBannerCount(kingdomClaim.getKingdomId(), 1);
+                KingdomProcedures.removeFromBannerCount(claim.getKingdomId(), 1);
                 break;
             }
         }
 
-        if (kingdomClaimToDrop != null) claims.remove(kingdomClaimToDrop);
+        if (claimToDrop != null) claims.remove(claimToDrop);
     }
 
     //Only use when dropping kingdoms
     public static void dropClaims(String kingdomId) {
         claimData.beginTransaction();
         ArrayList<Claim> claimsToDrop = new ArrayList<>();
-        for (Claim kingdomClaim : claims) {
-            if (kingdomClaim.getKingdomId().equalsIgnoreCase(kingdomId)) {
-                BlockPos pos = kingdomClaim.getPos();
-                kingdomClaim.removeHologram();
-                claimsToDrop.add(kingdomClaim);
+        for (Claim claim : claims) {
+            if (claim.getKingdomId().equalsIgnoreCase(kingdomId)) {
+                BlockPos pos = claim.getPos();
+                claim.removeHologram();
+                claimsToDrop.add(claim);
                 claimData.drop(pos.toShortString());
                 if (overworld.getBlockState(pos).getBlock() instanceof BannerBlock) overworld.breakBlock(pos, false);
             }
@@ -95,41 +95,41 @@ public class ClaimManager {
     }
 
     public static ArrayList<Claim> getClaims(String kingdomId) {
-        ArrayList<Claim> kingdomKingdomClaims = new ArrayList<>();
-        for (Claim kingdomClaim : claims) if (kingdomClaim.getKingdomId().equalsIgnoreCase(kingdomId)) kingdomKingdomClaims.add(kingdomClaim);
-        return kingdomKingdomClaims;
+        ArrayList<Claim> kingdomclaims = new ArrayList<>();
+        for (Claim claim : claims) if (claim.getKingdomId().equalsIgnoreCase(kingdomId)) kingdomclaims.add(claim);
+        return kingdomclaims;
     }
 
     public static void updateClaimTagColor(String kingdomId, String color) {
-        for (Claim kingdomClaim : claims) {
-            if (kingdomClaim.getKingdomId().equalsIgnoreCase(kingdomId)) kingdomClaim.updateColor(color);
+        for (Claim claim : claims) {
+            if (claim.getKingdomId().equalsIgnoreCase(kingdomId)) claim.updateColor(color);
         }
     }
 
     public static boolean actionAllowedAt(BlockPos pos, PlayerEntity player) {
         if (pos.getY() < 0) return true;
 
-        for (Claim kingdomClaim : claims) {
-            if (kingdomClaim.contains(pos)) {
-                if (kingdomClaim.getKingdomId().equals("ADMIN") && !player.hasPermissionLevel(4)) return false;
-                if (!kingdomClaim.getKingdomId().equals(((PlayerEntityInf) player).getKingdomId())) return false;
+        for (Claim claim : claims) {
+            if (claim.contains(pos)) {
+                if (claim.getKingdomId().equals("ADMIN") && !player.hasPermissionLevel(4)) return false;
+                if (!claim.getKingdomId().equals(((PlayerEntityInf) player).getKingdomId())) return false;
             }
         }
         return true;
     }
 
     public static boolean claimExistsAt(BlockPos pos) {
-        for (Claim kingdomClaim : claims) {
-            if (kingdomClaim.contains(pos)) return true;
+        for (Claim claim : claims) {
+            if (claim.contains(pos)) return true;
         }
         return false;
     }
 
     public static boolean validBannerPos(String kingdomId, BlockPos pos) {
-        for (Claim kingdomClaim : claims) {
-            if (kingdomClaim.contains(pos)) return false;
-            if (kingdomClaim.getKingdomId().equalsIgnoreCase(kingdomId)
-                    && !kingdomClaim.isOverlapping(ClaimHelpers.createChunkBox(pos, 7, false))) return false;
+        for (Claim claim : claims) {
+            if (claim.contains(pos)) return false;
+            if (claim.getKingdomId().equalsIgnoreCase(kingdomId)
+                    && !claim.isOverlapping(ClaimHelpers.createChunkBox(pos, 7, false))) return false;
         }
         return true;
     }
@@ -139,13 +139,13 @@ public class ClaimManager {
     }
 
     public static void renderClaims(ServerPlayerEntity player) {
-        for (Claim kingdomClaim : claims) ClaimHelpers.renderClaim(player, kingdomClaim);
+        for (Claim claim : claims) ClaimHelpers.renderClaim(player, claim);
     }
 
     public static void renderClaimsForPlacement(ServerPlayerEntity player) {
         if (!validBannerPos(((PlayerEntityInf) player).getKingdomId(), player.getBlockPos())) ClaimHelpers.renderClaimLayer(player, player.getBlockPos(), (int) player.getY(), Formatting.WHITE, 256 * 256);
-        for (Claim kingdomClaim : claims) {
-            ClaimHelpers.renderClaimLayer(player, kingdomClaim.getPos(), (int) player.getY(), Formatting.byName(kingdomClaim.getColor()), 256 * 256);
+        for (Claim claim : claims) {
+            ClaimHelpers.renderClaimLayer(player, claim.getPos(), (int) player.getY(), Formatting.byName(claim.getColor()), 256 * 256);
         }
     }
 
