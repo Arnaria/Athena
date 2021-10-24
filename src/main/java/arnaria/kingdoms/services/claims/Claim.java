@@ -20,7 +20,6 @@ public class Claim implements Serializable {
     private String color;
     private final BlockPos pos;
     private final WorldHologram hologram;
-
     private final ArrayList<Chunk> chunks;
 
     public Claim(String kingdomId, BlockPos pos) {

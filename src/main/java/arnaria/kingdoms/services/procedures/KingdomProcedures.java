@@ -115,8 +115,8 @@ public class KingdomProcedures {
     }
 
     public static void combineKingdoms(String deletingKingdom, String keepingKingdom) {
-        for (Claim claim : ClaimManager.getClaims(deletingKingdom)) {
-            claim.rebrand(keepingKingdom, KingdomsData.getColor(keepingKingdom));
+        for (Claim kingdomClaim : ClaimManager.getClaims(deletingKingdom)) {
+            kingdomClaim.rebrand(keepingKingdom, KingdomsData.getColor(keepingKingdom));
         }
         for (UUID player : KingdomsData.getMembers(deletingKingdom)) {
             addMember(keepingKingdom, player);

@@ -67,9 +67,11 @@ public class ClaimHelpers {
         }
     }
 
-    public static void renderClaim(ServerPlayerEntity player, Claim claim) {
+    public static void renderClaim(ServerPlayerEntity player, Claim kingdomClaim) {
         for (int i = 0; i < 256; i += 2) {
-            renderClaimLayer(player, claim.getPos(), i, Formatting.byName(claim.getColor()), 100);
+            renderClaimLayer(player, kingdomClaim.getPos(), i, Formatting.byName(kingdomClaim.getColor()), 100);
         }
+
+
     }
 }
