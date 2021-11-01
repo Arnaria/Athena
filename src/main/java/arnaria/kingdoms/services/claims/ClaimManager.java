@@ -13,6 +13,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.chunk.Chunk;
 import org.apache.logging.log4j.Level;
 
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class ClaimManager {
 
     private static final Table claimData = database.createTable("ClaimData");
     private static final ArrayList<Claim> claims = new ArrayList<>();
+    private static final ArrayList<Chunk> adminClaims = new ArrayList<>();
 
     public static void init() {
         for (DataContainer claim : claimData.getDataContainers()) {
@@ -56,6 +58,10 @@ public class ClaimManager {
         ((BannerMarkerInf) banner).makeClaimMarker();
         KingdomProcedures.addToBannerCount(kingdomId, 1);
         if (!placedFirstBanner(kingdomId)) KingdomProcedures.setStartingBannerPos(kingdomId, pos);
+    }
+
+    public static void addAdminClaim(BlockPos pos) {
+        adminClaims.add(overworld.getChunk(pos));
     }
 
     public static void dropClaim(BlockPos pos) {
@@ -90,14 +96,18 @@ public class ClaimManager {
         claims.removeAll(claimsToDrop);
     }
 
+    public static void dropAdminClaim(BlockPos pos) {
+        adminClaims.remove(overworld.getChunk(pos));
+    }
+
     public static ArrayList<Claim> getClaims() {
         return claims;
     }
 
     public static ArrayList<Claim> getClaims(String kingdomId) {
-        ArrayList<Claim> kingdomclaims = new ArrayList<>();
-        for (Claim claim : claims) if (claim.getKingdomId().equalsIgnoreCase(kingdomId)) kingdomclaims.add(claim);
-        return kingdomclaims;
+        ArrayList<Claim> kingdomClaims = new ArrayList<>();
+        for (Claim claim : claims) if (claim.getKingdomId().equalsIgnoreCase(kingdomId)) kingdomClaims.add(claim);
+        return kingdomClaims;
     }
 
     public static void updateClaimTagColor(String kingdomId, String color) {
@@ -111,27 +121,29 @@ public class ClaimManager {
 
         for (Claim claim : claims) {
             if (claim.contains(pos)) {
-                if (claim.getKingdomId().equals("ADMIN") && !player.hasPermissionLevel(4)) return false;
                 if (!claim.getKingdomId().equals(((PlayerEntityInf) player).getKingdomId())) return false;
             }
         }
-        return true;
+
+        return !adminClaims.contains(overworld.getChunk(pos)) || player.hasPermissionLevel(4);
     }
 
     public static boolean claimExistsAt(BlockPos pos) {
         for (Claim claim : claims) {
             if (claim.contains(pos)) return true;
         }
-        return false;
+
+        return adminClaims.contains(overworld.getChunk(pos));
     }
 
     public static boolean validBannerPos(String kingdomId, BlockPos pos) {
+        ArrayList<Chunk> chunks = ClaimHelpers.createChunkBox(pos, 7, false);
         for (Claim claim : claims) {
             if (claim.contains(pos)) return false;
-            if (claim.getKingdomId().equalsIgnoreCase(kingdomId)
-                    && !claim.isOverlapping(ClaimHelpers.createChunkBox(pos, 7, false))) return false;
+            if (claim.getKingdomId().equalsIgnoreCase(kingdomId) && !claim.isOverlapping(chunks)) return false;
         }
-        return true;
+
+        return !adminClaims.contains(overworld.getChunk(pos));
     }
 
     public static boolean placedFirstBanner(String kingdomId) {
@@ -143,7 +155,9 @@ public class ClaimManager {
     }
 
     public static void renderClaimsForPlacement(ServerPlayerEntity player) {
-        if (!validBannerPos(((PlayerEntityInf) player).getKingdomId(), player.getBlockPos())) ClaimHelpers.renderClaimLayer(player, player.getBlockPos(), (int) player.getY(), Formatting.WHITE, 256 * 256);
+        if (validBannerPos(((PlayerEntityInf) player).getKingdomId(), player.getBlockPos())) {
+            ClaimHelpers.renderClaimLayer(player, player.getBlockPos(), (int) player.getY(), Formatting.WHITE, 256 * 256);
+        }
         for (Claim claim : claims) {
             ClaimHelpers.renderClaimLayer(player, claim.getPos(), (int) player.getY(), Formatting.byName(claim.getColor()), 256 * 256);
         }

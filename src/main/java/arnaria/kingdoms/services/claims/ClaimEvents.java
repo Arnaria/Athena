@@ -2,7 +2,6 @@ package arnaria.kingdoms.services.claims;
 
 import arnaria.kingdoms.callbacks.BlockPlaceCallback;
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
-import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.notifacaitonlib.NotificationManager;
 import arnaria.notifacaitonlib.NotificationTypes;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;

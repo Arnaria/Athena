@@ -2,6 +2,7 @@ package arnaria.kingdoms.util;
 
 import arnaria.kingdoms.services.claims.Claim;
 import arnaria.kingdoms.services.claims.ClaimManager;
+import net.minecraft.block.Blocks;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -69,12 +70,16 @@ public class ClaimHelpers {
     }
 
     public static void renderClaim(ServerPlayerEntity player, Claim claim) {
+        for (Chunk chunk : claim.getChunks()) {
+            overworld.setBlockState(chunk.getPos().getCenterAtY(80), Blocks.DIAMOND_BLOCK.getDefaultState());
+        }
+
         if (claim.getPos().getSquaredDistance(player.getBlockPos()) > 64 * 64) return;
 
-        int y = player.getBlockY() + 1;
+        int y = player.getBlockY();
         if (y % 2 == 0) y += 1;
         for (int i = y - 8; i < y + 8; i += 2) {
-            renderClaimLayer(player, claim.getPos(), i, Formatting.byName(claim.getColor()), 100);
+            renderClaimLayer(player, claim.getPos(), i, Formatting.byName(claim.getColor()), 80);
         }
     }
 }

@@ -73,4 +73,9 @@ public class Claim implements Serializable {
     public String getColor() {
         return this.color;
     }
+
+    //DEBUG
+    public ArrayList<Chunk> getChunks() {
+        return chunks;
+    }
 }
