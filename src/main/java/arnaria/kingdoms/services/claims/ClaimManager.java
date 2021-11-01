@@ -12,15 +12,11 @@ import mrnavastar.sqlib.api.DataContainer;
 import mrnavastar.sqlib.api.Table;
 import net.minecraft.block.BannerBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.explosion.Explosion;
 import org.apache.logging.log4j.Level;
 
 import java.util.ArrayList;
@@ -33,13 +29,13 @@ public class ClaimManager {
 
     private static final Table claimData = database.createTable("ClaimData");
     private static final ArrayList<Claim> claims = new ArrayList<>();
-    private static final ArrayList<Chunk> adminClaims = new ArrayList<>();
+    private static final ArrayList<Chunk> adminClaim = new ArrayList<>();
 
     public static void init() {
 
         if (!claimData.contains("ADMIN_CLAIM")) {
-            DataContainer adminClaim = claimData.createDataContainer("ADMIN_CLAIM");
-            adminClaim.put("CHUNKS", new JsonArray());
+            DataContainer adminClaimData = claimData.createDataContainer("ADMIN_CLAIM");
+            adminClaimData.put("CHUNKS", new JsonArray());
         }
 
         for (DataContainer claim : claimData.getDataContainers()) {
@@ -57,7 +53,7 @@ public class ClaimManager {
                 }
             } else {
                 for (JsonElement strPos : claim.getJson("CHUNKS").getAsJsonArray()) {
-                    adminClaims.add(overworld.getChunk(Parser.blockPosFromString(strPos.getAsString())));
+                    adminClaim.add(overworld.getChunk(Parser.blockPosFromString(strPos.getAsString())));
                 }
             }
         }
@@ -81,7 +77,7 @@ public class ClaimManager {
     }
 
     public static void addAdminClaim(BlockPos pos) {
-        adminClaims.add(overworld.getChunk(pos));
+        adminClaim.add(overworld.getChunk(pos));
 
         DataContainer adminClaim = claimData.get("ADMIN_CLAIM");
         JsonArray chunks = (JsonArray) adminClaim.getJson("CHUNKS");
@@ -122,20 +118,19 @@ public class ClaimManager {
     }
 
     public static void dropAdminClaim(BlockPos pos) {
-        adminClaims.remove(overworld.getChunk(pos));
+        adminClaim.remove(overworld.getChunk(pos));
 
         DataContainer adminClaim = claimData.get("ADMIN_CLAIM");
         JsonArray chunks = (JsonArray) adminClaim.getJson("CHUNKS");
 
         int count = 0;
         for (JsonElement strPos : chunks) {
-            if (strPos.toString().equals(pos.toShortString())) {
-                chunks.remove(count);
-                adminClaim.put("CHUNKS", chunks);
-                break;
-            }
+            if (strPos.getAsString().equals(pos.toShortString())) break;
             count++;
         }
+
+        chunks.remove(count);
+        adminClaim.put("CHUNKS", chunks);
     }
 
     public static ArrayList<Claim> getClaims() {
@@ -163,7 +158,7 @@ public class ClaimManager {
             }
         }
 
-        return !adminClaims.contains(overworld.getChunk(pos)) || player.hasPermissionLevel(4);
+        return !adminClaim.contains(overworld.getChunk(pos)) || player.hasPermissionLevel(4);
     }
 
     public static boolean claimExistsAt(BlockPos pos) {
@@ -171,11 +166,11 @@ public class ClaimManager {
             if (claim.contains(pos)) return true;
         }
 
-        return adminClaims.contains(overworld.getChunk(pos));
+        return adminClaim.contains(overworld.getChunk(pos));
     }
 
     public static boolean validBannerPos(String kingdomId, BlockPos pos) {
-        if (adminClaims.contains(overworld.getChunk(pos))) return false;
+        if (adminClaim.contains(overworld.getChunk(pos))) return false;
 
         ArrayList<Chunk> chunks = ClaimHelpers.createChunkBox(pos, 7, false);
         for (Claim claim : claims) {

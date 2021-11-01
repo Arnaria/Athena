@@ -104,12 +104,13 @@ public class KingdomProcedures {
     public static void removeAdviser(String kingdomID, UUID player) {
         DataContainer kingdom = kingdomData.get(kingdomID);
         JsonArray advisers = kingdom.getJson("ADVISERS").getAsJsonArray();
-        int count = 0;
 
+        int count = 0;
         for (JsonElement adviser : advisers) {
             if (adviser.getAsString().equals(player.toString())) break;
             count++;
         }
+
         advisers.remove(count);
         kingdom.put("ADVISERS", advisers);
     }
@@ -145,12 +146,13 @@ public class KingdomProcedures {
     public static void removeJoinRequest(String kingdomID, UUID player) {
         DataContainer kingdom = kingdomData.get(kingdomID);
         JsonArray requests = kingdom.getJson("REQUESTS").getAsJsonArray();
-        int count = 0;
 
+        int count = 0;
         for (JsonElement request : requests) {
             if (request.getAsString().equals(player.toString())) break;
             count++;
         }
+
         requests.remove(count);
         kingdom.put("REQUESTS", requests);
     }
@@ -168,19 +170,23 @@ public class KingdomProcedures {
         scoreboard.addPlayerToTeam(BetterPlayerManager.getName(uuid), scoreboard.getTeam(kingdomId));
 
         for (ServerPlayerEntity player : BetterPlayerManager.getOnlinePlayers()) {
-            if (player.getUuid().equals(uuid)) ((PlayerEntityInf) player).setKingdomId(kingdomId);
+            if (player.getUuid().equals(uuid)) {
+                ((PlayerEntityInf) player).setKingdomId(kingdomId);
+                break;
+            }
         }
     }
 
     public static void removeMember(String kingdomID, UUID uuid) {
         DataContainer kingdom = kingdomData.get(kingdomID);
         JsonArray members = kingdom.getJson("MEMBERS").getAsJsonArray();
-        int count = 0;
 
+        int count = 0;
         for (JsonElement member : members) {
             if (member.getAsString().equals(uuid.toString())) break;
             count++;
         }
+
         members.remove(count);
         kingdom.put("MEMBERS", members);
         scoreboard.removePlayerFromTeam(BetterPlayerManager.getName(uuid), scoreboard.getTeam(kingdomID));
@@ -196,11 +202,16 @@ public class KingdomProcedures {
 
     public static void unblockPlayer(String kingdomID, UUID player) {
         DataContainer kingdom = kingdomData.get(kingdomID);
-        JsonArray blockedPlayer = kingdom.getJson("BLOCKED").getAsJsonArray();
+        JsonArray blockedPlayers = kingdom.getJson("BLOCKED").getAsJsonArray();
 
-        for (JsonElement blocked : blockedPlayer) {
-            if (blocked.getAsString().equals(player.toString())) blockedPlayer.remove(blocked);
+        int count = 0;
+        for (JsonElement blocked : blockedPlayers) {
+            if (blocked.getAsString().equals(player.toString())) break;
+            count++;
         }
+
+        blockedPlayers.remove(count);
+        kingdom.put("BLOCKED", blockedPlayers);
     }
 
     public static void addToBannerCount(String kingdomId, int amount) {
