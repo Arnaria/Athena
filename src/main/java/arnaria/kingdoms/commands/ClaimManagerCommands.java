@@ -10,22 +10,27 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 
 //I'm tired shut up
-public class AdminClaimCommand {
+public class ClaimManagerCommands {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        dispatcher.register(CommandManager.literal("admin_claim_this_bitch").requires(source -> source.hasPermissionLevel(4))
-                    .executes(AdminClaimCommand::addClaim)
+        dispatcher.register(CommandManager.literal("claims").requires(source -> source.hasPermissionLevel(4))
+
+                .then(CommandManager.literal("admin_claim_this_bitch")
+                    .executes(ClaimManagerCommands::addClaim))
 
                 .then(CommandManager.literal("admin_drop_kick_this_claim")
-                    .executes(AdminClaimCommand::removeClaim))
+                    .executes(ClaimManagerCommands::removeClaim))
         );
     }
 
     public static int addClaim(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         ServerPlayerEntity executor = context.getSource().getPlayer();
-        ClaimManager.addAdminClaim(executor.getBlockPos());
 
-        executor.sendMessage(new LiteralText("Yeah she good boss man"), false);
+        if (!ClaimManager.claimExistsAt(executor.getBlockPos())) {
+            ClaimManager.addAdminClaim(executor.getBlockPos());
+            executor.sendMessage(new LiteralText("Yeah she good boss man"), false);
+        } else executor.sendMessage(new LiteralText("Yeah there is already a claim there dumbass"), false);
+
         return 1;
     }
 

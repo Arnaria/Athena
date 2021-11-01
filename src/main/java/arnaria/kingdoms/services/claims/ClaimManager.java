@@ -5,6 +5,7 @@ import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.kingdoms.services.procedures.KingdomProcedures;
 import arnaria.kingdoms.util.ClaimHelpers;
+import arnaria.kingdoms.util.Parser;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import mrnavastar.sqlib.api.DataContainer;
@@ -36,7 +37,7 @@ public class ClaimManager {
 
         if (!claimData.contains("ADMIN_CLAIM")) {
             DataContainer adminClaim = claimData.createDataContainer("ADMIN_CLAIM");
-            adminClaim.put("CHUNKS", new NbtList());
+            adminClaim.put("CHUNKS", new JsonArray());
         }
 
         for (DataContainer claim : claimData.getDataContainers()) {
@@ -53,8 +54,8 @@ public class ClaimManager {
                     log(Level.ERROR, "This could have been caused by the server shutting down improperly");
                 }
             } else {
-                for (NbtElement pos : (NbtList) claim.getNbt("CHUNKS")) {
-                    adminClaims.add(overworld.getChunk((BlockPos) pos));
+                for (JsonElement strPos : claim.getJson("CHUNKS").getAsJsonArray()) {
+                    adminClaims.add(overworld.getChunk(Parser.blockPosFromString(strPos.getAsString())));
                 }
             }
         }
@@ -81,8 +82,8 @@ public class ClaimManager {
         adminClaims.add(overworld.getChunk(pos));
 
         DataContainer adminClaim = claimData.get("ADMIN_CLAIM");
-        NbtList chunks = (NbtList) adminClaim.getNbt("CHUNKS");
-        chunks.add((NbtElement) pos);
+        JsonArray chunks = (JsonArray) adminClaim.getJson("CHUNKS");
+        chunks.add(pos.toShortString());
         adminClaim.put("CHUNKS", chunks);
     }
 
@@ -122,9 +123,17 @@ public class ClaimManager {
         adminClaims.remove(overworld.getChunk(pos));
 
         DataContainer adminClaim = claimData.get("ADMIN_CLAIM");
-        NbtList chunks = (NbtList) adminClaim.getNbt("CHUNKS");
-        chunks.remove((NbtElement) pos);
-        adminClaim.put("CHUNKS", chunks);
+        JsonArray chunks = (JsonArray) adminClaim.getJson("CHUNKS");
+
+        int count = 0;
+        for (JsonElement strPos : chunks) {
+            if (strPos.toString().equals(pos.toShortString())) {
+                chunks.remove(count);
+                adminClaim.put("CHUNKS", chunks);
+                break;
+            }
+            count++;
+        }
     }
 
     public static ArrayList<Claim> getClaims() {
