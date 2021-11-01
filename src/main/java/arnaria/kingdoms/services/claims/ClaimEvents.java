@@ -1,6 +1,7 @@
 package arnaria.kingdoms.services.claims;
 
 import arnaria.kingdoms.callbacks.BlockPlaceCallback;
+import arnaria.kingdoms.interfaces.BannerMarkerInf;
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.notifacaitonlib.NotificationManager;
 import arnaria.notifacaitonlib.NotificationTypes;
@@ -23,14 +24,20 @@ public class ClaimEvents {
 
         BlockPlaceCallback.EVENT.register((world, player, pos, state, block, item) -> {
             if (world.getRegistryKey().equals(World.OVERWORLD)) {
-                if (!ClaimManager.actionAllowedAt(pos, player)) return false;
+                if (!ClaimManager.actionAllowedAt(pos, player)) {
+                    NotificationManager.send(player.getUuid(), "You can't place blocks in other kingdoms claims", NotificationTypes.ERROR);
+                    return false;
+                }
 
                 if (block instanceof BannerBlock bannerBlock) {
                     String kingdomId = ((PlayerEntityInf) player).getKingdomId();
                     if (!kingdomId.isEmpty()) {
                         NbtCompound nbt = item.getNbt();
                         if (nbt != null && nbt.getBoolean("IS_CLAIM_MARKER")) {
-                            if (ClaimManager.placedFirstBanner(kingdomId) && !ClaimManager.validBannerPos(kingdomId, pos)) return false;
+                            if (ClaimManager.placedFirstBanner(kingdomId) && !ClaimManager.validBannerPos(kingdomId, pos)) {
+                                NotificationManager.send(player.getUuid(), "You can't place a banner here", NotificationTypes.ERROR);
+                                return false;
+                            }
                             if (ClaimManager.canAffordBanner(kingdomId)) ClaimManager.addClaim(kingdomId, pos, bannerBlock);
                             else NotificationManager.send(player.getUuid(), "Your kingdom does not have enough xp", NotificationTypes.ERROR);
                         }
