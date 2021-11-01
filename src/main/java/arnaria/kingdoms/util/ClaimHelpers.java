@@ -70,12 +70,6 @@ public class ClaimHelpers {
     }
 
     public static void renderClaim(ServerPlayerEntity player, Claim claim) {
-
-        //DEBUG!!!!!!!!
-        for (Chunk chunk : claim.getChunks()) {
-            overworld.setBlockState(chunk.getPos().getCenterAtY(80), Blocks.DIAMOND_BLOCK.getDefaultState());
-        }
-
         if (claim.getPos().getSquaredDistance(player.getBlockPos()) > 64 * 64) return;
 
         int y = player.getBlockY();

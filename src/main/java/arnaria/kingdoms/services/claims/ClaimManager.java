@@ -12,6 +12,7 @@ import mrnavastar.sqlib.api.DataContainer;
 import mrnavastar.sqlib.api.Table;
 import net.minecraft.block.BannerBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
@@ -174,13 +175,15 @@ public class ClaimManager {
     }
 
     public static boolean validBannerPos(String kingdomId, BlockPos pos) {
+        if (adminClaims.contains(overworld.getChunk(pos))) return false;
+
         ArrayList<Chunk> chunks = ClaimHelpers.createChunkBox(pos, 7, false);
         for (Claim claim : claims) {
             if (claim.contains(pos)) return false;
-            if (claim.getKingdomId().equalsIgnoreCase(kingdomId) && !claim.isOverlapping(chunks)) return false;
+            if (claim.getKingdomId().equals(kingdomId) && claim.isOverlapping(chunks)) return true;
         }
 
-        return !adminClaims.contains(overworld.getChunk(pos));
+        return false;
     }
 
     public static boolean placedFirstBanner(String kingdomId) {
