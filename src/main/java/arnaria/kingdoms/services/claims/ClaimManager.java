@@ -5,11 +5,15 @@ import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.kingdoms.services.procedures.KingdomProcedures;
 import arnaria.kingdoms.util.ClaimHelpers;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import mrnavastar.sqlib.api.DataContainer;
 import mrnavastar.sqlib.api.Table;
 import net.minecraft.block.BannerBlock;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
@@ -29,19 +33,32 @@ public class ClaimManager {
     private static final ArrayList<Chunk> adminClaims = new ArrayList<>();
 
     public static void init() {
-        for (DataContainer claim : claimData.getDataContainers()) {
-            String kingdomId = claim.getString("KINGDOM_ID");
-            BlockPos pos = claim.getBlockPos("BANNER_POS");
-            claims.add(new Claim(kingdomId, pos));
 
-            Block block = overworld.getBlockState(pos).getBlock();
-            if (block instanceof BannerBlock bannerBlock) ((BannerMarkerInf) bannerBlock).makeClaimMarker();
-            else {
-                log(Level.ERROR, "Mismatch in claim data and banner pos!");
-                log(Level.ERROR, "The error occurred at: " + pos + ". Suspected BannerBlock, got " + block + ".");
-                log(Level.ERROR, "This could have been caused by the server shutting down improperly");
+        if (!claimData.contains("ADMIN_CLAIM")) {
+            DataContainer adminClaim = claimData.createDataContainer("ADMIN_CLAIM");
+            adminClaim.put("CHUNKS", new NbtList());
+        }
+
+        for (DataContainer claim : claimData.getDataContainers()) {
+            if (!claim.getId().equals("ADMIN_CLAIM")) {
+                String kingdomId = claim.getString("KINGDOM_ID");
+                BlockPos pos = claim.getBlockPos("BANNER_POS");
+                claims.add(new Claim(kingdomId, pos));
+
+                Block block = overworld.getBlockState(pos).getBlock();
+                if (block instanceof BannerBlock bannerBlock) ((BannerMarkerInf) bannerBlock).makeClaimMarker();
+                else {
+                    log(Level.ERROR, "Mismatch in claim data and banner pos!");
+                    log(Level.ERROR, "The error occurred at: " + pos + ". Suspected BannerBlock, got " + block + ".");
+                    log(Level.ERROR, "This could have been caused by the server shutting down improperly");
+                }
+            } else {
+                for (NbtElement pos : (NbtList) claim.getNbt("CHUNKS")) {
+                    adminClaims.add(overworld.getChunk((BlockPos) pos));
+                }
             }
         }
+
         ClaimEvents.register();
     }
 
@@ -62,6 +79,11 @@ public class ClaimManager {
 
     public static void addAdminClaim(BlockPos pos) {
         adminClaims.add(overworld.getChunk(pos));
+
+        DataContainer adminClaim = claimData.get("ADMIN_CLAIM");
+        NbtList chunks = (NbtList) adminClaim.getNbt("CHUNKS");
+        chunks.add((NbtElement) pos);
+        adminClaim.put("CHUNKS", chunks);
     }
 
     public static void dropClaim(BlockPos pos) {
@@ -98,6 +120,11 @@ public class ClaimManager {
 
     public static void dropAdminClaim(BlockPos pos) {
         adminClaims.remove(overworld.getChunk(pos));
+
+        DataContainer adminClaim = claimData.get("ADMIN_CLAIM");
+        NbtList chunks = (NbtList) adminClaim.getNbt("CHUNKS");
+        chunks.remove((NbtElement) pos);
+        adminClaim.put("CHUNKS", chunks);
     }
 
     public static ArrayList<Claim> getClaims() {
