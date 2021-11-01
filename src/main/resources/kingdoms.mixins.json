@@ -12,6 +12,7 @@
     "BannerBlockMixin",
     "BlockItemMixin",
     "BucketMixin",
+    "ExplosionMixin",
     "FlintNStealMixin",
     "HoeMixin",
     "ItemFrameEntityMixin",
