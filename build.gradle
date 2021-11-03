@@ -42,10 +42,13 @@ dependencies {
     }
 
     //Other Libs
-    implementation "org.geysermc.floodgate:common:${project.floodgate_version}"
-    include "org.geysermc.floodgate:common:${project.floodgate_version}"
-    implementation "io.javalin:javalin:${project.javalin_version}"
-    include "io.javalin:javalin:${project.javalin_version}"
+    include(implementation("org.geysermc.floodgate:common:${project.floodgate_version}"))
+    include(implementation("com.github.BlueMap-Minecraft:BlueMapAPI:${project.bluemap_version}"))
+    include(implementation("io.javalin:javalin:${project.javalin_version}"))
+    include(implementation("com.fasterxml.jackson.core:jackson-core:${project.jackson_version}"))
+    include(implementation("com.fasterxml.jackson.core:jackson-annotations:${project.jackson_version}"))
+    include(implementation("com.fasterxml.jackson.core:jackson-databind:${project.jackson_version}"))
+
 }
 
 processResources {

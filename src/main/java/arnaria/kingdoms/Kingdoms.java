@@ -6,6 +6,8 @@ import arnaria.kingdoms.util.Settings;
 import arnaria.kingdoms.services.claims.ClaimManager;
 import arnaria.kingdoms.services.procedures.KingdomProcedures;
 import com.mojang.brigadier.CommandDispatcher;
+import de.bluecolored.bluemap.api.BlueMapAPI;
+import de.bluecolored.bluemap.api.marker.MarkerAPI;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import mrnavastar.sqlib.api.databases.Database;
@@ -21,6 +23,8 @@ import net.minecraft.util.UserCache;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
+import java.io.IOException;
+
 public class Kingdoms implements ModInitializer {
 
     public static final String MODID = "Kingdoms";
@@ -30,6 +34,8 @@ public class Kingdoms implements ModInitializer {
     public static Scoreboard scoreboard;
     public static Database database;
     public static Settings settings;
+    public static BlueMapAPI blueMapAPI;
+    public static MarkerAPI markerAPI;
 
     @Override
     public void onInitialize() {
@@ -75,6 +81,15 @@ public class Kingdoms implements ModInitializer {
             });
 
             ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> KingdomProcedures.setupPlayer(handler.getPlayer()));
+
+            BlueMapAPI.onEnable(api -> {
+                try {
+                    blueMapAPI = api;
+                    markerAPI = api.getMarkerAPI();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
 
             log(Level.INFO, "Setup Finished");
         }

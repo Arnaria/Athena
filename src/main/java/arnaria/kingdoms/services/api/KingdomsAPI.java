@@ -3,6 +3,7 @@ package arnaria.kingdoms.services.api;
 import arnaria.kingdoms.services.claims.ClaimManager;
 import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.kingdoms.util.BetterPlayerManager;
+import com.google.gson.JsonObject;
 import io.javalin.Javalin;
 
 import java.util.ArrayList;
@@ -74,6 +75,11 @@ public class KingdomsAPI {
 
         api.get( "/v1/claims", ctx -> {
             ctx.json(ClaimManager.getClaims());
+        });
+
+        api.post("/{kingdomId}/members", ctx -> {
+            JsonObject jsonObject = ctx.bodyAsClass(JsonObject.class);
+            ctx.result(jsonObject.toString());
         });
     }
 }

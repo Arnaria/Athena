@@ -5,7 +5,6 @@ import arnaria.kingdoms.services.claims.ClaimManager;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.math.*;
 import net.minecraft.world.chunk.Chunk;
 
@@ -38,27 +37,29 @@ public class ClaimHelpers {
 
     public static BlockPos[] getCorners(BlockPos center) {
         return new BlockPos[] {
-            overworld.getChunk(center.add(-32, 0, -32)).getPos().getStartPos().add(-1, 0, -1),
-            overworld.getChunk(center.add(32, 0, 32)).getPos().getStartPos().add(17, 0, 17)
+            overworld.getChunk(center.add(-32, 0, -32)).getPos().getStartPos(),
+            overworld.getChunk(center.add(32, 0, 32)).getPos().getStartPos().add(16, 0, 16)
         };
     }
 
-    public static void spawnParticle(ServerPlayerEntity player, BlockPos pos, double offset, Formatting color, int range) {
+    public static void spawnParticle(ServerPlayerEntity player, BlockPos pos, double offset, String color, int range) {
         if (ClaimManager.claimExistsAt(pos)) return;
         if (pos.getSquaredDistance(player.getBlockPos()) > range) return;
 
         Vec3f rgb = new Vec3f(255, 255, 255);
-        if (color != null) rgb = new Vec3f(Vec3d.unpackRgb(color.getColorValue()));
+        if (color != null) rgb = Parser.colorNameToRGB(color);
         DustParticleEffect effect = new DustParticleEffect(rgb, 2.0F);
         ServerWorld world = player.getServerWorld();
 
         world.spawnParticles(player, effect, true, pos.getX() + offset, pos.getY(), pos.getZ() + offset, 1,0, 0, 0, 0);
     }
 
-    public static void renderClaimLayer(ServerPlayerEntity player, BlockPos bannerPos, int y, Formatting color, int range) {
+    public static void renderClaimLayer(ServerPlayerEntity player, BlockPos bannerPos, int y, String color, int range) {
         if (bannerPos.getSquaredDistance(player.getBlockPos()) > 256 * 256) return;
         if (player.getBlockY() < 0) return;
         BlockPos[] corners = getCorners(bannerPos);
+        corners[0].add(-1, 0, -1);
+        corners[1].add(1, 0, 1);
 
         for (int j = 0; j < 82; j+= 2) {
             spawnParticle(player, corners[0].add(j, y, 0), 1, color, range);
@@ -74,7 +75,7 @@ public class ClaimHelpers {
         int y = player.getBlockY();
         if (y % 2 == 0) y += 1;
         for (int i = y - 8; i < y + 8; i += 2) {
-            renderClaimLayer(player, claim.getPos(), i, Formatting.byName(claim.getColor()), 80);
+            renderClaimLayer(player, claim.getPos(), i, claim.getColor(), 80);
         }
     }
 }

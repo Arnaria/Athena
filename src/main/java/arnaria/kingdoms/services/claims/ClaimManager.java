@@ -4,22 +4,28 @@ import arnaria.kingdoms.interfaces.BannerMarkerInf;
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.kingdoms.services.procedures.KingdomProcedures;
+import arnaria.kingdoms.util.BlueMapAPI;
 import arnaria.kingdoms.util.ClaimHelpers;
 import arnaria.kingdoms.util.Parser;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import de.bluecolored.bluemap.api.marker.MarkerSet;
+import de.bluecolored.bluemap.api.marker.Shape;
+import de.bluecolored.bluemap.api.marker.ShapeMarker;
 import mrnavastar.sqlib.api.DataContainer;
 import mrnavastar.sqlib.api.Table;
 import net.minecraft.block.BannerBlock;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3f;
 import net.minecraft.world.chunk.Chunk;
 import org.apache.logging.log4j.Level;
 
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import static arnaria.kingdoms.Kingdoms.overworld;
 import static arnaria.kingdoms.Kingdoms.database;
@@ -53,7 +59,7 @@ public class ClaimManager {
                 }
             } else {
                 for (JsonElement strPos : claim.getJson("CHUNKS").getAsJsonArray()) {
-                    adminClaim.add(overworld.getChunk(Parser.blockPosFromString(strPos.getAsString())));
+                    adminClaim.add(overworld.getChunk(Parser.stringToBlockpos(strPos.getAsString())));
                 }
             }
         }
@@ -74,6 +80,16 @@ public class ClaimManager {
         ((BannerMarkerInf) banner).makeClaimMarker();
         KingdomProcedures.addToBannerCount(kingdomId, 1);
         if (!placedFirstBanner(kingdomId)) KingdomProcedures.setStartingBannerPos(kingdomId, pos);
+
+        Optional<MarkerSet> markerSet = BlueMapAPI.getMarkerSet(kingdomId);
+        markerSet.ifPresent(markers -> {
+            BlockPos[] corners = ClaimHelpers.getCorners(pos);
+            ShapeMarker marker = markers.createShapeMarker(kingdomId + " : " + pos.toShortString(), BlueMapAPI.getOverworld(), corners[0].getX(), corners[0].getY(), corners[0].getZ(), Shape.createRect(corners[0].getX(), corners[0].getZ(), corners[1].getX(), corners[1].getZ()), pos.getY());
+            Vec3f rgb = Parser.colorNameToRGB(KingdomsData.getColor(kingdomId));
+            Color color = new Color(rgb.getX(), rgb.getY(), rgb.getZ(), 0.5F);
+            marker.setColors(color, color.darker());
+            BlueMapAPI.saveMarkers();
+        });
     }
 
     public static void addAdminClaim(BlockPos pos) {
@@ -87,34 +103,43 @@ public class ClaimManager {
 
     public static void dropClaim(BlockPos pos) {
         Claim claimToDrop = null;
+
         for (Claim claim : claims) {
             if (claim.getPos().equals(pos)) {
                 claim.removeHologram();
                 claimToDrop = claim;
-                claimData.drop(pos.toShortString());
+                Optional<MarkerSet> markerSet = BlueMapAPI.getMarkerSet(claim.getKingdomId());
+                markerSet.ifPresent(markers -> markers.removeMarker(claim.getKingdomId() + " : " + pos.toShortString()));
                 KingdomProcedures.removeFromBannerCount(claim.getKingdomId(), 1);
+                claimData.drop(pos.toShortString());
                 break;
             }
         }
 
         if (claimToDrop != null) claims.remove(claimToDrop);
+        BlueMapAPI.saveMarkers();
     }
 
     //Only use when dropping kingdoms
     public static void dropClaims(String kingdomId) {
         claimData.beginTransaction();
         ArrayList<Claim> claimsToDrop = new ArrayList<>();
+
         for (Claim claim : claims) {
             if (claim.getKingdomId().equalsIgnoreCase(kingdomId)) {
                 BlockPos pos = claim.getPos();
                 claim.removeHologram();
                 claimsToDrop.add(claim);
-                claimData.drop(pos.toShortString());
+                Optional<MarkerSet> markerSet = BlueMapAPI.getMarkerSet(kingdomId);
+                markerSet.ifPresent(markers -> markers.removeMarker(kingdomId + " : " + pos.toShortString()));
                 if (overworld.getBlockState(pos).getBlock() instanceof BannerBlock) overworld.breakBlock(pos, false);
+                claimData.drop(pos.toShortString());
             }
         }
+
         claimData.endTransaction();
         claims.removeAll(claimsToDrop);
+        BlueMapAPI.saveMarkers();
     }
 
     public static void dropAdminClaim(BlockPos pos) {
@@ -143,9 +168,23 @@ public class ClaimManager {
         return kingdomClaims;
     }
 
-    public static void updateClaimTagColor(String kingdomId, String color) {
+    public static void updateClaimColor(String kingdomId, String color) {
         for (Claim claim : claims) {
-            if (claim.getKingdomId().equalsIgnoreCase(kingdomId)) claim.updateColor(color);
+            if (claim.getKingdomId().equalsIgnoreCase(kingdomId)) {
+                claim.updateColor(color);
+                Optional<MarkerSet> markerSet = BlueMapAPI.getMarkerSet(kingdomId);
+                markerSet.ifPresent(markers -> {
+                    markers.removeMarker(kingdomId + " : " + claim.getPos().toShortString());
+
+                    BlockPos pos = claim.getPos();
+                    BlockPos[] corners = ClaimHelpers.getCorners(pos);
+                    ShapeMarker marker = markers.createShapeMarker(kingdomId + " : " + claim.getPos().toShortString(), BlueMapAPI.getOverworld(), corners[0].getX(), corners[0].getY(), corners[0].getZ(), Shape.createRect(corners[0].getX(), corners[0].getZ(), corners[1].getX(), corners[1].getZ()), pos.getY());
+                    Vec3f rgb = Parser.colorNameToRGB(KingdomsData.getColor(kingdomId));
+                    Color c = new Color(rgb.getX(), rgb.getY(), rgb.getZ(), 0.5F);
+                    marker.setColors(c, c.darker());
+                });
+                BlueMapAPI.saveMarkers();
+            }
         }
     }
 
@@ -157,7 +196,6 @@ public class ClaimManager {
                 if (!claim.getKingdomId().equals(((PlayerEntityInf) player).getKingdomId())) return false;
             }
         }
-
         return !adminClaim.contains(overworld.getChunk(pos)) || player.hasPermissionLevel(4);
     }
 
@@ -165,7 +203,6 @@ public class ClaimManager {
         for (Claim claim : claims) {
             if (claim.contains(pos)) return true;
         }
-
         return adminClaim.contains(overworld.getChunk(pos));
     }
 
@@ -177,7 +214,6 @@ public class ClaimManager {
             if (claim.contains(pos)) return false;
             if (claim.getKingdomId().equals(kingdomId) && claim.isOverlapping(chunks)) return true;
         }
-
         return false;
     }
 
@@ -191,11 +227,9 @@ public class ClaimManager {
 
     public static void renderClaimsForPlacement(ServerPlayerEntity player) {
         if (validBannerPos(((PlayerEntityInf) player).getKingdomId(), player.getBlockPos())) {
-            ClaimHelpers.renderClaimLayer(player, player.getBlockPos(), (int) player.getY(), Formatting.WHITE, 256 * 256);
+            ClaimHelpers.renderClaimLayer(player, player.getBlockPos(), (int) player.getY(), "white", 256 * 256);
         }
-        for (Claim claim : claims) {
-            ClaimHelpers.renderClaimLayer(player, claim.getPos(), (int) player.getY(), Formatting.byName(claim.getColor()), 256 * 256);
-        }
+        for (Claim claim : claims) ClaimHelpers.renderClaimLayer(player, claim.getPos(), (int) player.getY(), claim.getColor(), 256 * 256);
     }
 
     public static boolean canAffordBanner(String kingdomId) {

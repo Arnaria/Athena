@@ -5,6 +5,7 @@ import arnaria.kingdoms.services.claims.Claim;
 import arnaria.kingdoms.services.claims.ClaimManager;
 import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.kingdoms.util.BetterPlayerManager;
+import arnaria.kingdoms.util.BlueMapAPI;
 import arnaria.notifacaitonlib.NotificationManager;
 import arnaria.notifacaitonlib.NotificationTypes;
 import com.google.gson.JsonArray;
@@ -42,6 +43,8 @@ public class KingdomProcedures {
         kingdomData.beginTransaction();
         DataContainer kingdom = kingdomData.createDataContainer(kingdomId);
         Team kingdomTeam = scoreboard.addTeam(kingdomId);
+        BlueMapAPI.getMarkerApi().createMarkerSet(kingdomId);
+        BlueMapAPI.saveMarkers();
 
         kingdomTeam.setNameTagVisibilityRule(AbstractTeam.VisibilityRule.HIDE_FOR_OTHER_TEAMS);
         kingdomTeam.setFriendlyFireAllowed(false);
@@ -63,14 +66,17 @@ public class KingdomProcedures {
 
     public static void removeKingdom(String kingdomId) {
         ClaimManager.dropClaims(kingdomId);
-        kingdomData.drop(kingdomId);
-        scoreboard.removeTeam(scoreboard.getTeam(kingdomId));
+        scoreboard.removeTeam(scoreboard.getTeam(kingdomId)); //Broken????
+        BlueMapAPI.getMarkerApi().removeMarkerSet(kingdomId);
+        BlueMapAPI.saveMarkers();
+
         for (ServerPlayerEntity player : BetterPlayerManager.getOnlinePlayers()) {
             if (((PlayerEntityInf) player).getKingdomId().equals(kingdomId)) {
                 ((PlayerEntityInf) player).setKingdomId("");
                 ((PlayerEntityInf) player).setKingship(false);
             }
         }
+        kingdomData.drop(kingdomId);
     }
 
     public static void updateKing(String kingdomID, UUID king) {
@@ -129,7 +135,7 @@ public class KingdomProcedures {
         Team kingdomTeam = scoreboard.getTeam(kingdomId);
         kingdom.put("COLOR", color.getName());
         if (kingdomTeam != null) kingdomTeam.setColor(color);
-        ClaimManager.updateClaimTagColor(kingdomId, color.getName());
+        ClaimManager.updateClaimColor(kingdomId, color.getName());
     }
 
     public static void addJoinRequest(String kingdomID, UUID executor) {
