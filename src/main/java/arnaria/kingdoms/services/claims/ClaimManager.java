@@ -1,5 +1,6 @@
 package arnaria.kingdoms.services.claims;
 
+import arnaria.kingdoms.Kingdoms;
 import arnaria.kingdoms.interfaces.BannerMarkerInf;
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.kingdoms.services.data.KingdomsData;
@@ -28,12 +29,11 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import static arnaria.kingdoms.Kingdoms.overworld;
-import static arnaria.kingdoms.Kingdoms.database;
 import static arnaria.kingdoms.Kingdoms.log;
 
 public class ClaimManager {
 
-    private static final Table claimData = database.createTable("ClaimData");
+    private static final Table claimData = Kingdoms.database.createTable("ClaimData");
     private static final ArrayList<Claim> claims = new ArrayList<>();
     private static final ArrayList<Chunk> adminClaim = new ArrayList<>();
 
@@ -193,7 +193,7 @@ public class ClaimManager {
 
         for (Claim claim : claims) {
             if (claim.contains(pos)) {
-                if (!claim.getKingdomId().equals(((PlayerEntityInf) player).getKingdomId())) return false;
+                if (!((PlayerEntityInf) player).allowedToEditIn(claim.getKingdomId())) return false;
             }
         }
         return !adminClaim.contains(overworld.getChunk(pos)) || player.hasPermissionLevel(4);

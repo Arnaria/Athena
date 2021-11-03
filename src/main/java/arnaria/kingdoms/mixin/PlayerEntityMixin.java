@@ -19,6 +19,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
+
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements PlayerEntityInf {
 
@@ -26,12 +28,15 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerEn
 
     private String kingdomId = "";
     private boolean isKing = false;
+    private final ArrayList<String> allowedToEditIn = new ArrayList<>();
 
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
     }
 
     public void setKingdomId(String kingdomId) {
+        if (kingdomId.isEmpty()) this.allowedToEditIn.remove(this.kingdomId);
+        else this.allowedToEditIn.add(kingdomId);
         this.kingdomId = kingdomId;
     }
 
@@ -45,6 +50,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerEn
 
     public boolean isKing() {
         return isKing;
+    }
+
+    public boolean allowedToEditIn(String kingdomId) {
+        return this.allowedToEditIn.contains(kingdomId);
     }
 
     @Inject(method = "onDeath", at = @At("HEAD"))

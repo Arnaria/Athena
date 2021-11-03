@@ -1,5 +1,6 @@
 package arnaria.kingdoms.services.procedures;
 
+import arnaria.kingdoms.Kingdoms;
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.kingdoms.services.claims.Claim;
 import arnaria.kingdoms.services.claims.ClaimManager;
@@ -21,12 +22,11 @@ import net.minecraft.util.math.BlockPos;
 
 import java.util.UUID;
 
-import static arnaria.kingdoms.Kingdoms.database;
 import static arnaria.kingdoms.Kingdoms.scoreboard;
 
 public class KingdomProcedures {
 
-    public static final Table kingdomData = database.createTable("KingdomData");
+    public static final Table kingdomData = Kingdoms.database.createTable("KingdomData");
 
     public static void setupPlayer(PlayerEntity player) {
         kingdomData.beginTransaction();
