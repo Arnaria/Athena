@@ -2,6 +2,7 @@ package arnaria.kingdoms;
 
 import arnaria.kingdoms.commands.*;
 import arnaria.kingdoms.services.api.RestAPI;
+import arnaria.kingdoms.services.events.ChallengeManager;
 import arnaria.kingdoms.util.Settings;
 import arnaria.kingdoms.services.claims.ClaimManager;
 import arnaria.kingdoms.services.procedures.KingdomProcedures;
@@ -58,15 +59,13 @@ public class Kingdoms implements ModInitializer {
 
             ServerLifecycleEvents.SERVER_STARTED.register(server -> {
                 playerManager = server.getPlayerManager();
+                userCache = server.getUserCache();
                 overworld = server.getOverworld();
                 scoreboard = server.getScoreboard();
 
+                ChallengeManager.init();
                 ClaimManager.init();
                 RestAPI.init();
-            });
-
-            ServerLifecycleEvents.SERVER_STARTING.register(server -> {
-                userCache = server.getUserCache();
 
                 //Command Registration
                 CommandDispatcher<ServerCommandSource> dispatcher = server.getCommandManager().getDispatcher();
