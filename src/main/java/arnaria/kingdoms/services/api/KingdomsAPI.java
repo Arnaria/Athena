@@ -68,15 +68,6 @@ public class KingdomsAPI {
             ctx.json(blocks);
         });
 
-        api.get(url + "/{kingdomId}/claims", ctx -> {
-            String kingdomId = ctx.pathParam("kingdomId");
-            ctx.json(ClaimManager.getClaims(kingdomId));
-        });
-
-        api.get( "/v1/claims", ctx -> {
-            ctx.json(ClaimManager.getClaims());
-        });
-
         api.post("/{kingdomId}/members", ctx -> {
             JsonObject jsonObject = ctx.bodyAsClass(JsonObject.class);
             ctx.result(jsonObject.toString());
