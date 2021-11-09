@@ -5,6 +5,7 @@ import mrnavastar.sqlib.api.DataContainer;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 import static arnaria.kingdoms.services.procedures.KingdomProcedures.kingdomData;
@@ -74,5 +75,10 @@ public class KingdomsData {
     public static int getXp(String kingdomId) {
         DataContainer kingdom = kingdomData.get(kingdomId);
         return kingdom.getInt("XP");
+    }
+
+    public static ArrayList<String> getChallengeQue(String kingdomId) {
+        DataContainer kingdom = kingdomData.get(kingdomId);
+        return (ArrayList<String>) Arrays.asList(kingdom.getStringArray("CHALLENGE_QUE"));
     }
 }

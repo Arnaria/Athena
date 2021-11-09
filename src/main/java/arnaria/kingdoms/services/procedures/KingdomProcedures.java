@@ -5,6 +5,8 @@ import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.kingdoms.services.claims.Claim;
 import arnaria.kingdoms.services.claims.ClaimManager;
 import arnaria.kingdoms.services.data.KingdomsData;
+import arnaria.kingdoms.services.events.Challenge;
+import arnaria.kingdoms.services.events.ChallengeManager;
 import arnaria.kingdoms.util.BetterPlayerManager;
 import arnaria.kingdoms.util.BlueMapAPI;
 import arnaria.notifacaitonlib.NotificationManager;
@@ -20,6 +22,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 import static arnaria.kingdoms.Kingdoms.scoreboard;
@@ -122,8 +126,8 @@ public class KingdomProcedures {
     }
 
     public static void combineKingdoms(String deletingKingdom, String keepingKingdom) {
-        for (Claim kingdomClaim : ClaimManager.getClaims(deletingKingdom)) {
-            kingdomClaim.rebrand(keepingKingdom, KingdomsData.getColor(keepingKingdom));
+        for (Claim claim : ClaimManager.getClaims(deletingKingdom)) {
+            claim.rebrand(keepingKingdom, KingdomsData.getColor(keepingKingdom));
         }
         for (UUID player : KingdomsData.getMembers(deletingKingdom)) {
             addMember(keepingKingdom, player);
@@ -241,5 +245,21 @@ public class KingdomProcedures {
         DataContainer kingdom = kingdomData.get(kingdomId);
         int newAmount = kingdom.getInt("XP") + amount;
         kingdom.put("XP", newAmount);
+    }
+
+    public static void addChallengeToQue(String kingdomId, String challengeId) {
+        DataContainer kingdom = kingdomData.get(kingdomId);
+        ArrayList<String> challenges = (ArrayList<String>) Arrays.asList(kingdom.getStringArray("CHALLENGE_QUE"));
+        challenges.add(challengeId);
+        kingdom.put("CHALLENGE_QUE", challenges.toArray(new String[]{}));
+    }
+
+    public static void completeChallenge(String kingdomId, String challengeId) {
+        DataContainer kingdom = kingdomData.get(kingdomId);
+        ArrayList<String> challenges = (ArrayList<String>) Arrays.asList(kingdom.getStringArray("CHALLENGE_QUE"));
+        challenges.remove(challengeId);
+
+        Challenge challenge = ChallengeManager.getChallenge(challengeId);
+        if (challenge != null) addXp(kingdomId, challenge.xp());
     }
 }

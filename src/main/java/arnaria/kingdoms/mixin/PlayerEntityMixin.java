@@ -4,9 +4,11 @@ import arnaria.kingdoms.callbacks.PlayerDeathCallback;
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.kingdoms.services.claims.ClaimManager;
 import arnaria.kingdoms.util.BetterPlayerManager;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BannerItem;
 import net.minecraft.item.ItemStack;
@@ -60,6 +62,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerEn
     public void onDeath(DamageSource source, CallbackInfo ci) {
         PlayerEntity player = BetterPlayerManager.getPlayer(this.uuid);
         PlayerDeathCallback.EVENT.invoker().place(player, source);
+    }
+
+    @Inject(method = "attack", at = @At("HEAD"), cancellable = true)
+    public void stopAttackInClaims(Entity target, CallbackInfo ci) {
+        ServerPlayerEntity player = (ServerPlayerEntity) BetterPlayerManager.getPlayer(this.uuid);
+        if (!(target instanceof HostileEntity) && ClaimManager.actionAllowedAt(target.getBlockPos(), player)) ci.cancel();
     }
 
     @Inject(method = "tick", at = @At("HEAD"))

@@ -7,12 +7,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ChallengeManager {
 
     private static final File folder = new File(FabricLoader.getInstance().getConfigDir() + "/challenges");
-    private static final ArrayList<List<String[]>> challenges = new ArrayList<>();
+    private static final HashMap<Integer, ArrayList<Challenge>> challenges = new HashMap<>();
 
     public static void init() {
         try {
@@ -23,17 +24,17 @@ public class ChallengeManager {
                 for (String fileName : fileNames) {
                     CSVReader csvReader = new CSVReader(new FileReader(folder.getPath() + "/" + fileName));
 
-                    ArrayList<String[]> parsedChallenges = new ArrayList<>();
                     int tier = 0;
+                    ArrayList<Challenge> parsedChallenges = new ArrayList<>();
 
                     int count = 0;
-                    for (String[] challenge : csvReader.readAll()) {
-                        if (count == 0) tier = Integer.parseInt(challenge[0]);
-                        else parsedChallenges.add(challenge);
+                    for (String[] c : csvReader.readAll()) {
+                        if (count == 0) tier = Integer.parseInt(c[0]);
+                        Challenge challenge = new Challenge(c[0], c[1], Integer.parseInt(c[2]));
+                        parsedChallenges.add(challenge);
                         count++;
                     }
-
-                    challenges.set(tier, parsedChallenges);
+                    challenges.put(tier, parsedChallenges);
                 }
             }
         } catch (IOException e) {
@@ -47,16 +48,18 @@ public class ChallengeManager {
 
     public static ArrayList<String> getChallengeIds(int tier) {
         ArrayList<String> challengeIds = new ArrayList<>();
-        for (String[] challenge : challenges.get(tier)) {
-            challengeIds.add(challenge[0]);
+        for (Challenge challenge : challenges.get(tier)) {
+            challengeIds.add(challenge.challengeId());
         }
         return challengeIds;
     }
 
-    public static String[] getChallenge(int tier, String challengeId) {
-        for (String[] challenge : challenges.get(tier)) {
-            if (challenge[0].equals(challengeId)) return challenge;
+    public static Challenge getChallenge(String challengeId) {
+        for (ArrayList<Challenge> tier : challenges.values()) {
+            for (Challenge challenge : tier) {
+                if (challenge.challengeId().equals(challengeId)) return challenge;
+            }
         }
-        return null;
+       return null;
     }
 }

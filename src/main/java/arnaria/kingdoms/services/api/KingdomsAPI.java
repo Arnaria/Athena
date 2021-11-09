@@ -1,6 +1,5 @@
 package arnaria.kingdoms.services.api;
 
-import arnaria.kingdoms.services.claims.ClaimManager;
 import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.kingdoms.util.BetterPlayerManager;
 import com.google.gson.JsonObject;
