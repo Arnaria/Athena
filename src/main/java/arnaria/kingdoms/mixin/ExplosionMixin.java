@@ -25,8 +25,6 @@ public class ExplosionMixin {
     @Inject(method = "affectWorld", at = @At("HEAD"))
     public void saveBlocks(boolean particles, CallbackInfo ci) {
         assert this.entity != null;
-        if (this.entity.getType().equals(EntityType.TNT) || this.entity.getType().equals(EntityType.TNT_MINECART)) {
-            this.affectedBlocks.removeIf(ClaimManager::claimExistsAt);
-        }
+        this.affectedBlocks.removeIf(ClaimManager::claimExistsAt);
     }
 }
