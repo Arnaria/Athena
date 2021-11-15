@@ -2,7 +2,6 @@ package arnaria.kingdoms.mixin;
 
 import arnaria.kingdoms.services.claims.ClaimManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.explosion.Explosion;
 import org.jetbrains.annotations.Nullable;

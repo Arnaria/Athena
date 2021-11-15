@@ -8,6 +8,10 @@ import static arnaria.kingdoms.Kingdoms.MODID;
 
 @Config(name = MODID)
 public class Settings implements ConfigData {
+    @Comment("Auth0 stuff")
+    public String CLIENT_ID = "";
+    public String CLIENT_SECRET = "";
+
     @Comment("Allowed Values: \"SQLITE\" | \"MYSQL\"")
     public String DATABASE_TYPE = "SQLITE";
     public String DATABASE_NAME = "Kingdoms";

@@ -49,7 +49,7 @@ dependencies {
     include(implementation("com.fasterxml.jackson.core:jackson-annotations:${project.jackson_version}"))
     include(implementation("com.fasterxml.jackson.core:jackson-databind:${project.jackson_version}"))
     include(implementation("com.opencsv:opencsv:${project.opencsv_version}"))
-
+    include(implementation("com.konghq:unirest-java:3.11.09"))
 }
 
 processResources {

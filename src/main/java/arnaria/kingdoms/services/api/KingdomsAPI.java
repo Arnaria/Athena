@@ -3,6 +3,7 @@ package arnaria.kingdoms.services.api;
 import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.kingdoms.util.BetterPlayerManager;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.javalin.Javalin;
 
 import java.util.ArrayList;
@@ -67,9 +68,9 @@ public class KingdomsAPI {
             ctx.json(blocks);
         });
 
-        api.post("/{kingdomId}/members", ctx -> {
-            JsonObject jsonObject = ctx.bodyAsClass(JsonObject.class);
-            ctx.result(jsonObject.toString());
+        api.post("/test", ctx -> {
+            JsonObject object = (JsonObject) JsonParser.parseString(ctx.body());
+            ctx.json(object.toString());
         });
     }
 }

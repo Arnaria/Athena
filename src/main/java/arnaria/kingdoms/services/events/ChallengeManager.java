@@ -30,8 +30,10 @@ public class ChallengeManager {
                     int count = 0;
                     for (String[] c : csvReader.readAll()) {
                         if (count == 0) tier = Integer.parseInt(c[0]);
-                        Challenge challenge = new Challenge(c[0], c[1], Integer.parseInt(c[2]));
-                        parsedChallenges.add(challenge);
+                        else {
+                            Challenge challenge = new Challenge(c[0], c[1], Integer.parseInt(c[2]));
+                            parsedChallenges.add(challenge);
+                        }
                         count++;
                     }
                     challenges.put(tier, parsedChallenges);
