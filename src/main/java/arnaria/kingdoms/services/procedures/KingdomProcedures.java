@@ -70,9 +70,18 @@ public class KingdomProcedures {
 
     public static void removeKingdom(String kingdomId) {
         ClaimManager.dropClaims(kingdomId);
-        scoreboard.removeTeam(scoreboard.getTeam(kingdomId)); //Broken????
         BlueMapAPI.getMarkerApi().removeMarkerSet(kingdomId);
         BlueMapAPI.saveMarkers();
+
+        /*Team kingdomTeam = scoreboard.getTeam(kingdomId);
+        if (kingdomTeam != null) {
+            for (String player : kingdomTeam.getPlayerList()) {
+                scoreboard.removePlayerFromTeam(player, kingdomTeam);
+            }
+            scoreboard.removeTeam(kingdomTeam);
+        }*/
+
+        scoreboard.removeTeam(scoreboard.getTeam(kingdomId));
 
         for (ServerPlayerEntity player : BetterPlayerManager.getOnlinePlayers()) {
             if (((PlayerEntityInf) player).getKingdomId().equals(kingdomId)) {
@@ -261,5 +270,12 @@ public class KingdomProcedures {
 
         Challenge challenge = ChallengeManager.getChallenge(challengeId);
         if (challenge != null) addXp(kingdomId, challenge.xp());
+    }
+
+    public static String getKingdomId(UUID king) {
+        for (String kingdomId : kingdomData.getIds()) {
+            if (KingdomsData.getKing(kingdomId).equals(king)) return kingdomId;
+        }
+        return null;
     }
 }

@@ -1,10 +1,15 @@
 package arnaria.kingdoms.services.api;
 
 import arnaria.kingdoms.services.data.KingdomsData;
+import arnaria.kingdoms.services.procedures.KingdomProcedureChecks;
+import arnaria.kingdoms.services.procedures.KingdomProcedures;
+import arnaria.kingdoms.services.procedures.LinkingProcedures;
 import arnaria.kingdoms.util.BetterPlayerManager;
+import arnaria.kingdoms.util.InterfaceTypes;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.javalin.Javalin;
+import net.minecraft.util.Formatting;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,9 +73,36 @@ public class KingdomsAPI {
             ctx.json(blocks);
         });
 
-        api.post("/test", ctx -> {
-            JsonObject object = (JsonObject) JsonParser.parseString(ctx.body());
-            ctx.json(object.toString());
+        api.post(url + "/actions", ctx -> {
+            JsonObject obj = (JsonObject) JsonParser.parseString(ctx.body());
+            UUID executor = LinkingProcedures.getUuid(obj.get("access_token").getAsString());
+            String kingdomId = KingdomProcedures.getKingdomId(executor);
+
+            if (executor != null && kingdomId != null) {
+                if (obj.get("action").getAsString().equals("disband")) {
+                    KingdomProcedureChecks.disbandKingdom(InterfaceTypes.API, kingdomId, executor);
+                }
+
+                if (obj.get("action").getAsString().equals("update_color")) {
+                    Formatting color = Formatting.byName(obj.get("color").getAsString());
+                    if (color != null) KingdomProcedureChecks.setColour(InterfaceTypes.API, kingdomId, color, executor);
+                }
+
+                if (obj.get("action").getAsString().equals("banish_member")) {
+                    UUID member = UUID.fromString(obj.get("member_uuid").getAsString());
+                    KingdomProcedureChecks.removePlayer(InterfaceTypes.API, kingdomId, member, executor);
+                }
+
+                if (obj.get("action").getAsString().equals("accept_join_request")) {
+                    UUID request = UUID.fromString(obj.get("request_uuid").getAsString());
+                    KingdomProcedureChecks.acceptJoinRequest(InterfaceTypes.API, kingdomId, request, executor);
+                }
+
+                if (obj.get("action").getAsString().equals("decline_join_request")) {
+                    UUID request = UUID.fromString(obj.get("request_uuid").getAsString());
+                    KingdomProcedureChecks.declineJoinRequest(InterfaceTypes.API, kingdomId, request, executor);
+                }
+            }
         });
     }
 }
