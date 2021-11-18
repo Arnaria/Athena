@@ -1,5 +1,6 @@
 package arnaria.kingdoms.services.events;
 
+import arnaria.kingdoms.util.BetterPlayerManager;
 import net.minecraft.entity.boss.BossBar;
 import net.minecraft.entity.boss.ServerBossBar;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -8,6 +9,7 @@ import net.minecraft.util.Formatting;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -17,15 +19,13 @@ public abstract class Event {
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private final ServerBossBar bossBar;
     private final int min;
-    private final String name;
     private final ArrayList<ServerPlayerEntity> members = new ArrayList<>();
     private int secondsPassed = 0;
 
-    public Event(int min, String name) {
+    public Event(int min, String bossBarText) {
         this.min = min;
-        this.name = name;
 
-        this.bossBar = new ServerBossBar(new LiteralText(name).formatted(Formatting.BOLD), BossBar.Color.RED, BossBar.Style.PROGRESS);
+        this.bossBar = new ServerBossBar(new LiteralText(bossBarText).formatted(Formatting.BOLD), BossBar.Color.RED, BossBar.Style.PROGRESS);
         this.bossBar.setPercent(1.0F);
 
         Runnable stopEvent = this::stopEvent;
@@ -52,9 +52,15 @@ public abstract class Event {
         this.members.add(player);
     }
 
+    protected void addPlayers(ArrayList<UUID> uuids) {
+        uuids.iterator().forEachRemaining(uuid -> addPlayer(BetterPlayerManager.getPlayer(uuid)));
+    }
+
+    public abstract void onDeath(ServerPlayerEntity player);
+
     protected abstract void finish();
 
-    public ArrayList<ServerPlayerEntity> getMembers() {
+    public ArrayList<ServerPlayerEntity> getParticipants() {
         return this.members;
     }
 }

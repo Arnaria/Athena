@@ -1,8 +1,9 @@
 package arnaria.kingdoms.mixin;
 
-import arnaria.kingdoms.callbacks.PlayerDeathCallback;
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.kingdoms.services.claims.ClaimManager;
+import arnaria.kingdoms.services.events.Event;
+import arnaria.kingdoms.services.events.EventManager;
 import arnaria.kingdoms.util.BetterPlayerManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -60,19 +61,20 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerEn
 
     @Inject(method = "onDeath", at = @At("HEAD"))
     public void onDeath(DamageSource source, CallbackInfo ci) {
-        PlayerEntity player = BetterPlayerManager.getPlayer(this.uuid);
-        PlayerDeathCallback.EVENT.invoker().place(player, source);
+        ServerPlayerEntity player = BetterPlayerManager.getPlayer(this.uuid);
+        Event event = EventManager.getEvent(player);
+        if (event != null) event.onDeath(player);
     }
 
     @Inject(method = "attack", at = @At("HEAD"), cancellable = true)
     public void stopAttackInClaims(Entity target, CallbackInfo ci) {
-        ServerPlayerEntity player = (ServerPlayerEntity) BetterPlayerManager.getPlayer(this.uuid);
+        ServerPlayerEntity player = BetterPlayerManager.getPlayer(this.uuid);
         if (!(target instanceof HostileEntity) && ClaimManager.actionAllowedAt(target.getBlockPos(), player)) ci.cancel();
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
-        ServerPlayerEntity player = (ServerPlayerEntity) BetterPlayerManager.getPlayer(this.uuid);
+        ServerPlayerEntity player = BetterPlayerManager.getPlayer(this.uuid);
         ItemStack stack = this.getItemsHand().iterator().next();
         if (stack.getItem() instanceof BannerItem) {
             NbtCompound nbt = stack.getNbt();

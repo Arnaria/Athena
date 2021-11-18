@@ -13,11 +13,11 @@ import static arnaria.kingdoms.Kingdoms.userCache;
 
 public class BetterPlayerManager {
 
-    public static PlayerEntity getPlayer(UUID uuid) {
+    public static ServerPlayerEntity getPlayer(UUID uuid) {
         return playerManager.getPlayer(uuid);
     }
 
-    public static PlayerEntity getPlayer(String name) {
+    public static ServerPlayerEntity getPlayer(String name) {
         return playerManager.getPlayer(name);
     }
 
