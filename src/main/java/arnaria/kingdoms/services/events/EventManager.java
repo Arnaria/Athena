@@ -24,7 +24,7 @@ public class EventManager {
     }
 
     public static void startRevolution(String kingdomId) {
-
+        activeEvents.add(new RevolutionEvent(kingdomId));
     }
 
     public static void startInvasion(String defendingKingdomId, String attackingKingdomId, BlockPos pos) {

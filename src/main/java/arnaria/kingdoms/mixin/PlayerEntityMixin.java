@@ -63,7 +63,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerEn
     public void onDeath(DamageSource source, CallbackInfo ci) {
         ServerPlayerEntity player = BetterPlayerManager.getPlayer(this.uuid);
         Event event = EventManager.getEvent(player);
-        if (event != null) event.onDeath(player);
+
+        if (source.getAttacker() instanceof ServerPlayerEntity killer && event != null) {
+            event.onDeath(player, killer);
+        }
     }
 
     @Inject(method = "attack", at = @At("HEAD"), cancellable = true)

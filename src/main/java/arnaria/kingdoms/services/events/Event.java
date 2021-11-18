@@ -56,7 +56,7 @@ public abstract class Event {
         uuids.iterator().forEachRemaining(uuid -> addPlayer(BetterPlayerManager.getPlayer(uuid)));
     }
 
-    public abstract void onDeath(ServerPlayerEntity player);
+    public abstract void onDeath(ServerPlayerEntity player, ServerPlayerEntity killer);
 
     protected abstract void finish();
 
