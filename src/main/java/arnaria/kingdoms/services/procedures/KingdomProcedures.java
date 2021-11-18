@@ -32,6 +32,20 @@ public class KingdomProcedures {
 
     public static final Table kingdomData = Kingdoms.database.createTable("KingdomData");
 
+    public static void init() {
+        for (Team kingdomTeam : scoreboard.getTeams()) {
+            scoreboard.removeTeam(kingdomTeam);
+        }
+
+        for (DataContainer kingdom : kingdomData.getDataContainers()) {
+            Team kingdomTeam = scoreboard.addTeam(kingdom.getId());
+            kingdomTeam.setNameTagVisibilityRule(AbstractTeam.VisibilityRule.HIDE_FOR_OTHER_TEAMS);
+            kingdomTeam.setFriendlyFireAllowed(false);
+            Formatting color = Formatting.byName(KingdomsData.getColor(kingdom.getId()));
+            if (color != null) kingdomTeam.setColor(color);
+        }
+    }
+
     public static void setupPlayer(PlayerEntity player) {
         kingdomData.beginTransaction();
         for (DataContainer kingdom : kingdomData.getDataContainers()) {
@@ -70,18 +84,9 @@ public class KingdomProcedures {
 
     public static void removeKingdom(String kingdomId) {
         ClaimManager.dropClaims(kingdomId);
+        scoreboard.removeTeam(scoreboard.getTeam(kingdomId));
         BlueMapAPI.getMarkerApi().removeMarkerSet(kingdomId);
         BlueMapAPI.saveMarkers();
-
-        /*Team kingdomTeam = scoreboard.getTeam(kingdomId);
-        if (kingdomTeam != null) {
-            for (String player : kingdomTeam.getPlayerList()) {
-                scoreboard.removePlayerFromTeam(player, kingdomTeam);
-            }
-            scoreboard.removeTeam(kingdomTeam);
-        }*/
-
-        scoreboard.removeTeam(scoreboard.getTeam(kingdomId));
 
         for (ServerPlayerEntity player : BetterPlayerManager.getOnlinePlayers()) {
             if (((PlayerEntityInf) player).getKingdomId().equals(kingdomId)) {
@@ -272,10 +277,12 @@ public class KingdomProcedures {
         if (challenge != null) addXp(kingdomId, challenge.xp());
     }
 
-    public static String getKingdomId(UUID king) {
+    public static String getKingdomId(UUID uuid) {
+        kingdomData.beginTransaction();
         for (String kingdomId : kingdomData.getIds()) {
-            if (KingdomsData.getKing(kingdomId).equals(king)) return kingdomId;
+            if (KingdomsData.getMembers(kingdomId).contains(uuid)) return kingdomId;
         }
+        kingdomData.endTransaction();
         return null;
     }
 }

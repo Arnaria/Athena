@@ -63,6 +63,7 @@ public class Kingdoms implements ModInitializer {
                 overworld = server.getOverworld();
                 scoreboard = server.getScoreboard();
 
+                KingdomProcedures.init();
                 ChallengeManager.init();
                 ClaimManager.init();
                 RestAPI.init();
