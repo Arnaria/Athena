@@ -1,5 +1,6 @@
 package arnaria.kingdoms.services.claims;
 
+import arnaria.kingdoms.Kingdoms;
 import arnaria.kingdoms.callbacks.BlockPlaceCallback;
 import arnaria.kingdoms.interfaces.BannerMarkerInf;
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
@@ -9,6 +10,7 @@ import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.block.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.World;
+import org.apache.logging.log4j.Level;
 
 public class ClaimEvents {
 
@@ -17,6 +19,10 @@ public class ClaimEvents {
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, blockEntity) -> {
             if (world.getRegistryKey().equals(World.OVERWORLD)) {
                 if (state.getBlock() instanceof PlayerSkullBlock) return true;
+
+                if (state.getBlock() instanceof BannerBlock bannerBlock && ((BannerMarkerInf) bannerBlock).isClaimMarker()) {
+                    if (!ClaimManager.canBreakClaim(pos)) return false;
+                }
                 return ClaimManager.actionAllowedAt(pos, player);
             }
             return true;

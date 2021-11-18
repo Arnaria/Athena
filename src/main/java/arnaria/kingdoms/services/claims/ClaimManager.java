@@ -79,7 +79,6 @@ public class ClaimManager {
 
         ((BannerMarkerInf) banner).makeClaimMarker();
         KingdomProcedures.addToBannerCount(kingdomId, 1);
-        if (!placedFirstBanner(kingdomId)) KingdomProcedures.setStartingBannerPos(kingdomId, pos);
 
         Optional<MarkerSet> markerSet = BlueMapAPI.getMarkerSet(kingdomId);
         markerSet.ifPresent(markers -> {
@@ -101,11 +100,18 @@ public class ClaimManager {
         adminClaim.put("CHUNKS", chunks);
     }
 
+    private static void unlinkSouroundingClaims(Claim claim) {
+        ArrayList<Chunk> chunks = ClaimHelpers.createChunkBox(claim.getPos(), 7, false);
+        for (Claim c : claims) {
+            if (c.isOverlapping(chunks)) c.unlink(claim);
+        }
+    }
+
     public static void dropClaim(BlockPos pos) {
         Claim claimToDrop = null;
-
         for (Claim claim : claims) {
             if (claim.getPos().equals(pos)) {
+                unlinkSouroundingClaims(claim);
                 claim.removeHologram();
                 claimToDrop = claim;
                 Optional<MarkerSet> markerSet = BlueMapAPI.getMarkerSet(claim.getKingdomId());
@@ -199,6 +205,13 @@ public class ClaimManager {
         return !adminClaim.contains(overworld.getChunk(pos)) || player.hasPermissionLevel(4);
     }
 
+    public static boolean canBreakClaim(BlockPos pos) {
+        for (Claim claim : claims) {
+            if (claim.getPos().equals(pos) && claim.canBeBroken()) return true;
+        }
+        return false;
+    }
+
     public static boolean claimExistsAt(BlockPos pos) {
         for (Claim claim : claims) {
             if (claim.contains(pos)) return true;
@@ -221,6 +234,11 @@ public class ClaimManager {
         return KingdomsData.getBannerCount(kingdomId) > 0;
     }
 
+    public static boolean canAffordBanner(String kingdomId) {
+        int bannersAllowed = (int) Math.floor((float) KingdomsData.getXp(kingdomId) / 1000) + 1;
+        return bannersAllowed > KingdomsData.getBannerCount(kingdomId);
+    }
+
     public static void renderClaims(ServerPlayerEntity player) {
         for (Claim claim : claims) ClaimHelpers.renderClaim(player, claim);
     }
@@ -230,10 +248,5 @@ public class ClaimManager {
             ClaimHelpers.renderClaimLayer(player, player.getBlockPos(), (int) player.getY(), "white", 256 * 256);
         }
         for (Claim claim : claims) ClaimHelpers.renderClaimLayer(player, claim.getPos(), (int) player.getY(), claim.getColor(), 256 * 256);
-    }
-
-    public static boolean canAffordBanner(String kingdomId) {
-        int bannersAllowed = (int) Math.floor((float) KingdomsData.getXp(kingdomId) / 1000) + 1;
-        return bannersAllowed > KingdomsData.getBannerCount(kingdomId);
     }
 }

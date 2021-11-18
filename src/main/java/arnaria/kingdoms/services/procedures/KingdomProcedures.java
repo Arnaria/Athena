@@ -250,11 +250,6 @@ public class KingdomProcedures {
         kingdom.put("BANNER_COUNT", originalAmount - amount);
     }
 
-    public static void setStartingBannerPos(String kingdomId, BlockPos pos) {
-        DataContainer kingdom = kingdomData.get(kingdomId);
-        kingdom.put("STARTING_BANNER_POS", pos);
-    }
-
     public static void addXp(String kingdomId, int amount) {
         DataContainer kingdom = kingdomData.get(kingdomId);
         int newAmount = kingdom.getInt("XP") + amount;

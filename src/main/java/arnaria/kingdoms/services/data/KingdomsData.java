@@ -2,7 +2,6 @@ package arnaria.kingdoms.services.data;
 
 import com.google.gson.JsonElement;
 import mrnavastar.sqlib.api.DataContainer;
-import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,11 +64,6 @@ public class KingdomsData {
     public static int getBannerCount(String kingdomId) {
         DataContainer kingdom = kingdomData.get(kingdomId);
         return kingdom.getInt("BANNER_COUNT");
-    }
-
-    public static BlockPos getStartingBannerPos(String kingdomId) {
-        DataContainer kingdom = kingdomData.get(kingdomId);
-        return kingdom.getBlockPos("STARTING_BANNER_POS");
     }
 
     public static int getXp(String kingdomId) {

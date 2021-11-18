@@ -30,7 +30,6 @@ public class KingdomsAPI {
             kingdom.put("color", KingdomsData.getColor(kingdomId));
             kingdom.put("xp", KingdomsData.getXp(kingdomId));
             kingdom.put("banner_count", KingdomsData.getBannerCount(kingdomId));
-            kingdom.put("starting_banner_pos", KingdomsData.getStartingBannerPos(kingdomId));
             ctx.json(kingdom);
         });
 
