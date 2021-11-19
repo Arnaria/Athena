@@ -10,7 +10,6 @@ import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.block.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.World;
-import org.apache.logging.log4j.Level;
 
 public class ClaimEvents {
 
@@ -23,6 +22,7 @@ public class ClaimEvents {
                 if (state.getBlock() instanceof BannerBlock bannerBlock && ((BannerMarkerInf) bannerBlock).isClaimMarker()) {
                     if (!ClaimManager.canBreakClaim(pos)) return false;
                 }
+
                 return ClaimManager.actionAllowedAt(pos, player);
             }
             return true;

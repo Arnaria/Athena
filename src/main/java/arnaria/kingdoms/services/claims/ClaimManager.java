@@ -20,6 +20,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3f;
 import net.minecraft.world.chunk.Chunk;
 import org.apache.logging.log4j.Level;
@@ -38,7 +39,6 @@ public class ClaimManager {
     private static final ArrayList<Chunk> adminClaim = new ArrayList<>();
 
     public static void init() {
-
         if (!claimData.contains("ADMIN_CLAIM")) {
             DataContainer adminClaimData = claimData.createDataContainer("ADMIN_CLAIM");
             adminClaimData.put("CHUNKS", new JsonArray());
@@ -79,6 +79,7 @@ public class ClaimManager {
 
         ((BannerMarkerInf) banner).makeClaimMarker();
         KingdomProcedures.addToBannerCount(kingdomId, 1);
+        if (KingdomsData.getStartingClaimPos(kingdomId) == null) KingdomProcedures.setStartingClaimPos(kingdomId, pos);
 
         Optional<MarkerSet> markerSet = BlueMapAPI.getMarkerSet(kingdomId);
         markerSet.ifPresent(markers -> {
@@ -100,8 +101,8 @@ public class ClaimManager {
         adminClaim.put("CHUNKS", chunks);
     }
 
-    private static void unlinkSouroundingClaims(Claim claim) {
-        ArrayList<Chunk> chunks = ClaimHelpers.createChunkBox(claim.getPos(), 7, false);
+    private static void unlinkSurroundingClaims(Claim claim) {
+        ArrayList<ChunkPos> chunks = ClaimHelpers.createChunkBox(claim.getPos(), 7, false);
         for (Claim c : claims) {
             if (c.isOverlapping(chunks)) c.unlink(claim);
         }
@@ -111,7 +112,7 @@ public class ClaimManager {
         Claim claimToDrop = null;
         for (Claim claim : claims) {
             if (claim.getPos().equals(pos)) {
-                unlinkSouroundingClaims(claim);
+                unlinkSurroundingClaims(claim);
                 claim.removeHologram();
                 claimToDrop = claim;
                 Optional<MarkerSet> markerSet = BlueMapAPI.getMarkerSet(claim.getKingdomId());
@@ -222,7 +223,7 @@ public class ClaimManager {
     public static boolean validBannerPos(String kingdomId, BlockPos pos) {
         if (adminClaim.contains(overworld.getChunk(pos))) return false;
 
-        ArrayList<Chunk> chunks = ClaimHelpers.createChunkBox(pos, 7, false);
+        ArrayList<ChunkPos> chunks = ClaimHelpers.createChunkBox(pos, 7, false);
         for (Claim claim : claims) {
             if (claim.contains(pos)) return false;
             if (claim.getKingdomId().equals(kingdomId) && claim.isOverlapping(chunks)) return true;

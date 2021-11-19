@@ -2,6 +2,7 @@ package arnaria.kingdoms.services.data;
 
 import com.google.gson.JsonElement;
 import mrnavastar.sqlib.api.DataContainer;
+import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,6 +70,11 @@ public class KingdomsData {
     public static int getXp(String kingdomId) {
         DataContainer kingdom = kingdomData.get(kingdomId);
         return kingdom.getInt("XP");
+    }
+
+    public static BlockPos getStartingClaimPos(String kingdomId) {
+        DataContainer kingdom = kingdomData.get(kingdomId);
+        return kingdom.getBlockPos("STARTING_CLAIM_POS");
     }
 
     public static ArrayList<String> getChallengeQue(String kingdomId) {

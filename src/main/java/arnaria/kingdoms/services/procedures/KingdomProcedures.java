@@ -256,6 +256,11 @@ public class KingdomProcedures {
         kingdom.put("XP", newAmount);
     }
 
+    public static void setStartingClaimPos(String kingdomId, BlockPos pos) {
+        DataContainer kingdom = kingdomData.get(kingdomId);
+        kingdom.put("STARTING_CLAIM_POS", pos);
+    }
+
     public static void addChallengeToQue(String kingdomId, String challengeId) {
         DataContainer kingdom = kingdomData.get(kingdomId);
         ArrayList<String> challenges = (ArrayList<String>) Arrays.asList(kingdom.getStringArray("CHALLENGE_QUE"));

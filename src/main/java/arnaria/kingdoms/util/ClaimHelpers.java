@@ -6,7 +6,6 @@ import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.*;
-import net.minecraft.world.chunk.Chunk;
 
 import java.util.ArrayList;
 
@@ -14,7 +13,7 @@ import static arnaria.kingdoms.Kingdoms.overworld;
 
 public class ClaimHelpers {
 
-    public static ArrayList<Chunk> createChunkBox(BlockPos center, int diameter, boolean removeOverlapping) {
+/*    public static ArrayList<Chunk> createChunkBox(BlockPos center, int diameter, boolean removeOverlapping) {
         ArrayList<Chunk> chunkList = new ArrayList<>();
 
         int startingOffset = (int) Math.floor((float) diameter / 2) * 16;
@@ -33,6 +32,27 @@ public class ClaimHelpers {
             currentX += 16;
         }
         return chunkList;
+    }*/
+
+    public static ArrayList<ChunkPos> createChunkBox(BlockPos center, int diameter, boolean removeOverlapping) {
+        ArrayList<ChunkPos> chunks = new ArrayList<>();
+
+        int startingOffset = (int) Math.floor((float) diameter / 2) * 16;
+        int startX = center.getX() - startingOffset;
+        int startZ = center.getZ() - startingOffset;
+
+        int currentX = startX;
+        for (int i = 0; i < diameter; i++) {
+            int currentZ = startZ;
+            for (int j = 0; j < diameter; j++) {
+                BlockPos pos = new BlockPos(currentX, 1, currentZ);
+                if (removeOverlapping && !ClaimManager.claimExistsAt(pos)) chunks.add(overworld.getChunk(pos).getPos());
+                if (!removeOverlapping) chunks.add(overworld.getChunk(pos).getPos());
+                currentZ += 16;
+            }
+            currentX += 16;
+        }
+        return chunks;
     }
 
     public static BlockPos[] getCorners(BlockPos center) {

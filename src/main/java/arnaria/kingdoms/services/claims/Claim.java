@@ -6,8 +6,8 @@ import eu.pb4.holograms.api.holograms.WorldHologram;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.chunk.Chunk;
 
 import java.util.ArrayList;
 
@@ -19,9 +19,8 @@ public class Claim {
     private String color;
     private final BlockPos pos;
     private final WorldHologram hologram;
-    private final ArrayList<Chunk> chunks;
+    private final ArrayList<ChunkPos> chunks;
     private final ArrayList<BlockPos> linkedClaims = new ArrayList<>();
-    private boolean isStartingClaim = false;
 
     public Claim(String kingdomId, BlockPos pos) {
         this.kingdomId = kingdomId;
@@ -30,9 +29,7 @@ public class Claim {
         this.chunks = ClaimHelpers.createChunkBox(pos, 5, true);
         this.hologram = new WorldHologram(overworld, new Vec3d(pos.getX() + 0.5, pos.getY() + 2, pos.getZ() + 0.5));
 
-        if (!ClaimManager.placedFirstBanner(kingdomId)) isStartingClaim = true;
-
-        ArrayList<Chunk> chunks = ClaimHelpers.createChunkBox(pos, 7, false);
+        ArrayList<ChunkPos> chunks = ClaimHelpers.createChunkBox(pos, 7, false);
         for (Claim claim : ClaimManager.getClaims()) {
             if (claim.isOverlapping(chunks)) link(claim);
         }
@@ -44,22 +41,24 @@ public class Claim {
         this.hologram.show();
     }
 
-    public boolean isOverlapping(ArrayList<Chunk> testChunks) {
-        for (Chunk chunk : this.chunks) {
+    public boolean isOverlapping(ArrayList<ChunkPos> testChunks) {
+        for (ChunkPos chunk : this.chunks) {
             if (testChunks.contains(chunk)) return true;
         }
         return false;
     }
 
     public boolean contains(BlockPos pos) {
-        return this.chunks.contains(overworld.getChunk(pos));
+        return this.chunks.contains(overworld.getChunk(pos).getPos());
     }
 
     public boolean canBeBroken() {
+        BlockPos startingClaimPos = KingdomsData.getStartingClaimPos(kingdomId);
+        if (pos.equals(startingClaimPos) && KingdomsData.getBannerCount(kingdomId) == 1) return true;
+
         for (Claim claim : ClaimManager.getClaims()) {
-            if (linkedClaims.contains(claim.getPos()) && !(claim.getLinkedClaims().size() > 1)) return false;
+            if (linkedClaims.contains(claim.pos) && !(claim.linkedClaims.size() > 1) && !claim.pos.equals(startingClaimPos)) return false;
         }
-        if (isStartingClaim && KingdomsData.getBannerCount(kingdomId) > 1) return false;
         return true;
     }
 
@@ -79,17 +78,13 @@ public class Claim {
     }
 
     public void link(Claim claim) {
-        linkedClaims.add(claim.getPos());
-        claim.linkedClaims.add(this.getPos());
+        linkedClaims.add(claim.pos);
+        claim.linkedClaims.add(this.pos);
     }
 
     public void unlink(Claim claim) {
-        linkedClaims.remove(claim.getPos());
+        linkedClaims.remove(claim.pos);
         claim.linkedClaims.remove(this.pos);
-    }
-
-    public ArrayList<BlockPos> getLinkedClaims() {
-        return linkedClaims;
     }
 
     public String getKingdomId() {
