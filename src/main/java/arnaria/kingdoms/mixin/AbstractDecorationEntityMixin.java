@@ -1,6 +1,6 @@
 package arnaria.kingdoms.mixin;
 
-import arnaria.kingdoms.services.claims.ClaimManager;
+import arnaria.kingdoms.services.claims.NewClaimManager;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -22,7 +22,7 @@ public abstract class AbstractDecorationEntityMixin extends Entity {
 
     @Inject(method = "canStayAttached", at = @At("HEAD"), cancellable = true)
     public void allowPlacement(CallbackInfoReturnable<Boolean> cir) throws CommandSyntaxException {
-        if (!ClaimManager.actionAllowedAt(this.getBlockPos(), this.getCommandSource().getPlayer())) cir.setReturnValue(false);
+        if (!NewClaimManager.actionAllowedAt(this.getBlockPos(), this.getCommandSource().getPlayer())) cir.setReturnValue(false);
     }
 
     @Inject(method = "damage", at = @At("HEAD"), cancellable = true)
@@ -30,7 +30,7 @@ public abstract class AbstractDecorationEntityMixin extends Entity {
         Entity attacker = source.getAttacker();
 
         if (attacker instanceof PlayerEntity) {
-            if (!ClaimManager.actionAllowedAt(this.getBlockPos(), (PlayerEntity) attacker)) cir.setReturnValue(false);
+            if (!NewClaimManager.actionAllowedAt(this.getBlockPos(), (PlayerEntity) attacker)) cir.setReturnValue(false);
         }
     }
 }

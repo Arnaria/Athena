@@ -2,8 +2,8 @@ package arnaria.kingdoms.services.procedures;
 
 import arnaria.kingdoms.Kingdoms;
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
-import arnaria.kingdoms.services.claims.Claim;
 import arnaria.kingdoms.services.claims.ClaimManager;
+import arnaria.kingdoms.services.claims.NewClaimManager;
 import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.kingdoms.services.events.Challenge;
 import arnaria.kingdoms.services.events.ChallengeManager;
@@ -140,9 +140,7 @@ public class KingdomProcedures {
     }
 
     public static void combineKingdoms(String deletingKingdom, String keepingKingdom) {
-        for (Claim claim : ClaimManager.getClaims(deletingKingdom)) {
-            claim.rebrand(keepingKingdom, KingdomsData.getColor(keepingKingdom));
-        }
+        NewClaimManager.rebrand(deletingKingdom, keepingKingdom);
         for (UUID player : KingdomsData.getMembers(deletingKingdom)) {
             addMember(keepingKingdom, player);
         }
@@ -153,7 +151,7 @@ public class KingdomProcedures {
         Team kingdomTeam = scoreboard.getTeam(kingdomId);
         kingdom.put("COLOR", color.getName());
         if (kingdomTeam != null) kingdomTeam.setColor(color);
-        ClaimManager.updateClaimColor(kingdomId, color.getName());
+        NewClaimManager.updateColor(kingdomId, color.getName());
     }
 
     public static void addJoinRequest(String kingdomID, UUID executor) {

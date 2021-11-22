@@ -1,7 +1,7 @@
 package arnaria.kingdoms.mixin;
 
 
-import arnaria.kingdoms.services.claims.ClaimManager;
+import arnaria.kingdoms.services.claims.NewClaimManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -30,7 +30,7 @@ public abstract class ArmorStandEntityMixin extends LivingEntity {
 
         BlockPos standPos = new BlockPos(hitPos.getX(), hitPos.getX() ,hitPos.getZ());
 
-        if (!ClaimManager.actionAllowedAt(standPos, player)) {
+        if (!NewClaimManager.actionAllowedAt(standPos, player)) {
             cir.setReturnValue(ActionResult.FAIL);
         }
     }
@@ -40,7 +40,7 @@ public abstract class ArmorStandEntityMixin extends LivingEntity {
         Entity attacker = source.getAttacker();
 
         if (attacker instanceof PlayerEntity) {
-            if (!ClaimManager.actionAllowedAt(this.getBlockPos(), (PlayerEntity) attacker)) cir.setReturnValue(false);
+            if (!NewClaimManager.actionAllowedAt(this.getBlockPos(), (PlayerEntity) attacker)) cir.setReturnValue(false);
         }
     }
 }

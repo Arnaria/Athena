@@ -1,6 +1,6 @@
 package arnaria.kingdoms.mixin;
 
-import arnaria.kingdoms.services.claims.ClaimManager;
+import arnaria.kingdoms.services.claims.NewClaimManager;
 import arnaria.notifacaitonlib.NotificationManager;
 import arnaria.notifacaitonlib.NotificationTypes;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,7 +18,7 @@ public class FlintNStealMixin {
     @Inject(method = "useOnBlock", at = @At("HEAD"), cancellable = true)
     public void useOnBlock(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
         PlayerEntity player = context.getPlayer();
-        if (player != null && !ClaimManager.actionAllowedAt(context.getBlockPos(), player)) {
+        if (player != null && !NewClaimManager.actionAllowedAt(context.getBlockPos(), player)) {
             NotificationManager.send(player.getUuid(), "You can't use flint and steel in other kingdoms claims", NotificationTypes.ERROR);
             cir.setReturnValue(ActionResult.FAIL);
         }

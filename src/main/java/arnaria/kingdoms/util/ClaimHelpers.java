@@ -2,6 +2,7 @@ package arnaria.kingdoms.util;
 
 import arnaria.kingdoms.services.claims.Claim;
 import arnaria.kingdoms.services.claims.ClaimManager;
+import arnaria.kingdoms.services.claims.NewClaimManager;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -45,9 +46,9 @@ public class ClaimHelpers {
         for (int i = 0; i < diameter; i++) {
             int currentZ = startZ;
             for (int j = 0; j < diameter; j++) {
-                BlockPos pos = new BlockPos(currentX, 1, currentZ);
-                if (removeOverlapping && !ClaimManager.claimExistsAt(pos)) chunks.add(overworld.getChunk(pos).getPos());
-                if (!removeOverlapping) chunks.add(overworld.getChunk(pos).getPos());
+                ChunkPos pos = new ChunkPos(new BlockPos(currentX, 0, currentZ));
+                if (removeOverlapping && !NewClaimManager.claimExistsAt(pos)) chunks.add(pos);
+                if (!removeOverlapping) chunks.add(pos);
                 currentZ += 16;
             }
             currentX += 16;
