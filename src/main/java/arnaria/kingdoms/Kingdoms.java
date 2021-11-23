@@ -2,6 +2,7 @@ package arnaria.kingdoms;
 
 import arnaria.kingdoms.commands.*;
 import arnaria.kingdoms.services.api.RestAPI;
+import arnaria.kingdoms.services.claims.NewClaimManager;
 import arnaria.kingdoms.services.events.ChallengeManager;
 import arnaria.kingdoms.util.Settings;
 import arnaria.kingdoms.services.claims.ClaimManager;
@@ -65,7 +66,8 @@ public class Kingdoms implements ModInitializer {
 
                 KingdomProcedures.init();
                 ChallengeManager.init();
-                ClaimManager.init();
+                //ClaimManager.init();
+                NewClaimManager.init();
                 RestAPI.init();
 
                 //Command Registration

@@ -78,11 +78,11 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerEn
 
     @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
-        ServerPlayerEntity player = BetterPlayerManager.getPlayer(this.uuid);
+        /*ServerPlayerEntity player = BetterPlayerManager.getPlayer(this.uuid);
         ItemStack stack = this.getItemsHand().iterator().next();
         if (stack.getItem() instanceof BannerItem) {
             NbtCompound nbt = stack.getNbt();
             if (nbt != null && nbt.getBoolean("IS_CLAIM_MARKER")) ClaimManager.renderClaimsForPlacement(player);
-        } else ClaimManager.renderClaims(player);
+        } else ClaimManager.renderClaims(player);*/
     }
 }

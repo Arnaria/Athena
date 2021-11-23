@@ -83,7 +83,7 @@ public class KingdomProcedures {
     }
 
     public static void removeKingdom(String kingdomId) {
-        ClaimManager.dropClaims(kingdomId);
+        NewClaimManager.dropKingdom(kingdomId);
         scoreboard.removeTeam(scoreboard.getTeam(kingdomId));
         BlueMapAPI.getMarkerApi().removeMarkerSet(kingdomId);
         BlueMapAPI.saveMarkers();
@@ -140,7 +140,7 @@ public class KingdomProcedures {
     }
 
     public static void combineKingdoms(String deletingKingdom, String keepingKingdom) {
-        NewClaimManager.rebrand(deletingKingdom, keepingKingdom);
+        //NewClaimManager.rebrand(deletingKingdom, keepingKingdom);
         for (UUID player : KingdomsData.getMembers(deletingKingdom)) {
             addMember(keepingKingdom, player);
         }
@@ -151,7 +151,7 @@ public class KingdomProcedures {
         Team kingdomTeam = scoreboard.getTeam(kingdomId);
         kingdom.put("COLOR", color.getName());
         if (kingdomTeam != null) kingdomTeam.setColor(color);
-        NewClaimManager.updateColor(kingdomId, color.getName());
+        //NewClaimManager.updateColor(kingdomId, color.getName());
     }
 
     public static void addJoinRequest(String kingdomID, UUID executor) {

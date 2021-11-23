@@ -17,8 +17,8 @@ public class AbstractBlockMixin {
 
     @Inject(method = "onStateReplaced", at = @At("HEAD"))
     public void dropClaim(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved, CallbackInfo ci) {
-        if (state.getBlock() instanceof BannerBlock bannerBlock) {
-            if (((BannerMarkerInf) bannerBlock).isClaimMarker()) NewClaimManager.dropClaim(pos);
+        if (state.getBlock() instanceof BannerBlock) {
+            if (!NewClaimManager.getKingdomId(pos).isEmpty()) NewClaimManager.dropClaim(pos);
         }
     }
 
