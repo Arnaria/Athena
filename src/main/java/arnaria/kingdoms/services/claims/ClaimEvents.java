@@ -17,13 +17,9 @@ public class ClaimEvents {
             if (world.getRegistryKey().equals(World.OVERWORLD)) {
                 if (state.getBlock() instanceof PlayerSkullBlock) return true;
 
-               /* if (state.getBlock() instanceof BannerBlock bannerBlock && ((BannerMarkerInf) bannerBlock).isClaimMarker()) {
-                    if (!ClaimManager.canBreakClaim(pos)) return false;
+                if (state.getBlock() instanceof BannerBlock && NewClaimManager.isClaimMarker(pos)) {
+                    if (!NewClaimManager.canBreakClaim(pos)) return false;
                 }
-
-                return ClaimManager.actionAllowedAt(pos, player);*/
-
-
 
                 return NewClaimManager.actionAllowedAt(pos, player);
             }

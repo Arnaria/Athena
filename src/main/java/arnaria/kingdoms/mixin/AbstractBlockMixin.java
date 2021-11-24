@@ -1,6 +1,5 @@
 package arnaria.kingdoms.mixin;
 
-import arnaria.kingdoms.interfaces.BannerMarkerInf;
 import arnaria.kingdoms.services.claims.NewClaimManager;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BannerBlock;
@@ -18,7 +17,7 @@ public class AbstractBlockMixin {
     @Inject(method = "onStateReplaced", at = @At("HEAD"))
     public void dropClaim(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved, CallbackInfo ci) {
         if (state.getBlock() instanceof BannerBlock) {
-            if (!NewClaimManager.getKingdomId(pos).isEmpty()) NewClaimManager.dropClaim(pos);
+            if (NewClaimManager.isClaimMarker(pos)) NewClaimManager.dropClaim(pos);
         }
     }
 

@@ -139,11 +139,9 @@ public class KingdomProcedures {
         kingdom.put("ADVISERS", advisers);
     }
 
-    public static void combineKingdoms(String deletingKingdom, String keepingKingdom) {
-        //NewClaimManager.rebrand(deletingKingdom, keepingKingdom);
-        for (UUID player : KingdomsData.getMembers(deletingKingdom)) {
-            addMember(keepingKingdom, player);
-        }
+    public static void combineKingdoms(String kingdomId, String newKingdomId) {
+        NewClaimManager.transferClaims(kingdomId, newKingdomId);
+        for (UUID player : KingdomsData.getMembers(kingdomId)) addMember(newKingdomId, player);
     }
 
     public static void setColor(String kingdomId, Formatting color) {
@@ -151,7 +149,7 @@ public class KingdomProcedures {
         Team kingdomTeam = scoreboard.getTeam(kingdomId);
         kingdom.put("COLOR", color.getName());
         if (kingdomTeam != null) kingdomTeam.setColor(color);
-        //NewClaimManager.updateColor(kingdomId, color.getName());
+        NewClaimManager.updateColor(kingdomId, color.getName());
     }
 
     public static void addJoinRequest(String kingdomID, UUID executor) {
