@@ -5,5 +5,6 @@ public interface PlayerEntityInf {
     String getKingdomId();
     void setKingship(boolean isKing);
     boolean isKing();
+    void allowToEditIn(String kingdomId);
     boolean allowedToEditIn(String kingdomId);
 }

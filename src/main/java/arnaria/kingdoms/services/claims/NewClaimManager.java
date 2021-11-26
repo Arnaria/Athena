@@ -74,15 +74,22 @@ public class NewClaimManager {
         claims.put(pos, chunks);
         owners.put(pos, kingdomId);
 
+        ArrayList<ChunkPos> kingdomChunks = new ArrayList<>();
         claims.forEach((claimPos, claimChunks) -> {
-            if (isOverlapping(claimChunks, testChunks) && owners.get(claimPos).equals(kingdomId)) {
-                links.put(pos, claimPos);
-                links.put(claimPos, pos);
+            if (owners.get(claimPos).equals(kingdomId)) {
+                kingdomChunks.addAll(claimChunks);
+
+                if (isOverlapping(claimChunks, testChunks)) {
+                    links.put(pos, claimPos);
+                    links.put(claimPos, pos);
+                }
             }
         });
 
+        ClaimRenderer.updateRenderMap(kingdomId, kingdomChunks);
         KingdomProcedures.addToBannerCount(kingdomId, 1);
         if (KingdomsData.getStartingClaimPos(kingdomId) == null) KingdomProcedures.setStartingClaimPos(kingdomId, pos);
+
 
         if (showCosmetics) {
             WorldHologram hologram = new WorldHologram(Kingdoms.overworld, new Vec3d(pos.getX() + 0.5, pos.getY() + 2, pos.getZ() + 0.5));
@@ -94,7 +101,7 @@ public class NewClaimManager {
             hologram.addText(claimTag);
             hologram.show();
 
-            Optional<MarkerSet> markerSet = BlueMapAPI.getMarkerSet(kingdomId);
+            /*Optional<MarkerSet> markerSet = BlueMapAPI.getMarkerSet(kingdomId);
             markerSet.ifPresent(markers -> {
                 BlockPos[] corners = ClaimHelpers.getCorners(pos);
                 ShapeMarker marker = markers.createShapeMarker(pos.toShortString(), BlueMapAPI.getOverworld(), corners[0].getX(), corners[0].getY(), corners[0].getZ(), Shape.createRect(corners[0].getX(), corners[0].getZ(), corners[1].getX(), corners[1].getZ()), pos.getY());
@@ -102,10 +109,10 @@ public class NewClaimManager {
                 Color color = new Color(rgb.getX(), rgb.getY(), rgb.getZ(), 0.5F);
                 marker.setColors(color, color.darker());
                 BlueMapAPI.saveMarkers();
-            });
+            });*/
         }
 
-        claimData.beginTransaction();
+       /* claimData.beginTransaction();
         DataContainer claimDataContainer = claimData.createDataContainer(pos.toShortString());
         claimDataContainer.put("KINGDOM_ID", kingdomId);
         claimDataContainer.put("POS", pos);
@@ -114,7 +121,7 @@ public class NewClaimManager {
         chunks.iterator().forEachRemaining(chunk -> chunkPositions.add(chunk.getStartPos()));
         claimDataContainer.put("CHUNKS", chunkPositions.toArray(BlockPos[]::new));
 
-        claimData.endTransaction();
+        claimData.endTransaction();*/
     }
 
     public static void addAdminClaim(BlockPos pos) {
@@ -127,9 +134,9 @@ public class NewClaimManager {
         holograms.get(pos).hide();
         KingdomProcedures.removeFromBannerCount(kingdomId, 1);
 
-        Optional<MarkerSet> markerSet = BlueMapAPI.getMarkerSet(kingdomId);
+        /*Optional<MarkerSet> markerSet = BlueMapAPI.getMarkerSet(kingdomId);
         markerSet.ifPresent(markers -> markers.removeMarker(pos.toShortString()));
-        BlueMapAPI.saveMarkers();
+        BlueMapAPI.saveMarkers();*/
 
         for (BlockPos claimPos : links.get(pos)) links.remove(claimPos, pos);
 
@@ -138,6 +145,14 @@ public class NewClaimManager {
         links.removeAll(pos);
         holograms.remove(pos);
         claimData.drop(pos.toShortString());
+
+        ArrayList<ChunkPos> kingdomChunks = new ArrayList<>();
+        claims.forEach((claimPos, claimChunks) -> {
+            if (owners.get(claimPos).equals(kingdomId)) {
+                kingdomChunks.addAll(claimChunks);
+            }
+        });
+        ClaimRenderer.updateRenderMap(kingdomId, kingdomChunks);
     }
 
     public static void dropKingdom(String kingdomId) {
@@ -146,17 +161,18 @@ public class NewClaimManager {
             dropClaim(pos);
         }
         claimData.endTransaction();
+        ClaimRenderer.dropRenderMap(kingdomId);
     }
 
     public static void updateColor(String kingdomId, String color) {
-        Optional<MarkerSet> markerSet = BlueMapAPI.getMarkerSet(kingdomId);
+        //Optional<MarkerSet> markerSet = BlueMapAPI.getMarkerSet(kingdomId);
 
         holograms.forEach((pos, hologram) -> {
             if (owners.get(pos).equals(kingdomId)) {
                 hologram.removeElement(0);
                 hologram.addText(new LiteralText(kingdomId.toUpperCase()).formatted(Formatting.byName(color)));
 
-                markerSet.ifPresent(markers -> {
+                /*markerSet.ifPresent(markers -> {
                     markers.removeMarker(pos.toShortString());
 
                     BlockPos[] corners = ClaimHelpers.getCorners(pos);
@@ -164,10 +180,12 @@ public class NewClaimManager {
                     Vec3f rgb = Parser.colorNameToRGB(KingdomsData.getColor(kingdomId));
                     Color c = new Color(rgb.getX(), rgb.getY(), rgb.getZ(), 0.5F);
                     marker.setColors(c, c.darker());
-                });
+                });*/
             }
         });
-        BlueMapAPI.saveMarkers();
+        //BlueMapAPI.saveMarkers();
+
+        ClaimRenderer.updateColor(kingdomId, color);
     }
 
     public static void transferClaims(String kingdomId, String newKingdomId) {

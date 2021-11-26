@@ -2,7 +2,6 @@ package arnaria.kingdoms.services.procedures;
 
 import arnaria.kingdoms.Kingdoms;
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
-import arnaria.kingdoms.services.claims.ClaimManager;
 import arnaria.kingdoms.services.claims.NewClaimManager;
 import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.kingdoms.services.events.Challenge;
@@ -20,6 +19,7 @@ import net.minecraft.scoreboard.AbstractTeam;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.UUID;
 
 import static arnaria.kingdoms.Kingdoms.scoreboard;
+import static arnaria.kingdoms.Kingdoms.settings;
 
 public class KingdomProcedures {
 
@@ -44,29 +45,34 @@ public class KingdomProcedures {
             Formatting color = Formatting.byName(KingdomsData.getColor(kingdom.getId()));
             if (color != null) kingdomTeam.setColor(color);
         }
+
+        if (!kingdomData.contains("ADMIN")) createKingdom("ADMIN", Util.NIL_UUID);
+        for (String admin : settings.admins) addMember("ADMIN", UUID.fromString(admin));
     }
 
     public static void setupPlayer(PlayerEntity player) {
         kingdomData.beginTransaction();
         for (DataContainer kingdom : kingdomData.getDataContainers()) {
-            if (KingdomsData.getMembers(kingdom.getId()).contains(player.getUuid())) {
-                if (kingdom.getUuid("KING").equals(player.getUuid())) ((PlayerEntityInf) player).setKingship(true);
-                ((PlayerEntityInf) player).setKingdomId(kingdom.getId());
+            String kingdomId = kingdom.getId();
+            if (KingdomsData.getMembers(kingdomId).contains(player.getUuid())) {
+                if (!kingdomId.equals("ADMIN")) {
+                    if (kingdom.getUuid("KING").equals(player.getUuid())) ((PlayerEntityInf) player).setKingship(true);
+                    ((PlayerEntityInf) player).setKingdomId(kingdomId);
+                } else {
+                    ((PlayerEntityInf) player).allowToEditIn(kingdomId);
+                }
             }
         }
         kingdomData.endTransaction();
     }
 
     public static void createKingdom(String kingdomId, UUID uuid) {
-        kingdomData.beginTransaction();
-        DataContainer kingdom = kingdomData.createDataContainer(kingdomId);
         Team kingdomTeam = scoreboard.addTeam(kingdomId);
-        BlueMapAPI.getMarkerApi().createMarkerSet(kingdomId);
-        BlueMapAPI.saveMarkers();
-
         kingdomTeam.setNameTagVisibilityRule(AbstractTeam.VisibilityRule.HIDE_FOR_OTHER_TEAMS);
         kingdomTeam.setFriendlyFireAllowed(false);
-        kingdom.put("KING", uuid);
+
+        kingdomData.beginTransaction();
+        DataContainer kingdom = kingdomData.createDataContainer(kingdomId);
         kingdom.put("COLOR", "white");
         kingdom.put("BANNER_COUNT", 0);
         kingdom.put("XP", 0);
@@ -75,10 +81,15 @@ public class KingdomProcedures {
         kingdom.put("BLOCKED", new JsonArray());
         kingdom.put("ADVISERS", new JsonArray());
 
-        addMember(kingdomId, uuid);
+        if (!uuid.equals(Util.NIL_UUID)) {
+            kingdom.put("KING", uuid);
+            BlueMapAPI.getMarkerApi().createMarkerSet(kingdomId);
+            BlueMapAPI.saveMarkers();
 
-        PlayerEntity executor = BetterPlayerManager.getPlayer(uuid);
-        if (executor != null) ((PlayerEntityInf) executor).setKingship(true);
+            addMember(kingdomId, uuid);
+            PlayerEntity executor = BetterPlayerManager.getPlayer(uuid);
+            if (executor != null) ((PlayerEntityInf) executor).setKingship(true);
+        }
         kingdomData.endTransaction();
     }
 

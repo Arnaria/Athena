@@ -2,6 +2,7 @@ package arnaria.kingdoms.mixin;
 
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.kingdoms.services.claims.ClaimManager;
+import arnaria.kingdoms.services.claims.ClaimRenderer;
 import arnaria.kingdoms.services.claims.NewClaimManager;
 import arnaria.kingdoms.services.events.Event;
 import arnaria.kingdoms.services.events.EventManager;
@@ -56,6 +57,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerEn
         return isKing;
     }
 
+    public void allowToEditIn(String kingdomId) {
+        this.allowedToEditIn.add(kingdomId);
+    }
+
     public boolean allowedToEditIn(String kingdomId) {
         return this.allowedToEditIn.contains(kingdomId);
     }
@@ -84,5 +89,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerEn
             NbtCompound nbt = stack.getNbt();
             if (nbt != null && nbt.getBoolean("IS_CLAIM_MARKER")) ClaimManager.renderClaimsForPlacement(player);
         } else ClaimManager.renderClaims(player);*/
+
+        ClaimRenderer.render(BetterPlayerManager.getPlayer(this.uuid));
     }
 }

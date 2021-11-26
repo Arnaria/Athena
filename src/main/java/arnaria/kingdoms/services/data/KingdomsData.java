@@ -31,6 +31,7 @@ public class KingdomsData {
     }
 
     public static String getColor(String kingdomId) {
+        if (kingdomId.equals("ADMIN")) return "white";
         DataContainer kingdom = kingdomData.get(kingdomId);
         return kingdom.getString("COLOR");
     }
