@@ -29,7 +29,7 @@ public class KingdomProcedureChecks {
     public static void createKingdom(Enum<InterfaceTypes> platform, String kingdomID, UUID executor) {
         if (!kingdomID.isEmpty()) {
             for (String kingdom : KingdomsData.getKingdomIds()) {
-                if (KingdomsData.getMembers(kingdom).contains(executor)) {
+                if (KingdomsData.getMembers(kingdom).contains(executor) && !kingdom.equals("ADMIN")) {
                     sendNotification(platform, executor, "You are already in a kingdom", NotificationTypes.ERROR);
                     return;
                 }
@@ -60,7 +60,7 @@ public class KingdomProcedureChecks {
     public static void transferKingShip(Enum<InterfaceTypes> platform, String kingdomID, UUID player, UUID executor) {
         if (!kingdomID.isEmpty()) {
             if (executor.equals(KingdomsData.getKing(kingdomID))) {
-                if (!KingdomsData.getMembers(kingdomID).contains(player)) {
+                if (!KingdomsData.getMembers(kingdomID).contains(player)  && !kingdomID.equals("ADMIN")) {
                     for (String kingdom : KingdomsData.getKingdomIds()) {
                         if (KingdomsData.getMembers(kingdom).contains(player)) {
                             if (KingdomsData.getKing(kingdom).equals(player)) {

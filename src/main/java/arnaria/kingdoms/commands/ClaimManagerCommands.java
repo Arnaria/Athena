@@ -1,6 +1,5 @@
 package arnaria.kingdoms.commands;
 
-import arnaria.kingdoms.services.claims.ClaimManager;
 import arnaria.kingdoms.services.claims.NewClaimManager;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
@@ -19,7 +18,7 @@ public class ClaimManagerCommands {
                 .then(CommandManager.literal("admin_claim_this_bitch")
                     .executes(ClaimManagerCommands::addClaim))
 
-                .then(CommandManager.literal("admin_drop_kick_this_claim")
+                .then(CommandManager.literal("drop_kick_this_chunk")
                     .executes(ClaimManagerCommands::removeClaim))
         );
     }
@@ -27,8 +26,8 @@ public class ClaimManagerCommands {
     public static int addClaim(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         ServerPlayerEntity executor = context.getSource().getPlayer();
 
-        if (!ClaimManager.claimExistsAt(executor.getBlockPos())) {
-            NewClaimManager.addAdminClaim(executor.getBlockPos());
+        if (!NewClaimManager.claimExistsAt(executor.getChunkPos())) {
+            NewClaimManager.addAdminClaim(executor.getChunkPos());
             executor.sendMessage(new LiteralText("Yeah she good boss man"), false);
         } else executor.sendMessage(new LiteralText("Yeah there is already a claim there dumbass"), false);
 
@@ -37,8 +36,7 @@ public class ClaimManagerCommands {
 
     public static int removeClaim(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         ServerPlayerEntity executor = context.getSource().getPlayer();
-        NewClaimManager.dropClaim(executor.getBlockPos());
-
+        NewClaimManager.dropChunk(executor.getChunkPos());
         executor.sendMessage(new LiteralText("Cya looser"), false);
         return 1;
     }

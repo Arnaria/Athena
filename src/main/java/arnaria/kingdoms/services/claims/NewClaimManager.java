@@ -21,9 +21,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3f;
 
-import java.awt.*;
 import java.util.*;
 
 public class NewClaimManager {
@@ -46,12 +44,12 @@ public class NewClaimManager {
         ClaimEvents.register();
 
         claimData.beginTransaction();
-        for (DataContainer claimDataContainer : claimData.getDataContainers()) {
-            String kingdomId = claimDataContainer.getString("KINGDOM_ID");
-            BlockPos pos = claimDataContainer.getBlockPos("POS");
+        for (DataContainer claim : claimData.getDataContainers()) {
+            String kingdomId = claim.getString("KINGDOM_ID");
+            BlockPos pos = claim.getBlockPos("POS");
 
             ArrayList<ChunkPos> chunks = new ArrayList<>();
-            for (BlockPos chunk : claimDataContainer.getBlockPosArray("CHUNKS")) chunks.add(new ChunkPos(chunk));
+            for (BlockPos chunk : claim.getBlockPosArray("CHUNKS")) chunks.add(new ChunkPos(chunk));
             claims.put(pos, chunks);
 
             WorldHologram hologram = new WorldHologram(Kingdoms.overworld, new Vec3d(pos.getX(), pos.getY(), pos.getZ()));
@@ -112,7 +110,7 @@ public class NewClaimManager {
             });*/
         }
 
-       /* claimData.beginTransaction();
+       claimData.beginTransaction();
         DataContainer claimDataContainer = claimData.createDataContainer(pos.toShortString());
         claimDataContainer.put("KINGDOM_ID", kingdomId);
         claimDataContainer.put("POS", pos);
@@ -121,11 +119,34 @@ public class NewClaimManager {
         chunks.iterator().forEachRemaining(chunk -> chunkPositions.add(chunk.getStartPos()));
         claimDataContainer.put("CHUNKS", chunkPositions.toArray(BlockPos[]::new));
 
-        claimData.endTransaction();*/
+        claimData.endTransaction();
     }
 
-    public static void addAdminClaim(BlockPos pos) {
-        addClaim("ADMIN", pos, false);
+    public static void addAdminClaim(ChunkPos pos) {
+        ArrayList<BlockPos> point = getPoints("ADMIN");
+        if (point.isEmpty()) {
+            point.add(pos.getStartPos());
+            owners.put(pos.getStartPos(), "ADMIN");
+        }
+        BlockPos claimPos = point.get(0);
+
+        ArrayList<ChunkPos> chunks = claims.get(claimPos);
+        if (chunks == null) chunks = new ArrayList<>();
+        chunks.add(pos);
+        claims.put(claimPos, chunks);
+
+        ClaimRenderer.updateRenderMap("ADMIN", chunks);
+
+        claimData.beginTransaction();
+        DataContainer claim = claimData.createDataContainer(claimPos.toShortString());
+        claim.put("KINGDOM_ID", "ADMIN");
+        claim.put("POS", claimPos);
+
+        ArrayList<BlockPos> chunkPositions = new ArrayList<>();
+        chunks.iterator().forEachRemaining(chunk -> chunkPositions.add(chunk.getStartPos()));
+        claim.put("CHUNKS", chunkPositions.toArray(BlockPos[]::new));
+
+        claimData.endTransaction();
     }
 
     public static void dropClaim(BlockPos pos) {
@@ -164,6 +185,30 @@ public class NewClaimManager {
         ClaimRenderer.dropRenderMap(kingdomId);
     }
 
+    public static void dropChunk(ChunkPos pos) {
+        for (Map.Entry<BlockPos, ArrayList<ChunkPos>> claim : claims.entrySet()) {
+            ArrayList<ChunkPos> chunks = claim.getValue();
+            if (chunks.contains(pos)) {
+                chunks.remove(pos);
+
+                if (chunks.isEmpty()) {
+                    claims.remove(pos.getStartPos());
+                    owners.remove(pos.getStartPos());
+                }
+
+                ClaimRenderer.updateRenderMap(owners.get(claim.getKey()), chunks);
+
+                claimData.beginTransaction();
+                DataContainer claimDataContainer = claimData.get(claim.getKey().toShortString());
+                ArrayList<BlockPos> chunkPositions = new ArrayList<>(Arrays.asList(claimDataContainer.getBlockPosArray("CHUNKS")));
+                chunkPositions.remove(pos.getStartPos());
+                claimDataContainer.put("CHUNKS", chunkPositions.toArray(BlockPos[]::new));
+                claimData.endTransaction();
+                break;
+            }
+        }
+    }
+
     public static void updateColor(String kingdomId, String color) {
         //Optional<MarkerSet> markerSet = BlueMapAPI.getMarkerSet(kingdomId);
 
@@ -197,7 +242,7 @@ public class NewClaimManager {
         if (pos.getY() < 0) return true;
 
         for (Map.Entry<BlockPos, ArrayList<ChunkPos>> claim : claims.entrySet()) {
-        if (claim.getValue().contains(new ChunkPos(pos)) && !((PlayerEntityInf) player).allowedToEditIn(owners.get(claim.getKey()))) return false;
+            if (claim.getValue().contains(new ChunkPos(pos)) && !((PlayerEntityInf) player).allowedToEditIn(owners.get(claim.getKey()))) return false;
         }
         return true;
     }
