@@ -2,6 +2,7 @@ package arnaria.kingdoms.services.procedures;
 
 import arnaria.kingdoms.Kingdoms;
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
+import arnaria.kingdoms.interfaces.ScoreboardInf;
 import arnaria.kingdoms.services.claims.NewClaimManager;
 import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.kingdoms.services.events.Challenge;
@@ -22,9 +23,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.UUID;
+import java.util.*;
 
 import static arnaria.kingdoms.Kingdoms.scoreboard;
 import static arnaria.kingdoms.Kingdoms.settings;
@@ -34,9 +33,7 @@ public class KingdomProcedures {
     public static final Table kingdomData = Kingdoms.database.createTable("KingdomData");
 
     public static void init() {
-        for (Team kingdomTeam : scoreboard.getTeams()) {
-            scoreboard.removeTeam(kingdomTeam);
-        }
+        ((ScoreboardInf) scoreboard).clearTeams();
 
         for (DataContainer kingdom : kingdomData.getDataContainers()) {
             Team kingdomTeam = scoreboard.addTeam(kingdom.getId());

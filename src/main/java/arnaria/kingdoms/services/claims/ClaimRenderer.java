@@ -28,18 +28,17 @@ public class ClaimRenderer {
 
     public static void render(ServerPlayerEntity player) {
         renderMaps.forEach((kingdomId, lines) -> lines.forEach(line -> {
-
-            if (line.getLeft().getX() != line.getRight().getX()) {
+            if (line.getLeft().getZ() == line.getRight().getZ()) {
                 BlockPos pos = line.getLeft().add(0, 80, 0);
                 for (int i = 0; i <= 16; i += 2) {
                     spawnParticle(player, pos, colors.get(kingdomId), 110);
-                    pos = pos.add(2, 0, 0);
+                    pos = pos.add(-2, 0, 0);
                 }
             } else {
-                BlockPos pos = line.getRight().add(0, 80, 0);
+                BlockPos pos = line.getLeft().add(0, 80, 0);
                 for (int i = 0; i <= 16; i += 2) {
                     spawnParticle(player, pos, colors.get(kingdomId), 110);
-                    pos = pos.add(0, 0, 2);
+                    pos = pos.add(0, 0, -2);
                 }
             }
         }));
@@ -48,24 +47,24 @@ public class ClaimRenderer {
     public static void updateRenderMap(String kingdomId, ArrayList<ChunkPos> chunks) {
         ArrayList<Pair<BlockPos, BlockPos>> renderMap = new ArrayList<>();
         chunks.forEach(chunk -> {
-            if (!chunks.contains(new ChunkPos(chunk.x, chunk.z + 1))) {
-                BlockPos pos = chunk.getStartPos();
-                renderMap.add(new Pair<>(pos, pos.add(16, 0, 0)));
-            }
-
             if (!chunks.contains(new ChunkPos(chunk.x, chunk.z - 1))) {
                 BlockPos pos = chunk.getStartPos();
-                renderMap.add(new Pair<>(pos.add(0, 0, -16), pos.add(16, 0, -16)));
+                renderMap.add(new Pair<>(pos.add(16, 0, 0), pos));
             }
 
-            if (!chunks.contains(new ChunkPos(chunk.x + 1, chunk.z))) {
+            if (!chunks.contains(new ChunkPos(chunk.x, chunk.z + 1))) {
                 BlockPos pos = chunk.getStartPos();
-                renderMap.add(new Pair<>(pos.add(16, 0, 0), pos.add(16, 0, -16)));
+                renderMap.add(new Pair<>(pos.add(16, 0, 16), pos.add(0, 0, 16)));
             }
 
             if (!chunks.contains(new ChunkPos(chunk.x - 1, chunk.z))) {
                 BlockPos pos = chunk.getStartPos();
-                renderMap.add(new Pair<>(pos, pos.add(0, 0, -16)));
+                renderMap.add(new Pair<>(pos.add(0, 0, 16), pos));
+            }
+
+            if (!chunks.contains(new ChunkPos(chunk.x + 1, chunk.z))) {
+                BlockPos pos = chunk.getStartPos();
+                renderMap.add(new Pair<>(pos.add(16, 0, 16), pos.add(16, 0, 0)));
             }
         });
 

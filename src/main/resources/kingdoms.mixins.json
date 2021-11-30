@@ -18,6 +18,7 @@
     "ItemFrameEntityMixin",
     "ItemFrameMixin",
     "PlayerEntityMixin",
+    "ScoreboardMixin",
     "ShovelMixin"
   ],
   "injectors": {
