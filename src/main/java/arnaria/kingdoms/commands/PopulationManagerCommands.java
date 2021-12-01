@@ -31,7 +31,16 @@ public class PopulationManagerCommands {
                                 .executes(context -> banishMember(context, StringArgumentType.getString(context, "Player")))))
                 .then(CommandManager.literal("unbanish")
                         .then(CommandManager.argument("Player", StringArgumentType.string())
-                                .executes(context -> unbanishMember(context, StringArgumentType.getString(context, "Player"))))));
+                                .executes(context -> unbanishMember(context, StringArgumentType.getString(context, "Player")))))
+                .then(CommandManager.literal("view")
+                        .executes(PopulationManagerCommands::viewJoinRequests)));
+    }
+
+    private static int viewJoinRequests(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        PlayerEntity executor = context.getSource().getPlayer();
+        if (executor == null) return 1;
+        // KingdomProcedureChecks.viewJoinRequests(InterfaceTypes.COMMAND, ((PlayerEntityInf) executor).getKingdomId(), executor.getUuid());
+        return 1;
     }
 
     private static int acceptJoinRequest(CommandContext<ServerCommandSource> context, String requester) throws CommandSyntaxException {

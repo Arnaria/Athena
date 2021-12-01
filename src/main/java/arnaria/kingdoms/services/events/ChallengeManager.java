@@ -1,6 +1,7 @@
 package arnaria.kingdoms.services.events;
 
 import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.File;
@@ -39,7 +40,7 @@ public class ChallengeManager {
                     challenges.put(tier, parsedChallenges);
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | CsvException e) {
             e.printStackTrace();
         }
     }

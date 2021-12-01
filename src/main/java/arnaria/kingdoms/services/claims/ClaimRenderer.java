@@ -22,7 +22,7 @@ public class ClaimRenderer {
         //if (pos.getSquaredDistance(player.getBlockPos()) > range) return;
 
         DustParticleEffect effect = new DustParticleEffect(color, 2.0F);
-        ServerWorld world = player.getServerWorld();
+        ServerWorld world = player.getWorld();
         world.spawnParticles(player, effect, true, pos.getX(), pos.getY(), pos.getZ(), 1,0, 0, 0, 0);
     }
 

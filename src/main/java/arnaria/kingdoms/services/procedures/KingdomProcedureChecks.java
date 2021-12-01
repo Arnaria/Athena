@@ -6,7 +6,6 @@ import arnaria.kingdoms.util.BetterPlayerManager;
 import arnaria.kingdoms.util.InterfaceTypes;
 import arnaria.notifacaitonlib.NotificationManager;
 import arnaria.notifacaitonlib.NotificationTypes;
-import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 import org.apache.logging.log4j.Level;
 
@@ -18,10 +17,7 @@ public class KingdomProcedureChecks {
         if (platform.equals(InterfaceTypes.API)) {
             Kingdoms.log(Level.INFO, "API go brrrrrrr");
         } else {
-            if (notificationType.contains("color:")) {
-                Formatting color = Formatting.byName(notificationType.split(":")[1]);
-                if (color != null) NotificationManager.send(receiver, new LiteralText(message).formatted(color), NotificationTypes.EVENT);
-            } else NotificationManager.send(receiver, message, notificationType);
+            NotificationManager.send(receiver, message, notificationType);
         }
     }
 
@@ -125,8 +121,7 @@ public class KingdomProcedureChecks {
         if(!kingdomID.isEmpty()) {
             if (KingdomsData.getKing(kingdomID).equals(executor)) {
                 KingdomProcedures.setColor(kingdomID, color);
-
-                sendNotification(platform, executor, kingdomID + "'s colour is now " + color.name(), "color:" + color.getName());
+                sendNotification(platform, executor, kingdomID + "'s colour is now " + color.name(), NotificationTypes.EVENT);
 
             } else sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
         } else sendNotification(platform, executor, "You are not in a kingdom", NotificationTypes.WARN);
