@@ -22,10 +22,7 @@ public class BlueMapAPI {
 
     public static void init(MarkerAPI api) {
         markerAPI = api;
-        purgeUnusedKingdoms(KingdomsData.getKingdomIds());
-    }
-
-    public static void purgeUnusedKingdoms(ArrayList<String> kingdomIds) {
+        ArrayList<String> kingdomIds = KingdomsData.getKingdomIds();
         for (MarkerSet set : markerAPI.getMarkerSets()) {
             if (!kingdomIds.contains(set.getId())) markerAPI.removeMarkerSet(set);
         }

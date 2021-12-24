@@ -80,7 +80,6 @@ public class KingdomProcedures {
 
         if (!uuid.equals(Util.NIL_UUID)) {
             kingdom.put("KING", uuid);
-
             addMember(kingdomId, uuid);
             PlayerEntity executor = BetterPlayerManager.getPlayer(uuid);
             if (executor != null) ((PlayerEntityInf) executor).setKingship(true);

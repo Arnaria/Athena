@@ -179,7 +179,10 @@ public class NewClaimManager {
                     owners.remove(pos.getStartPos());
                 }
 
-                ClaimRenderer.updateRenderMap(owners.get(claim.getKey()), chunks);
+                String kingdomId = owners.get(claim.getKey());
+                ClaimRenderer.updateRenderMap(kingdomId, chunks);
+                BlueMapAPI.removeMarker(kingdomId, claims.get(claim.getKey()));
+                BlueMapAPI.createMarker(kingdomId, chunks);
 
                 claimData.beginTransaction();
                 DataContainer claimDataContainer = claimData.get(claim.getKey().toShortString());
