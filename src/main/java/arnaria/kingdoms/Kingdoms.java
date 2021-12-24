@@ -5,11 +5,9 @@ import arnaria.kingdoms.services.api.RestAPI;
 import arnaria.kingdoms.services.claims.NewClaimManager;
 import arnaria.kingdoms.services.events.ChallengeManager;
 import arnaria.kingdoms.util.Settings;
-import arnaria.kingdoms.services.claims.ClaimManager;
 import arnaria.kingdoms.services.procedures.KingdomProcedures;
 import com.mojang.brigadier.CommandDispatcher;
 import de.bluecolored.bluemap.api.BlueMapAPI;
-import de.bluecolored.bluemap.api.marker.MarkerAPI;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import mrnavastar.sqlib.api.databases.Database;
@@ -37,7 +35,6 @@ public class Kingdoms implements ModInitializer {
     public static Database database;
     public static Settings settings;
     public static BlueMapAPI blueMapAPI;
-    public static MarkerAPI markerAPI;
 
     @Override
     public void onInitialize() {
@@ -87,7 +84,7 @@ public class Kingdoms implements ModInitializer {
             BlueMapAPI.onEnable(api -> {
                 try {
                     blueMapAPI = api;
-                    markerAPI = api.getMarkerAPI();
+                    arnaria.kingdoms.util.BlueMapAPI.init(api.getMarkerAPI());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

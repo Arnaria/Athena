@@ -80,8 +80,6 @@ public class KingdomProcedures {
 
         if (!uuid.equals(Util.NIL_UUID)) {
             kingdom.put("KING", uuid);
-            BlueMapAPI.getMarkerApi().createMarkerSet(kingdomId);
-            BlueMapAPI.saveMarkers();
 
             addMember(kingdomId, uuid);
             PlayerEntity executor = BetterPlayerManager.getPlayer(uuid);

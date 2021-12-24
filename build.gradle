@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.10.62'
+    id 'fabric-loom' version '0.10.64'
     id 'maven-publish'
 }
 
@@ -9,13 +9,13 @@ group = project.maven_group
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
-    maven { url "https://maven.shedaniel.me/" }
+    maven { url 'https://maven.shedaniel.me/' }
     maven { url 'https://maven.nucleoid.xyz' }
     maven {
         url = 'https://oss.sonatype.org/content/repositories/snapshots'
     }
     maven {
-        url = "https://repo.incendo.org/content/repositories/snapshots"
+        url = 'https://repo.incendo.org/content/repositories/snapshots'
     }
     maven {
         name = 'opencollab-release-repo'
@@ -103,13 +103,5 @@ publishing {
                 builtBy remapSourcesJar
             }
         }
-    }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-        // Add repositories to publish to here.
-        // Notice: This block does NOT have the same function as the block in the top level.
-        // The repositories here will be used for publishing your artifact, not for
-        // retrieving dependencies.
     }
 }
