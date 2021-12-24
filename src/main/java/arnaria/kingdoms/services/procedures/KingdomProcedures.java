@@ -68,9 +68,12 @@ public class KingdomProcedures {
         kingdomTeam.setNameTagVisibilityRule(AbstractTeam.VisibilityRule.HIDE_FOR_OTHER_TEAMS);
         kingdomTeam.setFriendlyFireAllowed(false);
 
+        Formatting color = Formatting.byColorIndex((int) (Math.random() * 15));
+
         kingdomData.beginTransaction();
         DataContainer kingdom = kingdomData.createDataContainer(kingdomId);
-        kingdom.put("COLOR", "white");
+        if (color != null) kingdom.put("COLOR", color.getName());
+        else kingdom.put("COLOR", "white");
         kingdom.put("BANNER_COUNT", 0);
         kingdom.put("XP", 0);
         kingdom.put("MEMBERS", new JsonArray());
@@ -158,14 +161,14 @@ public class KingdomProcedures {
     }
 
     public static void addJoinRequest(String kingdomID, UUID executor) {
-            DataContainer kingdom = kingdomData.get(kingdomID);
-            JsonArray requests = kingdom.getJson("REQUESTS").getAsJsonArray();
-            for (JsonElement request : requests) {
-                if (request.getAsString().equals(executor.toString())) return;
-            }
+        DataContainer kingdom = kingdomData.get(kingdomID);
+        JsonArray requests = kingdom.getJson("REQUESTS").getAsJsonArray();
+        for (JsonElement request : requests) {
+            if (request.getAsString().equals(executor.toString())) return;
+        }
 
-            requests.add(executor.toString());
-            kingdom.put("REQUESTS", requests);
+        requests.add(executor.toString());
+        kingdom.put("REQUESTS", requests);
     }
 
     public static void removeJoinRequest(String kingdomID, UUID player) {
