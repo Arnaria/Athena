@@ -67,8 +67,8 @@ public class KingdomProcedures {
         Team kingdomTeam = scoreboard.addTeam(kingdomId);
         kingdomTeam.setNameTagVisibilityRule(AbstractTeam.VisibilityRule.HIDE_FOR_OTHER_TEAMS);
         kingdomTeam.setFriendlyFireAllowed(false);
-
         Formatting color = Formatting.byColorIndex((int) (Math.random() * 15));
+        kingdomTeam.setColor(color);
 
         kingdomData.beginTransaction();
         DataContainer kingdom = kingdomData.createDataContainer(kingdomId);
