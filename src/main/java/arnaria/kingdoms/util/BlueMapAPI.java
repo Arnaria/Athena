@@ -29,6 +29,7 @@ public class BlueMapAPI {
         for (MarkerSet set : markerAPI.getMarkerSets()) {
             if (!kingdomIds.contains(set.getId())) markerAPI.removeMarkerSet(set);
         }
+        saveMarkers();
     }
 
     public static BlueMapMap getOverworld() {
