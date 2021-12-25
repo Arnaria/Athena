@@ -87,7 +87,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerEn
         ItemStack stack = this.getItemsHand().iterator().next();
         if (stack.getItem() instanceof BannerItem) {
             NbtCompound nbt = stack.getNbt();
-            if (nbt != null && nbt.getBoolean("IS_CLAIM_MARKER")) ClaimManager.renderClaimsForPlacement(player);
+            if (nbt != null && nbt.getBoolean("IS_CLAIM_MARKER")) ClaimRenderer.renderForPlacement(player);
         } else ClaimRenderer.render(BetterPlayerManager.getPlayer(this.uuid));
     }
 }

@@ -23,6 +23,7 @@ public class BlueMapAPI {
     public static void init(MarkerAPI api) {
         markerAPI = api;
         ArrayList<String> kingdomIds = KingdomsData.getKingdomIds();
+
         for (MarkerSet set : markerAPI.getMarkerSets()) {
             if (!kingdomIds.contains(set.getId())) markerAPI.removeMarkerSet(set);
         }

@@ -26,7 +26,7 @@ public class Settings implements ConfigData {
     public String MYSQL_USERNAME = "username";
     public String MYSQL_PASSWORD = "password";
 
-    @Comment("Game Settings:")
+    @Comment("Game Settings")
     public int REVOLUTION_DURATION = 15;
     public int INVASION_DURATION = 15;
 }
