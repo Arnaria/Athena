@@ -8,7 +8,6 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -19,7 +18,7 @@ public abstract class Event {
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private final ServerBossBar bossBar;
     private final int min;
-    private final ArrayList<ServerPlayerEntity> members = new ArrayList<>();
+    private final ArrayList<ServerPlayerEntity> participants = new ArrayList<>();
     private int secondsPassed = 0;
 
     public Event(int min, String bossBarText) {
@@ -49,7 +48,7 @@ public abstract class Event {
 
     protected void addPlayer(ServerPlayerEntity player) {
         this.bossBar.addPlayer(player);
-        this.members.add(player);
+        this.participants.add(player);
     }
 
     protected void addPlayers(ArrayList<UUID> uuids) {
@@ -61,6 +60,6 @@ public abstract class Event {
     protected abstract void finish();
 
     public ArrayList<ServerPlayerEntity> getParticipants() {
-        return this.members;
+        return this.participants;
     }
 }

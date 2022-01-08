@@ -43,7 +43,10 @@ public class KingdomProcedures {
             if (color != null) kingdomTeam.setColor(color);
         }
 
-        if (!kingdomData.contains("ADMIN")) createKingdom("ADMIN", Util.NIL_UUID);
+        if (!kingdomData.contains("ADMIN")) {
+            createKingdom("ADMIN", Util.NIL_UUID);
+            setColor("ADMIN", Formatting.WHITE);
+        }
         for (String admin : settings.admins) addMember("ADMIN", UUID.fromString(admin));
     }
 

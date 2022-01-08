@@ -27,9 +27,7 @@ public abstract class ArmorStandEntityMixin extends LivingEntity {
 
     @Inject(method = "interactAt", at = @At("HEAD"), cancellable = true)
     public void interactAt(PlayerEntity player, Vec3d hitPos, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
-
-        BlockPos standPos = new BlockPos(hitPos.getX(), hitPos.getX() ,hitPos.getZ());
-
+        BlockPos standPos = new BlockPos(hitPos);
         if (!NewClaimManager.actionAllowedAt(standPos, player)) {
             cir.setReturnValue(ActionResult.FAIL);
         }
@@ -38,7 +36,6 @@ public abstract class ArmorStandEntityMixin extends LivingEntity {
     @Inject(method = "damage", at = @At("HEAD"), cancellable = true)
     public void damage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         Entity attacker = source.getAttacker();
-
         if (attacker instanceof PlayerEntity) {
             if (!NewClaimManager.actionAllowedAt(this.getBlockPos(), (PlayerEntity) attacker)) cir.setReturnValue(false);
         }

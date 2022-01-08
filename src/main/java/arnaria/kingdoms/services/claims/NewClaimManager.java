@@ -17,7 +17,6 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
-import org.apache.logging.log4j.Level;
 
 import java.util.*;
 
@@ -26,10 +25,10 @@ public class NewClaimManager {
     private static final Table claimData = Kingdoms.database.createTable("ClaimData");
     private static final HashMap<BlockPos, ArrayList<ChunkPos>> claims = new HashMap<>();
     private static final HashMap<ChunkPos, String> owners = new HashMap<>();
-    private static final ListMultimap<ChunkPos, ChunkPos> links = ArrayListMultimap.create();
+    private static final ListMultimap<BlockPos, BlockPos> links = ArrayListMultimap.create();
     private static final HashMap<BlockPos, WorldHologram> holograms = new HashMap<>();
 
-    public static ArrayList<BlockPos> getPoints(String kingdomId) {
+    public static ArrayList<BlockPos> getBanners(String kingdomId) {
         ArrayList<BlockPos> points = new ArrayList<>();
         claims.forEach((bannerPos, chunks) -> {
             if (owners.get(new ChunkPos(bannerPos)).equals(kingdomId)) points.add(bannerPos);
@@ -65,25 +64,24 @@ public class NewClaimManager {
     }
 
     public static void addClaim(String kingdomId, BlockPos pos, boolean showCosmetics) {
-        ChunkPos chunkPos = new ChunkPos(pos);
-
         ArrayList<ChunkPos> chunks = ClaimHelpers.createChunkBox(pos, 5, true);
         ArrayList<ChunkPos> testChunks = ClaimHelpers.createChunkBox(pos, 7, false);
-        claims.put(chunkPos.getStartPos(), chunks);
+        claims.put(pos, chunks);
 
         chunks.forEach(chunk -> owners.put(chunk, kingdomId));
 
         ArrayList<ChunkPos> kingdomChunks = new ArrayList<>();
-        claims.forEach((claimPos, claimChunks) -> {
-            if (owners.get(new ChunkPos(claimPos)).equals(kingdomId)) {
-                kingdomChunks.addAll(claimChunks);
+        for (BlockPos claim : getBanners(kingdomId)) {
+            ArrayList<ChunkPos> claimChunks = claims.get(claim);
+            kingdomChunks.addAll(claimChunks);
 
+            if (!claim.equals(pos)) {
                 if (isOverlapping(claimChunks, testChunks)) {
-                    links.put(chunkPos, new ChunkPos(claimPos));
-                    links.put(new ChunkPos(claimPos), chunkPos);
+                    links.put(claim, pos);
+                    links.put(pos, claim);
                 }
             }
-        });
+        }
 
         ClaimRenderer.updateRenderMap(kingdomId, kingdomChunks);
         KingdomProcedures.addToBannerCount(kingdomId, 1);
@@ -112,7 +110,7 @@ public class NewClaimManager {
     }
 
     public static void addAdminClaim(ChunkPos pos) {
-        ArrayList<BlockPos> point = getPoints("ADMIN");
+        ArrayList<BlockPos> point = getBanners("ADMIN");
         if (point.isEmpty()) {
             point.add(pos.getStartPos());
             owners.put(pos, "ADMIN");
@@ -133,34 +131,33 @@ public class NewClaimManager {
         ArrayList<BlockPos> chunkPositions = new ArrayList<>();
         chunks.iterator().forEachRemaining(chunk -> chunkPositions.add(chunk.getStartPos()));
         claim.put("CHUNKS", chunkPositions.toArray(BlockPos[]::new));
-
     }
 
     public static void dropClaim(BlockPos pos) {
-        ChunkPos chunkPos = new ChunkPos(pos);
-        String kingdomId = owners.get(chunkPos);
+        String kingdomId = owners.get(new ChunkPos(pos));
 
         holograms.get(pos).hide();
         KingdomProcedures.removeFromBannerCount(kingdomId, 1);
-        for (ChunkPos claimPos : links.get(chunkPos)) links.remove(claimPos, chunkPos);
-        BlueMapAPI.removeMarker(kingdomId, claims.remove(pos));
+        BlueMapAPI.removeMarker(kingdomId, claims.get(pos));
+
+        //New ArrayList is needed to fix concurrent modification error
+        for (BlockPos claimPos : new ArrayList<>(links.get(pos))) links.remove(claimPos, pos);
 
         claims.get(pos).forEach(owners::remove);
-        links.removeAll(chunkPos);
+        claims.remove(pos);
+        links.removeAll(pos);
         holograms.remove(pos);
         claimData.drop(pos.toShortString());
 
         ArrayList<ChunkPos> kingdomChunks = new ArrayList<>();
         claims.forEach((claimPos, claimChunks) -> {
-            if (owners.get(new ChunkPos(claimPos)).equals(kingdomId)) {
-                kingdomChunks.addAll(claimChunks);
-            }
+            if (owners.get(new ChunkPos(claimPos)).equals(kingdomId)) kingdomChunks.addAll(claimChunks);
         });
         ClaimRenderer.updateRenderMap(kingdomId, kingdomChunks);
     }
 
     public static void dropKingdom(String kingdomId) {
-        for (BlockPos pos : getPoints(kingdomId)) {
+        for (BlockPos pos : getBanners(kingdomId)) {
             dropClaim(pos);
         }
         ClaimRenderer.dropRenderMap(kingdomId);
@@ -171,11 +168,9 @@ public class NewClaimManager {
             ArrayList<ChunkPos> chunks = claim.getValue();
             if (chunks.contains(pos)) {
                 chunks.remove(pos);
+                owners.remove(pos);
 
-                if (chunks.isEmpty()) {
-                    claims.remove(pos.getStartPos());
-                    owners.remove(pos);
-                }
+                if (chunks.isEmpty()) claims.remove(claim.getKey());
 
                 String kingdomId = owners.get(new ChunkPos(claim.getKey()));
                 ClaimRenderer.updateRenderMap(kingdomId, chunks);
@@ -193,12 +188,11 @@ public class NewClaimManager {
 
     public static void updateColor(String kingdomId, String color) {
         holograms.forEach((pos, hologram) -> {
-            ChunkPos chunkPos = new ChunkPos(pos);
-            if (owners.get(chunkPos).equals(kingdomId)) {
+            if (owners.get(new ChunkPos(pos)).equals(kingdomId)) {
                 hologram.removeElement(0);
                 hologram.addText(new LiteralText(kingdomId.toUpperCase()).formatted(Formatting.byName(color)));
 
-                ArrayList<ChunkPos> chunks = claims.get(chunkPos.getStartPos());
+                ArrayList<ChunkPos> chunks = claims.get(pos);
                 BlueMapAPI.removeMarker(kingdomId, chunks);
                 BlueMapAPI.createMarker(kingdomId, chunks);
             }
@@ -208,17 +202,16 @@ public class NewClaimManager {
     }
 
     public static void transferClaims(String kingdomId, String newKingdomId) {
-        getPoints(kingdomId).forEach(pos -> owners.put(new ChunkPos(pos), newKingdomId));
+        getBanners(kingdomId).forEach(pos -> owners.put(new ChunkPos(pos), newKingdomId));
         updateColor(newKingdomId, KingdomsData.getColor(newKingdomId));
     }
 
     public static boolean actionAllowedAt(BlockPos pos, PlayerEntity player) {
         if (pos.getY() < 0) return true;
 
-        for (Map.Entry<BlockPos, ArrayList<ChunkPos>> claim : claims.entrySet()) {
-            if (claim.getValue().contains(new ChunkPos(pos)) && !((PlayerEntityInf) player).allowedToEditIn(owners.get(new ChunkPos(claim.getKey())))) return false;
-        }
-        return true;
+        String kingdomId = owners.get(new ChunkPos(pos));
+        if (kingdomId == null) return true;
+        else return ((PlayerEntityInf) player).allowedToEditIn(kingdomId);
     }
 
     //Consider moving into valid banner pos if not used anywhere else
@@ -230,7 +223,7 @@ public class NewClaimManager {
     }
 
     public static boolean isClaimMarker(BlockPos pos) {
-        return owners.containsKey(pos);
+        return claims.containsKey(pos);
     }
 
     public static boolean validBannerPos(String kingdomId, BlockPos pos) {
@@ -245,20 +238,32 @@ public class NewClaimManager {
     }
 
     public static boolean claimExistsAt(ChunkPos pos) {
-        for (ArrayList<ChunkPos> claim : claims.values()) {
-            if (claim.contains(pos)) return true;
-        }
-        return false;
+        return owners.get(pos) != null;
     }
 
     public static boolean canBreakClaim(BlockPos pos) {
-        ChunkPos chunkPos = new ChunkPos(pos);
-        String kingdomId = owners.get(chunkPos);
+        System.out.println("----------------------------");
+        System.out.println("CanBreakClaim called!");
+
+        String kingdomId = owners.get(new ChunkPos(pos));
+        System.out.println("Kingdom Id : " + kingdomId);
+
         BlockPos startingClaimPos = KingdomsData.getStartingClaimPos(kingdomId);
+        System.out.println("Starting Claim Pos : " + startingClaimPos.toShortString());
+
+        System.out.println("Is Starting Banner : " + pos.equals(startingClaimPos));
+        System.out.println("Banner Count = to 1 : " + (KingdomsData.getBannerCount(kingdomId) == 1));
         if (pos.equals(startingClaimPos) && KingdomsData.getBannerCount(kingdomId) == 1) return true;
 
-        for (ChunkPos claimPos : links.get(chunkPos)) {
-            if (!(links.get(claimPos).size() > 1)) return false;
+        for (BlockPos claim : getBanners(kingdomId)) {
+            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            System.out.println("Claim : " + claim.toShortString());
+            System.out.println("Links : " + links.get(claim));
+
+            System.out.println("Contains : " + links.get(pos).contains(claim));
+            System.out.println("Size : " + !(links.get(claim).size() > 1));
+            System.out.println("SPos : " + !claim.equals(startingClaimPos));
+            if (links.get(pos).contains(claim) && !(links.get(claim).size() > 1) && !claim.equals(startingClaimPos)) return false;
         }
         return true;
     }

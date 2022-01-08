@@ -23,6 +23,7 @@ import net.minecraft.util.UserCache;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
+import java.io.File;
 import java.io.IOException;
 
 public class Kingdoms implements ModInitializer {
@@ -48,8 +49,9 @@ public class Kingdoms implements ModInitializer {
             validConfig = !settings.SQLITE_DIRECTORY.equals("/path/to/folder");
         }
 
-        if (settings.DATABASE_TYPE.equals("MYSQL")) {
-            validConfig = (!settings.MYSQL_USERNAME.equals("username") && !settings.MYSQL_PASSWORD.equals("password"));
+        if (settings.clearDatabaseOnBoot && validConfig) {
+            File database = new File(settings.SQLITE_DIRECTORY + "/" + settings.DATABASE_NAME + ".db");
+            database.delete();
         }
 
         if (validConfig) {

@@ -15,13 +15,14 @@ public class ClaimEvents {
 
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, blockEntity) -> {
             if (world.getRegistryKey().equals(World.OVERWORLD)) {
+
+                //for graves compat
                 if (state.getBlock() instanceof PlayerSkullBlock) return true;
 
+                if (!NewClaimManager.actionAllowedAt(pos, player)) return false;
                 if (state.getBlock() instanceof BannerBlock && NewClaimManager.isClaimMarker(pos)) {
-                    if (!NewClaimManager.canBreakClaim(pos)) return false;
+                    return NewClaimManager.canBreakClaim(pos);
                 }
-
-                return NewClaimManager.actionAllowedAt(pos, player);
             }
             return true;
         });
