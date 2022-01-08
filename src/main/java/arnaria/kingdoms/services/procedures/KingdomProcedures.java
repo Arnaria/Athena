@@ -282,7 +282,7 @@ public class KingdomProcedures {
 
     public static String getKingdomId(UUID uuid) {
         for (String kingdomId : kingdomData.getIds()) {
-            if (KingdomsData.getMembers(kingdomId).contains(uuid)) return kingdomId;
+            if (!kingdomId.equals("ADMIN") && KingdomsData.getMembers(kingdomId).contains(uuid)) return kingdomId;
         }
         return null;
     }
