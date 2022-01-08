@@ -17,6 +17,7 @@
     "HoeMixin",
     "ItemFrameEntityMixin",
     "ItemFrameMixin",
+    "LecternMixin",
     "PlayerEntityMixin",
     "ScoreboardMixin",
     "ShovelMixin"
