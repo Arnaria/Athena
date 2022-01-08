@@ -1,6 +1,6 @@
 package arnaria.kingdoms.commands;
 
-import arnaria.kingdoms.services.claims.NewClaimManager;
+import arnaria.kingdoms.services.claims.ClaimManager;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -26,8 +26,8 @@ public class ClaimManagerCommands {
     public static int addClaim(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         ServerPlayerEntity executor = context.getSource().getPlayer();
 
-        if (!NewClaimManager.claimExistsAt(executor.getChunkPos())) {
-            NewClaimManager.addAdminClaim(executor.getChunkPos());
+        if (!ClaimManager.claimExistsAt(executor.getChunkPos())) {
+            ClaimManager.addAdminClaim(executor.getChunkPos());
             executor.sendMessage(new LiteralText("Yeah she good boss man"), false);
         } else executor.sendMessage(new LiteralText("Yeah there is already a claim there dumbass"), false);
 
@@ -36,7 +36,7 @@ public class ClaimManagerCommands {
 
     public static int removeClaim(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         ServerPlayerEntity executor = context.getSource().getPlayer();
-        NewClaimManager.dropChunk(executor.getChunkPos());
+        ClaimManager.dropChunk(executor.getChunkPos());
         executor.sendMessage(new LiteralText("Cya looser"), false);
         return 1;
     }

@@ -1,6 +1,6 @@
 package arnaria.kingdoms.mixin;
 
-import arnaria.kingdoms.services.claims.NewClaimManager;
+import arnaria.kingdoms.services.claims.ClaimManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.explosion.Explosion;
@@ -20,6 +20,6 @@ public class ExplosionMixin {
 
     @Inject(method = "affectWorld", at = @At("HEAD"))
     public void saveBlocks(boolean particles, CallbackInfo ci) {
-        this.affectedBlocks.removeIf(pos -> NewClaimManager.claimExistsAt(new ChunkPos(pos)));
+        this.affectedBlocks.removeIf(pos -> ClaimManager.claimExistsAt(new ChunkPos(pos)));
     }
 }

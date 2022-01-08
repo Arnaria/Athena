@@ -3,12 +3,12 @@ package arnaria.kingdoms.services.procedures;
 import arnaria.kingdoms.Kingdoms;
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.kingdoms.interfaces.ScoreboardInf;
-import arnaria.kingdoms.services.claims.NewClaimManager;
+import arnaria.kingdoms.services.claims.ClaimManager;
 import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.kingdoms.services.events.Challenge;
 import arnaria.kingdoms.services.events.ChallengeManager;
 import arnaria.kingdoms.util.BetterPlayerManager;
-import arnaria.kingdoms.util.BlueMapAPI;
+import arnaria.kingdoms.services.api.BlueMapAPI;
 import arnaria.notifacaitonlib.NotificationManager;
 import arnaria.notifacaitonlib.NotificationTypes;
 import com.google.gson.JsonArray;
@@ -90,7 +90,7 @@ public class KingdomProcedures {
     }
 
     public static void removeKingdom(String kingdomId) {
-        NewClaimManager.dropKingdom(kingdomId);
+        ClaimManager.dropKingdom(kingdomId);
         scoreboard.removeTeam(scoreboard.getTeam(kingdomId));
         BlueMapAPI.getMarkerApi().removeMarkerSet(kingdomId);
         BlueMapAPI.saveMarkers();
@@ -147,7 +147,7 @@ public class KingdomProcedures {
     }
 
     public static void combineKingdoms(String kingdomId, String newKingdomId) {
-        NewClaimManager.transferClaims(kingdomId, newKingdomId);
+        ClaimManager.transferClaims(kingdomId, newKingdomId);
         for (UUID player : KingdomsData.getMembers(kingdomId)) addMember(newKingdomId, player);
     }
 
@@ -156,7 +156,7 @@ public class KingdomProcedures {
         Team kingdomTeam = scoreboard.getTeam(kingdomId);
         kingdom.put("COLOR", color.getName());
         if (kingdomTeam != null) kingdomTeam.setColor(color);
-        NewClaimManager.updateColor(kingdomId, color.getName());
+        ClaimManager.updateColor(kingdomId, color.getName());
     }
 
     public static void addJoinRequest(String kingdomID, UUID executor) {

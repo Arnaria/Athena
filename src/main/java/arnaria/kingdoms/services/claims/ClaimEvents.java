@@ -19,9 +19,9 @@ public class ClaimEvents {
                 //for graves compat
                 if (state.getBlock() instanceof PlayerSkullBlock) return true;
 
-                if (!NewClaimManager.actionAllowedAt(pos, player)) return false;
-                if (state.getBlock() instanceof BannerBlock && NewClaimManager.isClaimMarker(pos)) {
-                    return NewClaimManager.canBreakClaim(pos);
+                if (!ClaimManager.actionAllowedAt(pos, player)) return false;
+                if (state.getBlock() instanceof BannerBlock && ClaimManager.isClaimMarker(pos)) {
+                    return ClaimManager.canBreakClaim(pos);
                 }
             }
             return true;
@@ -29,27 +29,7 @@ public class ClaimEvents {
 
         BlockPlaceCallback.EVENT.register((world, player, pos, state, block, item) -> {
             if (world.getRegistryKey().equals(World.OVERWORLD)) {
-                /*if (!ClaimManager.actionAllowedAt(pos, player)) {
-                    NotificationManager.send(player.getUuid(), "You can't place blocks in other kingdoms claims", NotificationTypes.ERROR);
-                    return false;
-                }
-
-                if (block instanceof BannerBlock bannerBlock) {
-                    String kingdomId = ((PlayerEntityInf) player).getKingdomId();
-                    if (!kingdomId.isEmpty()) {
-                        NbtCompound nbt = item.getNbt();
-                        if (nbt != null && nbt.getBoolean("IS_CLAIM_MARKER")) {
-                            if (ClaimManager.placedFirstBanner(kingdomId) && !ClaimManager.validBannerPos(kingdomId, pos)) {
-                                NotificationManager.send(player.getUuid(), "You can't place a banner here", NotificationTypes.ERROR);
-                                return false;
-                            }
-                            if (ClaimManager.canAffordBanner(kingdomId)) ClaimManager.addClaim(kingdomId, pos, bannerBlock);
-                            else NotificationManager.send(player.getUuid(), "Your kingdom does not have enough xp", NotificationTypes.ERROR);
-                        }
-                    }
-                }*/
-
-                if (!NewClaimManager.actionAllowedAt(pos, player)) {
+                if (!ClaimManager.actionAllowedAt(pos, player)) {
                     NotificationManager.send(player.getUuid(), "You can't place blocks in other kingdoms claims", NotificationTypes.ERROR);
                     return false;
                 }
@@ -59,12 +39,12 @@ public class ClaimEvents {
                     if (!kingdomId.isEmpty()) {
                         NbtCompound nbt = item.getNbt();
                         if (nbt != null && nbt.getBoolean("IS_CLAIM_MARKER")) {
-                            if (!NewClaimManager.validBannerPos(kingdomId, pos)) {
+                            if (!ClaimManager.validBannerPos(kingdomId, pos)) {
                                 NotificationManager.send(player.getUuid(), "You can't place a banner here", NotificationTypes.ERROR);
                                 return false;
                             }
 
-                            if (NewClaimManager.canAffordBanner(kingdomId)) NewClaimManager.addClaim(kingdomId, pos, true);
+                            if (ClaimManager.canAffordBanner(kingdomId)) ClaimManager.addClaim(kingdomId, pos, true);
                             else {
                                 NotificationManager.send(player.getUuid(), "Your kingdom does not have enough xp", NotificationTypes.ERROR);
                                 return false;

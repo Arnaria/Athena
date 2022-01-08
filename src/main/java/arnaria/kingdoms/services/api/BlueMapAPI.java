@@ -1,7 +1,8 @@
-package arnaria.kingdoms.util;
+package arnaria.kingdoms.services.api;
 
 import arnaria.kingdoms.Kingdoms;
 import arnaria.kingdoms.services.data.KingdomsData;
+import arnaria.kingdoms.util.Parser;
 import de.bluecolored.bluemap.api.BlueMapMap;
 import de.bluecolored.bluemap.api.marker.MarkerAPI;
 import de.bluecolored.bluemap.api.marker.MarkerSet;

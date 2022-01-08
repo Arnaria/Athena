@@ -1,6 +1,6 @@
 package arnaria.kingdoms.mixin;
 
-import arnaria.kingdoms.services.claims.NewClaimManager;
+import arnaria.kingdoms.services.claims.ClaimManager;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BannerBlock;
 import net.minecraft.block.BlockState;
@@ -17,23 +17,7 @@ public class AbstractBlockMixin {
     @Inject(method = "onStateReplaced", at = @At("HEAD"))
     public void dropClaim(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved, CallbackInfo ci) {
         if (state.getBlock() instanceof BannerBlock) {
-            if (NewClaimManager.isClaimMarker(pos)) NewClaimManager.dropClaim(pos);
+            if (ClaimManager.isClaimMarker(pos)) ClaimManager.dropClaim(pos);
         }
     }
-
-    /*
-     * @author MrNavaStar
-     * Im sorry idk what else to do lol
-     *//*
-    @Deprecated
-    @Overwrite
-    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        if (state.hasBlockEntity() && !state.isOf(newState.getBlock())) {
-            if (state.getBlock() instanceof BannerBlock bannerBlock) {
-                if (!ClaimManager.canBreakClaim(pos)) return;
-                if (((BannerMarkerInf) bannerBlock).isClaimMarker()) ClaimManager.dropClaim(pos);
-            }
-            world.removeBlockEntity(pos);
-        }
-    }*/
 }

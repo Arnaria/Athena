@@ -1,9 +1,8 @@
 package arnaria.kingdoms.mixin;
 
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
-import arnaria.kingdoms.services.claims.ClaimManager;
 import arnaria.kingdoms.services.claims.ClaimRenderer;
-import arnaria.kingdoms.services.claims.NewClaimManager;
+import arnaria.kingdoms.services.claims.ClaimManager;
 import arnaria.kingdoms.services.events.Event;
 import arnaria.kingdoms.services.events.EventManager;
 import arnaria.kingdoms.util.BetterPlayerManager;
@@ -78,7 +77,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerEn
     @Inject(method = "attack", at = @At("HEAD"), cancellable = true)
     public void stopAttackInClaims(Entity target, CallbackInfo ci) {
         ServerPlayerEntity player = BetterPlayerManager.getPlayer(this.uuid);
-        if (!(target instanceof HostileEntity) && NewClaimManager.actionAllowedAt(target.getBlockPos(), player)) ci.cancel();
+        if (!(target instanceof HostileEntity) && ClaimManager.actionAllowedAt(target.getBlockPos(), player)) ci.cancel();
     }
 
     @Inject(method = "tick", at = @At("HEAD"))

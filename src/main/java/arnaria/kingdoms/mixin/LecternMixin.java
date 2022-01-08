@@ -1,11 +1,10 @@
 package arnaria.kingdoms.mixin;
 
-import arnaria.kingdoms.services.claims.NewClaimManager;
+import arnaria.kingdoms.services.claims.ClaimManager;
 import arnaria.notifacaitonlib.NotificationManager;
 import arnaria.notifacaitonlib.NotificationTypes;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LecternBlock;
-import net.minecraft.block.entity.LecternBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -22,7 +21,7 @@ public class LecternMixin {
 
     @Inject(method = "onUse", at = @At("HEAD"))
     public void onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
-        if (!NewClaimManager.actionAllowedAt(pos, player)) {
+        if (!ClaimManager.actionAllowedAt(pos, player)) {
             NotificationManager.send(player.getUuid(), "You can't use other kingdoms lecterns", NotificationTypes.ERROR);
             cir.setReturnValue(ActionResult.FAIL);
         }

@@ -1,6 +1,6 @@
 package arnaria.kingdoms.mixin;
 
-import arnaria.kingdoms.services.claims.NewClaimManager;
+import arnaria.kingdoms.services.claims.ClaimManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemFrameItem;
 import net.minecraft.item.ItemStack;
@@ -16,7 +16,7 @@ public class ItemFrameMixin {
 
     @Inject(method = "canPlaceOn", at = @At("HEAD"), cancellable = true)
     public void canPlaceOn(PlayerEntity player, Direction side, ItemStack stack, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
-        if (!NewClaimManager.actionAllowedAt(pos, player)) {
+        if (!ClaimManager.actionAllowedAt(pos, player)) {
             cir.setReturnValue(false);
         }
     }

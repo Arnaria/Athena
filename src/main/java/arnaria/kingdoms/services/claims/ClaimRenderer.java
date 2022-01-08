@@ -2,7 +2,6 @@ package arnaria.kingdoms.services.claims;
 
 import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.kingdoms.services.data.KingdomsData;
-import arnaria.kingdoms.util.ClaimHelpers;
 import arnaria.kingdoms.util.Parser;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -87,7 +86,7 @@ public class ClaimRenderer {
         String kingdomId = ((PlayerEntityInf) player).getKingdomId();
         if (kingdomId.isEmpty()) return;
         renderMaps.forEach((kingdom, lines) -> renderClaimLayer(player, colors.get(kingdom), lines, player.getBlockY(), 256 * 256));
-        if (NewClaimManager.validBannerPos(kingdomId, player.getBlockPos())) {
+        if (ClaimManager.validBannerPos(kingdomId, player.getBlockPos())) {
             renderClaimLayer(player, new Vec3f(255, 255, 255), generateRenderMap(ClaimHelpers.createChunkBox(player.getBlockPos(), 5, true)), player.getBlockY(), 256 * 256);
         }
     }

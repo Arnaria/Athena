@@ -2,7 +2,7 @@ package arnaria.kingdoms;
 
 import arnaria.kingdoms.commands.*;
 import arnaria.kingdoms.services.api.RestAPI;
-import arnaria.kingdoms.services.claims.NewClaimManager;
+import arnaria.kingdoms.services.claims.ClaimManager;
 import arnaria.kingdoms.services.events.ChallengeManager;
 import arnaria.kingdoms.util.Settings;
 import arnaria.kingdoms.services.procedures.KingdomProcedures;
@@ -65,8 +65,7 @@ public class Kingdoms implements ModInitializer {
 
                 KingdomProcedures.init();
                 ChallengeManager.init();
-                //ClaimManager.init();
-                NewClaimManager.init();
+                ClaimManager.init();
                 RestAPI.init();
 
                 //Command Registration
@@ -86,7 +85,7 @@ public class Kingdoms implements ModInitializer {
             BlueMapAPI.onEnable(api -> {
                 try {
                     blueMapAPI = api;
-                    arnaria.kingdoms.util.BlueMapAPI.init(api.getMarkerAPI());
+                    arnaria.kingdoms.services.api.BlueMapAPI.init(api.getMarkerAPI());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
