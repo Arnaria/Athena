@@ -25,6 +25,7 @@ repositories {
         name = 'opencollab-snapshot-repo'
         url = 'https://repo.opencollab.dev/maven-snapshots/'
     }
+    maven { url 'https://maven.bymartrixx.me' }
 }
 
 dependencies {
@@ -32,6 +33,9 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    //dev env
+    modImplementation 'me.bymartrixx:wdmcf:1.0.2'
 
     //Lib Mods
     modImplementation "com.github.MrNavaStar:SQLib:${project.sqlib_version}"
@@ -42,7 +46,6 @@ dependencies {
     }
 
     //Other Libs
-    include(implementation("org.geysermc.floodgate:common:${project.floodgate_version}"))
     include(implementation("com.github.BlueMap-Minecraft:BlueMapAPI:${project.bluemap_version}"))
     include(implementation("io.javalin:javalin:${project.javalin_version}"))
     // include(implementation("com.fasterxml.jackson.core:jackson-core:${project.jackson_version}"))

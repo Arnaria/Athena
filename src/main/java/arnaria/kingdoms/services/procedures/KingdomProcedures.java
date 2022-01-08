@@ -48,7 +48,6 @@ public class KingdomProcedures {
     }
 
     public static void setupPlayer(PlayerEntity player) {
-        kingdomData.beginTransaction();
         for (DataContainer kingdom : kingdomData.getDataContainers()) {
             String kingdomId = kingdom.getId();
             if (KingdomsData.getMembers(kingdomId).contains(player.getUuid())) {
@@ -60,7 +59,6 @@ public class KingdomProcedures {
                 }
             }
         }
-        kingdomData.endTransaction();
     }
 
     public static void createKingdom(String kingdomId, UUID uuid) {
@@ -70,7 +68,6 @@ public class KingdomProcedures {
         Formatting color = Formatting.byColorIndex((int) (Math.random() * 15));
         kingdomTeam.setColor(color);
 
-        kingdomData.beginTransaction();
         DataContainer kingdom = kingdomData.createDataContainer(kingdomId);
         if (color != null) kingdom.put("COLOR", color.getName());
         else kingdom.put("COLOR", "white");
@@ -87,7 +84,6 @@ public class KingdomProcedures {
             PlayerEntity executor = BetterPlayerManager.getPlayer(uuid);
             if (executor != null) ((PlayerEntityInf) executor).setKingship(true);
         }
-        kingdomData.endTransaction();
     }
 
     public static void removeKingdom(String kingdomId) {
@@ -282,11 +278,9 @@ public class KingdomProcedures {
     }
 
     public static String getKingdomId(UUID uuid) {
-        kingdomData.beginTransaction();
         for (String kingdomId : kingdomData.getIds()) {
             if (KingdomsData.getMembers(kingdomId).contains(uuid)) return kingdomId;
         }
-        kingdomData.endTransaction();
         return null;
     }
 }
