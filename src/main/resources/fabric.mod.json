@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "id": "kingdoms",
+  "id": "athena",
   "version": "${version}",
-  "name": "Kingdoms",
+  "name": "Athena",
   "description": "",
   "authors": ["MrNavaStar", "Electro_Brine"],
   "contact": {},

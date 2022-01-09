@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.10.64'
+    id 'fabric-loom' version '0.10.65'
     id 'maven-publish'
 }
 
@@ -48,11 +48,7 @@ dependencies {
     //Other Libs
     include(implementation("com.github.BlueMap-Minecraft:BlueMapAPI:${project.bluemap_version}"))
     include(implementation("io.javalin:javalin:${project.javalin_version}"))
-    // include(implementation("com.fasterxml.jackson.core:jackson-core:${project.jackson_version}"))
-    // include(implementation("com.fasterxml.jackson.core:jackson-annotations:${project.jackson_version}"))
-    // include(implementation("com.fasterxml.jackson.core:jackson-databind:${project.jackson_version}"))
     include(implementation("com.opencsv:opencsv:${project.opencsv_version}"))
-    include(implementation("com.konghq:unirest-java:3.11.09"))
 }
 
 processResources {
