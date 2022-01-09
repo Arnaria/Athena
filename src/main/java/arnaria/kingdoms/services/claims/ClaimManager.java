@@ -79,7 +79,7 @@ public class ClaimManager {
         }
     }
 
-    public static void addClaim(String kingdomId, BlockPos pos, boolean showCosmetics) {
+    public static void addClaim(String kingdomId, BlockPos pos, boolean showCosmetics, int labelOffset) {
         ArrayList<ChunkPos> chunks = ClaimHelpers.createChunkBox(pos, 5, true);
         claims.put(pos, chunks);
 
@@ -93,7 +93,7 @@ public class ClaimManager {
         if (KingdomsData.getStartingClaimPos(kingdomId) == null) KingdomProcedures.setStartingClaimPos(kingdomId, pos);
 
         if (showCosmetics) {
-            WorldHologram hologram = new WorldHologram(Kingdoms.overworld, new Vec3d(pos.getX() + 0.5, pos.getY() + 2, pos.getZ() + 0.5));
+            WorldHologram hologram = new WorldHologram(Kingdoms.overworld, new Vec3d(pos.getX() + 0.5, pos.getY() + labelOffset, pos.getZ() + 0.5));
             holograms.put(pos, hologram);
 
             LiteralText claimTag = new LiteralText(kingdomId.toUpperCase());
