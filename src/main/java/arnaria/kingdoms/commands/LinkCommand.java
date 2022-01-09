@@ -45,9 +45,7 @@ public class LinkCommand {
 
     public static int unlinkAccounts(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         PlayerEntity executor = context.getSource().getPlayer();
-        if (LinkingProcedures.accountLinked(executor.getUuid())) {
-            LinkingProcedures.unlinkAccounts(executor.getUuid());
-        }
+        if (LinkingProcedures.accountLinked(executor.getUuid())) LinkingProcedures.unlinkAccounts(executor.getUuid());
         return 1;
     }
 }

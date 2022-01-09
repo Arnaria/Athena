@@ -49,7 +49,7 @@ public class Kingdoms implements ModInitializer {
             validConfig = !settings.SQLITE_DIRECTORY.equals("/path/to/folder");
         }
 
-        if (settings.clearDatabaseOnBoot && validConfig) {
+        if (settings.CLEAR_DATABASE_ON_BOOT && validConfig) {
             File database = new File(settings.SQLITE_DIRECTORY + "/" + settings.DATABASE_NAME + ".db");
             database.delete();
         }

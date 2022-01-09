@@ -4,15 +4,12 @@ import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
 import static arnaria.kingdoms.Kingdoms.MODID;
 
 @Config(name = MODID)
 public class Settings implements ConfigData {
-    @Comment("Admins")
-    public String[] admins = {};
+    public String[] ADMINS = {};
+    public int API_PORT = 6969;
 
     @Comment("Allowed Values: \"SQLITE\" | \"MYSQL\"")
     public String DATABASE_TYPE = "SQLITE";
@@ -25,5 +22,5 @@ public class Settings implements ConfigData {
     public int INVASION_DURATION = 15;
 
     @Comment("Dev Settings")
-    public boolean clearDatabaseOnBoot = false;
+    public boolean CLEAR_DATABASE_ON_BOOT = false;
 }

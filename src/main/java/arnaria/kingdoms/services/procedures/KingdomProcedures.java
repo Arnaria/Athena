@@ -47,7 +47,7 @@ public class KingdomProcedures {
             createKingdom("ADMIN", Util.NIL_UUID);
             setColor("ADMIN", Formatting.WHITE);
         }
-        for (String admin : settings.admins) addMember("ADMIN", UUID.fromString(admin));
+        for (String admin : settings.ADMINS) addMember("ADMIN", UUID.fromString(admin));
     }
 
     public static void setupPlayer(PlayerEntity player) {
