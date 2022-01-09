@@ -5,8 +5,6 @@ import arnaria.kingdoms.interfaces.PlayerEntityInf;
 import arnaria.kingdoms.services.data.KingdomsData;
 import arnaria.kingdoms.services.procedures.KingdomProcedures;
 import arnaria.kingdoms.services.api.BlueMapAPI;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
 import eu.pb4.holograms.api.holograms.WorldHologram;
 import mrnavastar.sqlib.api.DataContainer;
 import mrnavastar.sqlib.api.Table;
@@ -24,10 +22,9 @@ public class ClaimManager {
     private static final Table claimData = Kingdoms.database.createTable("ClaimData");
     private static final HashMap<BlockPos, ArrayList<ChunkPos>> claims = new HashMap<>();
     private static final HashMap<ChunkPos, String> owners = new HashMap<>();
-    private static final ListMultimap<BlockPos, BlockPos> links = ArrayListMultimap.create();
     private static final HashMap<BlockPos, WorldHologram> holograms = new HashMap<>();
 
-    public static ArrayList<BlockPos> getBanners(String kingdomId) {
+    private static ArrayList<BlockPos> getBanners(String kingdomId) {
         ArrayList<BlockPos> points = new ArrayList<>();
         claims.forEach((bannerPos, chunks) -> {
             if (owners.get(new ChunkPos(bannerPos)).equals(kingdomId)) points.add(bannerPos);
@@ -35,7 +32,27 @@ public class ClaimManager {
         return points;
     }
 
-    //Links are currently lost on server reboot
+    private static boolean isOverlapping(ArrayList<ChunkPos> claim, ArrayList<ChunkPos> newChunks) {
+        for (ChunkPos pos : claim) {
+            if (newChunks.contains(pos)) return true;
+        }
+        return false;
+    }
+
+    private static void magicScan(BlockPos pos, ArrayList<BlockPos> plsScanMe, ArrayList<BlockPos> scanned) {
+        scanned.add(pos);
+
+        ArrayList<BlockPos> overlapping = new ArrayList<>();
+        ArrayList<ChunkPos> testChunks = ClaimHelpers.createChunkBox(pos, 7, false);
+        for (BlockPos banner : plsScanMe) {
+            if (isOverlapping(claims.get(banner), testChunks)) overlapping.add(banner);
+        }
+
+        for (BlockPos pos1 : overlapping) {
+            if (!scanned.contains(pos1)) magicScan(pos1, plsScanMe, scanned);
+        }
+    }
+
     public static void init() {
         ClaimEvents.register();
 
@@ -64,23 +81,12 @@ public class ClaimManager {
 
     public static void addClaim(String kingdomId, BlockPos pos, boolean showCosmetics) {
         ArrayList<ChunkPos> chunks = ClaimHelpers.createChunkBox(pos, 5, true);
-        ArrayList<ChunkPos> testChunks = ClaimHelpers.createChunkBox(pos, 7, false);
         claims.put(pos, chunks);
 
         chunks.forEach(chunk -> owners.put(chunk, kingdomId));
 
         ArrayList<ChunkPos> kingdomChunks = new ArrayList<>();
-        for (BlockPos claim : getBanners(kingdomId)) {
-            ArrayList<ChunkPos> claimChunks = claims.get(claim);
-            kingdomChunks.addAll(claimChunks);
-
-            if (!claim.equals(pos)) {
-                if (isOverlapping(claimChunks, testChunks)) {
-                    links.put(claim, pos);
-                    links.put(pos, claim);
-                }
-            }
-        }
+        for (BlockPos claim : getBanners(kingdomId)) kingdomChunks.addAll(claims.get(claim));
 
         ClaimRenderer.updateRenderMap(kingdomId, kingdomChunks);
         KingdomProcedures.addToBannerCount(kingdomId, 1);
@@ -139,12 +145,8 @@ public class ClaimManager {
         KingdomProcedures.removeFromBannerCount(kingdomId, 1);
         BlueMapAPI.removeMarker(kingdomId, claims.get(pos));
 
-        //New ArrayList is needed to fix concurrent modification error
-        for (BlockPos claimPos : new ArrayList<>(links.get(pos))) links.remove(claimPos, pos);
-
         claims.get(pos).forEach(owners::remove);
         claims.remove(pos);
-        links.removeAll(pos);
         holograms.remove(pos);
         claimData.drop(pos.toShortString());
 
@@ -213,24 +215,16 @@ public class ClaimManager {
         else return ((PlayerEntityInf) player).allowedToEditIn(kingdomId);
     }
 
-    //Consider moving into valid banner pos if not used anywhere else
-    private static boolean isOverlapping(ArrayList<ChunkPos> claim, ArrayList<ChunkPos> newChunks) {
-        for (ChunkPos pos : claim) {
-            if (newChunks.contains(pos)) return true;
-        }
-        return false;
-    }
-
     public static boolean isClaimMarker(BlockPos pos) {
         return claims.containsKey(pos);
     }
 
     public static boolean validBannerPos(String kingdomId, BlockPos pos) {
         if (KingdomsData.getBannerCount(kingdomId) == 0) return true;
+        if (claimExistsAt(new ChunkPos(pos))) return false;
 
         ArrayList<ChunkPos> testChunks = ClaimHelpers.createChunkBox(pos, 7, false);
         for (Map.Entry<BlockPos, ArrayList<ChunkPos>> claim : claims.entrySet()) {
-            if (claim.getValue().contains(new ChunkPos(pos))) return false;
             if (kingdomId.equals(owners.get(new ChunkPos(claim.getKey()))) && isOverlapping(claim.getValue(), testChunks)) return true;
         }
         return false;
@@ -241,14 +235,14 @@ public class ClaimManager {
     }
 
     public static boolean canBreakClaim(BlockPos pos) {
-        String kingdomId = owners.get(new ChunkPos(pos));
-        BlockPos startingClaimPos = KingdomsData.getStartingClaimPos(kingdomId);
-        if (pos.equals(startingClaimPos) && KingdomsData.getBannerCount(kingdomId) == 1) return true;
+        ArrayList<BlockPos> scanned = new ArrayList<>();
+        ArrayList<BlockPos> plsScanMe = getBanners(owners.get(new ChunkPos(pos)));
+        plsScanMe.remove(pos);
 
-        for (BlockPos claim : getBanners(kingdomId)) {
-            if (links.get(pos).contains(claim) && !(links.get(claim).size() > 1) && !claim.equals(startingClaimPos)) return false;
-        }
-        return true;
+        if (plsScanMe.size() == 0) return true;
+        magicScan(plsScanMe.get(0), plsScanMe, scanned);
+
+        return scanned.size() >= plsScanMe.size();
     }
 
     public static boolean canAffordBanner(String kingdomId) {

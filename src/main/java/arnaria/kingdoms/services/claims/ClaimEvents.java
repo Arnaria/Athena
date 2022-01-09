@@ -44,7 +44,9 @@ public class ClaimEvents {
                                 return false;
                             }
 
-                            if (ClaimManager.canAffordBanner(kingdomId)) ClaimManager.addClaim(kingdomId, pos, true);
+                            if (ClaimManager.canAffordBanner(kingdomId)){
+                                ClaimManager.addClaim(kingdomId, pos, true);
+                            }
                             else {
                                 NotificationManager.send(player.getUuid(), "Your kingdom does not have enough xp", NotificationTypes.ERROR);
                                 return false;

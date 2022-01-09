@@ -9,7 +9,6 @@
     "ArmorStandEntityMixin",
     "ArmorStandItemMixin",
     "AxeMixin",
-    "BannerBlockMixin",
     "BlockItemMixin",
     "BucketMixin",
     "ExplosionMixin",
