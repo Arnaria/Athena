@@ -10,7 +10,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "arnaria.kingdoms.Kingdoms"
+      "corviolis.kingdoms.Kingdoms"
     ]
   },
   "mixins": [

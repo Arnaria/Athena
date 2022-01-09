@@ -1,0 +1,34 @@
+package corviolis.kingdoms.util;
+
+import com.mojang.authlib.GameProfile;
+import corviolis.kingdoms.Kingdoms;
+import net.minecraft.server.network.ServerPlayerEntity;
+
+import java.util.ArrayList;
+import java.util.Optional;
+import java.util.UUID;
+
+public class BetterPlayerManager {
+
+    public static ServerPlayerEntity getPlayer(UUID uuid) {
+        return Kingdoms.playerManager.getPlayer(uuid);
+    }
+
+    public static ServerPlayerEntity getPlayer(String name) {
+        return Kingdoms.playerManager.getPlayer(name);
+    }
+
+    public static String getName(UUID uuid) {
+        Optional<GameProfile> gameProfile = Kingdoms.userCache.getByUuid(uuid);
+        return gameProfile.map(GameProfile::getName).orElse(null);
+    }
+
+    public static UUID getUuid(String name) {
+        Optional<GameProfile> gameProfile = Kingdoms.userCache.findByName(name);
+        return gameProfile.map(GameProfile::getId).orElse(null);
+    }
+
+    public static ArrayList<ServerPlayerEntity> getOnlinePlayers() {
+        return (ArrayList<ServerPlayerEntity>) Kingdoms.playerManager.getPlayerList();
+    }
+}
