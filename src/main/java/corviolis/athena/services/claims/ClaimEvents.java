@@ -7,6 +7,7 @@ import arnaria.notifacaitonlib.NotificationTypes;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.block.*;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class ClaimEvents {
@@ -20,8 +21,10 @@ public class ClaimEvents {
                 if (state.getBlock() instanceof PlayerSkullBlock) return true;
 
                 if (!ClaimManager.actionAllowedAt(pos, player)) return false;
-                if (state.getBlock() instanceof BannerBlock && ClaimManager.isClaimMarker(pos)) {
-                    return ClaimManager.canBreakClaim(pos);
+                if (state.getBlock() instanceof AbstractBannerBlock && ClaimManager.isClaimMarker(pos)) {
+                    if (!ClaimManager.canBreakClaim(pos)) return false;
+                    ClaimManager.dropClaim(pos);
+                    return true;
                 }
             }
             return true;
@@ -34,7 +37,7 @@ public class ClaimEvents {
                     return false;
                 }
 
-                if (block instanceof BannerBlock) {
+                if (block instanceof AbstractBannerBlock) {
                     String kingdomId = ((PlayerEntityInf) player).getKingdomId();
                     if (!kingdomId.isEmpty()) {
                         NbtCompound nbt = item.getNbt();
@@ -49,7 +52,8 @@ public class ClaimEvents {
                                 return false;
                             }
 
-                            ClaimManager.addClaim(kingdomId, pos, true, 2);
+                            if (state.getBlock() instanceof WallBannerBlock) ClaimManager.addClaim(kingdomId, pos, true, new Vec3d(0.98, 1, 0.5));
+                            else ClaimManager.addClaim(kingdomId, pos, true, new Vec3d(0.5, 2, 0.5));
                         }
                     }
                 }

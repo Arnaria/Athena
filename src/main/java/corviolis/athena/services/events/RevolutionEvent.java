@@ -1,6 +1,6 @@
 package corviolis.athena.services.events;
 
-import corviolis.athena.Kingdoms;
+import corviolis.athena.Athena;
 import corviolis.athena.interfaces.PlayerEntityInf;
 import corviolis.athena.services.data.KingdomsData;
 import corviolis.athena.services.procedures.KingdomProcedures;
@@ -14,7 +14,7 @@ public class RevolutionEvent extends Event {
     private ServerPlayerEntity newKing;
 
     public RevolutionEvent(String kingdomId) {
-        super(Kingdoms.settings.REVOLUTION_DURATION, kingdomId + " | Revolution");
+        super(Athena.settings.REVOLUTION_DURATION, kingdomId + " | Revolution");
         this.kingdomId = kingdomId;
         addPlayers(KingdomsData.getMembers(kingdomId));
     }

@@ -3,14 +3,14 @@
   "id": "athena",
   "version": "${version}",
   "name": "Athena",
-  "description": "",
+  "description": "Lil spaghetti never hurt nobody",
   "authors": ["MrNavaStar", "Electro_Brine"],
   "contact": {},
   "license": "MIT",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "corviolis.kingdoms.Kingdoms"
+      "corviolis.athena.Athena"
     ]
   },
   "mixins": [

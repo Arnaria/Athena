@@ -1,6 +1,6 @@
 package corviolis.athena.services.api;
 
-import corviolis.athena.Kingdoms;
+import corviolis.athena.Athena;
 import corviolis.athena.services.data.KingdomsData;
 import corviolis.athena.util.Parser;
 import de.bluecolored.bluemap.api.BlueMapMap;
@@ -32,7 +32,7 @@ public class BlueMapAPI {
     }
 
     public static BlueMapMap getOverworld() {
-        Optional<BlueMapMap> map = Kingdoms.blueMapAPI.getMap("world");
+        Optional<BlueMapMap> map = Athena.blueMapAPI.getMap("world");
         return map.orElse(null);
     }
 

@@ -1,19 +1,16 @@
 package corviolis.athena.util;
 
-import corviolis.athena.Kingdoms;
+import corviolis.athena.Athena;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 
-@Config(name = Kingdoms.MODID)
+@Config(name = Athena.MODID)
 public class Settings implements ConfigData {
     public String[] ADMINS = {};
     public int API_PORT = 6969;
 
-    @Comment("Allowed Values: \"SQLITE\" | \"MYSQL\"")
-    public String DATABASE_TYPE = "SQLITE";
-    public String DATABASE_NAME = "Kingdoms";
-
+    public String DATABASE_NAME = "Athena";
     public String SQLITE_DIRECTORY = "/path/to/folder";
 
     @Comment("Game Settings")

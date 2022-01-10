@@ -1,6 +1,6 @@
 package corviolis.athena.services.procedures;
 
-import corviolis.athena.Kingdoms;
+import corviolis.athena.Athena;
 import corviolis.athena.interfaces.PlayerEntityInf;
 import corviolis.athena.interfaces.ScoreboardInf;
 import corviolis.athena.services.claims.ClaimManager;
@@ -25,12 +25,12 @@ import net.minecraft.util.math.BlockPos;
 
 import java.util.*;
 
-import static corviolis.athena.Kingdoms.scoreboard;
-import static corviolis.athena.Kingdoms.settings;
+import static corviolis.athena.Athena.scoreboard;
+import static corviolis.athena.Athena.settings;
 
 public class KingdomProcedures {
 
-    public static final Table kingdomData = Kingdoms.database.createTable("KingdomData");
+    public static final Table kingdomData = Athena.database.createTable("KingdomData");
 
     public static void init() {
         ((ScoreboardInf) scoreboard).clearTeams();

@@ -32,14 +32,12 @@ public class ManageKingdomCommand {
                 .then(CommandManager.literal("advisers")
                         .then(CommandManager.literal("add")
                                 .then(CommandManager.argument("Player", GameProfileArgumentType.gameProfile()).suggests(((context, builder) -> {
-                                            PlayerManager playerManager = ((ServerCommandSource)context.getSource()).getServer().getPlayerManager();
+                                            PlayerManager playerManager = context.getSource().getServer().getPlayerManager();
                                             String kingdomID = ((PlayerEntityInf) context.getSource().getPlayer()).getKingdomId();
                                             return CommandSource.suggestMatching(playerManager.getPlayerList().stream().filter((player) -> {
                                                 KingdomsData.getMembers(kingdomID);
                                                 return false;
-                                            }).map((player) -> {
-                                                return player.getGameProfile().getName();
-                                            }), builder);
+                                            }).map((player) -> player.getGameProfile().getName()), builder);
                                         }))
                                         .executes(context -> addAdviser(context, EntityArgumentType.getPlayer(context, "Player")))))
                         .then(CommandManager.literal("remove")
@@ -50,7 +48,8 @@ public class ManageKingdomCommand {
                                 .executes(context -> setKingdomColour(context, ColorArgumentType.getColor(context, "Colour")))))
                 .then(CommandManager.literal("transfer")
                         .then(CommandManager.argument("Player", EntityArgumentType.player())
-                                .executes(context -> transferKingship(context, EntityArgumentType.getPlayer(context, "Player"))))));
+                                .executes(context -> transferKingship(context, EntityArgumentType.getPlayer(context, "Player")))))
+        );
     }
 
     private static int createNewKingdom(CommandContext<ServerCommandSource> context, String name) throws CommandSyntaxException {

@@ -26,7 +26,7 @@ import org.apache.logging.log4j.LogManager;
 import java.io.File;
 import java.io.IOException;
 
-public class Kingdoms implements ModInitializer {
+public class Athena implements ModInitializer {
 
     public static final String MODID = "Athena";
     public static PlayerManager playerManager;
@@ -41,13 +41,9 @@ public class Kingdoms implements ModInitializer {
     public void onInitialize() {
         log(Level.INFO, "Initializing...");
 
-        boolean validConfig = false;
         AutoConfig.register(Settings.class, JanksonConfigSerializer::new);
         settings = AutoConfig.getConfigHolder(Settings.class).getConfig();
-
-        if (settings.DATABASE_TYPE.equals("SQLITE")) {
-            validConfig = !settings.SQLITE_DIRECTORY.equals("/path/to/folder");
-        }
+        boolean validConfig = !settings.SQLITE_DIRECTORY.equals("/path/to/folder");
 
         //Can be removed later if we want
         if (settings.CLEAR_DATABASE_ON_BOOT && validConfig) {

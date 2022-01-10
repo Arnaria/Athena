@@ -1,9 +1,9 @@
 package corviolis.athena.services.procedures;
 
+import corviolis.athena.Athena;
 import corviolis.athena.util.BetterPlayerManager;
 import arnaria.notifacaitonlib.NotificationManager;
 import arnaria.notifacaitonlib.NotificationTypes;
-import corviolis.athena.Kingdoms;
 import mrnavastar.sqlib.api.DataContainer;
 import mrnavastar.sqlib.api.Table;
 import net.minecraft.text.Text;
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 public class LinkingProcedures {
 
-    private static final Table linkedAccounts = Kingdoms.database.createTable("LinkedAccounts");
+    private static final Table linkedAccounts = Athena.database.createTable("LinkedAccounts");
     private static final HashMap<String, AccountLink> linkRequests = new HashMap<>();
     private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private static final RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange('a', 'z').build();

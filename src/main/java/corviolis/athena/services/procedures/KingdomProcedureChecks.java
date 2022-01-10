@@ -1,6 +1,6 @@
 package corviolis.athena.services.procedures;
 
-import corviolis.athena.Kingdoms;
+import corviolis.athena.Athena;
 import corviolis.athena.services.data.KingdomsData;
 import corviolis.athena.util.BetterPlayerManager;
 import corviolis.athena.util.InterfaceTypes;
@@ -15,7 +15,7 @@ public class KingdomProcedureChecks {
 
     public static void sendNotification(Enum<InterfaceTypes> platform, UUID receiver, String message, String notificationType) {
         if (platform.equals(InterfaceTypes.API)) {
-            Kingdoms.log(Level.INFO, "API go brrrrrrr");
+            Athena.log(Level.INFO, "API go brrrrrrr");
         } else {
             NotificationManager.send(receiver, message, notificationType);
         }

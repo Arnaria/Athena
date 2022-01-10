@@ -1,6 +1,6 @@
 package corviolis.athena.services.claims;
 
-import corviolis.athena.Kingdoms;
+import corviolis.athena.Athena;
 import corviolis.athena.interfaces.PlayerEntityInf;
 import corviolis.athena.services.data.KingdomsData;
 import corviolis.athena.services.procedures.KingdomProcedures;
@@ -8,6 +8,9 @@ import corviolis.athena.services.api.BlueMapAPI;
 import eu.pb4.holograms.api.holograms.WorldHologram;
 import mrnavastar.sqlib.api.DataContainer;
 import mrnavastar.sqlib.api.Table;
+import net.minecraft.block.AbstractBannerBlock;
+import net.minecraft.block.BannerBlock;
+import net.minecraft.block.WallBannerBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
@@ -19,7 +22,7 @@ import java.util.*;
 
 public class ClaimManager {
 
-    private static final Table claimData = Kingdoms.database.createTable("ClaimData");
+    private static final Table claimData = Athena.database.createTable("ClaimData");
     private static final HashMap<BlockPos, ArrayList<ChunkPos>> claims = new HashMap<>();
     private static final HashMap<ChunkPos, String> owners = new HashMap<>();
     private static final HashMap<BlockPos, WorldHologram> holograms = new HashMap<>();
@@ -68,18 +71,27 @@ public class ClaimManager {
             }
             claims.put(pos, chunks);
 
-            WorldHologram hologram = new WorldHologram(Kingdoms.overworld, new Vec3d(pos.getX() + 0.5, pos.getY() + 2, pos.getZ() + 0.5));
-            holograms.put(pos, hologram);
+            WorldHologram hologram = null;
+            if (Athena.overworld.getBlockState(pos).getBlock() instanceof BannerBlock) {
+                hologram = new WorldHologram(Athena.overworld, new Vec3d(pos.getX() + 0.5, pos.getY() + 2, pos.getZ() + 0.5));
+            }
 
-            LiteralText claimTag = new LiteralText(kingdomId.toUpperCase());
-            Formatting formatting = Formatting.byName(KingdomsData.getColor(kingdomId));
-            if (formatting != null) claimTag.formatted(formatting);
-            hologram.addText(claimTag);
-            hologram.show();
+            if (Athena.overworld.getBlockState(pos).getBlock() instanceof WallBannerBlock) {
+                hologram = new WorldHologram(Athena.overworld, new Vec3d(pos.getX() + 0.98, pos.getY() + 1, pos.getZ() + 0.5));
+            }
+
+            if (hologram != null) {
+                holograms.put(pos, hologram);
+                LiteralText claimTag = new LiteralText(kingdomId.toUpperCase());
+                Formatting formatting = Formatting.byName(KingdomsData.getColor(kingdomId));
+                if (formatting != null) claimTag.formatted(formatting);
+                hologram.addText(claimTag);
+                hologram.show();
+            }
         }
     }
 
-    public static void addClaim(String kingdomId, BlockPos pos, boolean showCosmetics, int labelOffset) {
+    public static void addClaim(String kingdomId, BlockPos pos, boolean showCosmetics, Vec3d labelOffset) {
         ArrayList<ChunkPos> chunks = ClaimHelpers.createChunkBox(pos, 5, true);
         claims.put(pos, chunks);
 
@@ -93,7 +105,7 @@ public class ClaimManager {
         if (KingdomsData.getStartingClaimPos(kingdomId) == null) KingdomProcedures.setStartingClaimPos(kingdomId, pos);
 
         if (showCosmetics) {
-            WorldHologram hologram = new WorldHologram(Kingdoms.overworld, new Vec3d(pos.getX() + 0.5, pos.getY() + labelOffset, pos.getZ() + 0.5));
+            WorldHologram hologram = new WorldHologram(Athena.overworld, new Vec3d(pos.getX(), pos.getY(), pos.getZ()).add(labelOffset));
             holograms.put(pos, hologram);
 
             LiteralText claimTag = new LiteralText(kingdomId.toUpperCase());

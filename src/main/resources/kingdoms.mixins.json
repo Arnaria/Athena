@@ -4,11 +4,11 @@
   "package": "corviolis.athena.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "AbstractBlockMixin",
     "AbstractDecorationEntityMixin",
     "ArmorStandEntityMixin",
     "ArmorStandItemMixin",
     "AxeMixin",
+    "BannerBlockMixin",
     "BlockItemMixin",
     "BucketMixin",
     "ExplosionMixin",
@@ -19,7 +19,8 @@
     "LecternMixin",
     "PlayerEntityMixin",
     "ScoreboardMixin",
-    "ShovelMixin"
+    "ShovelMixin",
+    "WallBannerBlockMixin"
   ],
   "injectors": {
     "defaultRequire": 1
