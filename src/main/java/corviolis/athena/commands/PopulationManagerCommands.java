@@ -38,7 +38,7 @@ public class PopulationManagerCommands {
     private static int viewJoinRequests(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         PlayerEntity executor = context.getSource().getPlayer();
         if (executor == null) return 1;
-        // KingdomProcedureChecks.viewJoinRequests(InterfaceTypes.COMMAND, ((PlayerEntityInf) executor).getKingdomId(), executor.getUuid());
+        //KingdomProcedureChecks.viewJoinRequests(InterfaceTypes.COMMAND, ((PlayerEntityInf) executor).getKingdomId(), executor.getUuid());
         return 1;
     }
 

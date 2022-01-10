@@ -159,6 +159,12 @@ public class KingdomProcedures {
         ClaimManager.updateColor(kingdomId, color.getName());
     }
 
+    //This may or may not work
+    public static void renameKingdom(String kingdomId, String newKingdomId, UUID executor) {
+        createKingdom(newKingdomId, executor);
+        combineKingdoms(kingdomId, newKingdomId);
+    }
+
     public static void addJoinRequest(String kingdomID, UUID executor) {
         DataContainer kingdom = kingdomData.get(kingdomID);
         JsonArray requests = kingdom.getJson("REQUESTS").getAsJsonArray();

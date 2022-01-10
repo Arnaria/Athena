@@ -78,28 +78,59 @@ public class NationsAPI {
             String kingdomId = KingdomProcedures.getKingdomId(executor);
 
             if (executor != null && kingdomId != null) {
-                if (obj.get("action").getAsString().equals("disband")) {
+                String action = obj.get("action").getAsString();
+
+                if (action.equals("create")) {
+                    KingdomProcedureChecks.createKingdom(InterfaceTypes.API, obj.get("name").getAsString(), executor);
+                }
+
+                if (action.equals("disband")) {
                     KingdomProcedureChecks.disbandKingdom(InterfaceTypes.API, kingdomId, executor);
                 }
 
-                if (obj.get("action").getAsString().equals("update_color")) {
+                if (action.equals("update_color")) {
                     Formatting color = Formatting.byName(obj.get("color").getAsString());
                     if (color != null) KingdomProcedureChecks.setColour(InterfaceTypes.API, kingdomId, color, executor);
                 }
 
-                if (obj.get("action").getAsString().equals("banish_member")) {
-                    UUID member = UUID.fromString(obj.get("member_uuid").getAsString());
-                    KingdomProcedureChecks.removePlayer(InterfaceTypes.API, kingdomId, member, executor);
+                if (action.equals("kick_member")) {
+                    UUID uuid = UUID.fromString(obj.get("uuid").getAsString());
+                    KingdomProcedureChecks.removePlayer(InterfaceTypes.API, kingdomId, uuid, executor);
                 }
 
-                if (obj.get("action").getAsString().equals("accept_join_request")) {
-                    UUID request = UUID.fromString(obj.get("request_uuid").getAsString());
-                    KingdomProcedureChecks.acceptJoinRequest(InterfaceTypes.API, kingdomId, request, executor);
+                if (action.equals("banish_member")) {
+                    UUID uuid = UUID.fromString(obj.get("uuid").getAsString());
+                    KingdomProcedureChecks.banishPlayer(InterfaceTypes.API, kingdomId, uuid, executor);
                 }
 
-                if (obj.get("action").getAsString().equals("decline_join_request")) {
-                    UUID request = UUID.fromString(obj.get("request_uuid").getAsString());
-                    KingdomProcedureChecks.declineJoinRequest(InterfaceTypes.API, kingdomId, request, executor);
+                if (action.equals("unbanish_member")) {
+                    UUID uuid = UUID.fromString(obj.get("uuid").getAsString());
+                    KingdomProcedureChecks.unBanishPlayer(InterfaceTypes.API, kingdomId, uuid, executor);
+                }
+
+                if (action.equals("accept_join_request")) {
+                    UUID uuid = UUID.fromString(obj.get("uuid").getAsString());
+                    KingdomProcedureChecks.acceptJoinRequest(InterfaceTypes.API, kingdomId, uuid, executor);
+                }
+
+                if (action.equals("decline_join_request")) {
+                    UUID uuid = UUID.fromString(obj.get("uuid").getAsString());
+                    KingdomProcedureChecks.declineJoinRequest(InterfaceTypes.API, kingdomId, uuid, executor);
+                }
+
+                if (action.equals("add_advisor")) {
+                    UUID uuid = UUID.fromString(obj.get("uuid").getAsString());
+                    KingdomProcedureChecks.addAdviser(InterfaceTypes.API, kingdomId, uuid, executor);
+                }
+
+                if (action.equals("remove_advisor")) {
+                    UUID uuid = UUID.fromString(obj.get("uuid").getAsString());
+                    KingdomProcedureChecks.removeAdviser(InterfaceTypes.API, kingdomId, uuid, executor);
+                }
+
+                if (action.equals("transfer_kingship")) {
+                    UUID uuid = UUID.fromString(obj.get("uuid").getAsString());
+                    KingdomProcedureChecks.transferKingShip(InterfaceTypes.API, kingdomId, uuid, executor);
                 }
             }
         });

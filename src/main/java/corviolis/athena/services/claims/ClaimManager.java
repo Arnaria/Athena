@@ -8,7 +8,6 @@ import corviolis.athena.services.api.BlueMapAPI;
 import eu.pb4.holograms.api.holograms.WorldHologram;
 import mrnavastar.sqlib.api.DataContainer;
 import mrnavastar.sqlib.api.Table;
-import net.minecraft.block.AbstractBannerBlock;
 import net.minecraft.block.BannerBlock;
 import net.minecraft.block.WallBannerBlock;
 import net.minecraft.entity.player.PlayerEntity;
