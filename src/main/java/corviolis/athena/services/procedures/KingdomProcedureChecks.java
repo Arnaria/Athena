@@ -229,4 +229,16 @@ public class KingdomProcedureChecks {
         } else sendNotification(platform, executor, "You are not in a kingdom", NotificationTypes.WARN);
     }
 
+    public static void renameKingdom(Enum<InterfaceTypes> platform, String kingdomID, String newKingdomID, UUID executor) {
+        if (!kingdomID.isEmpty()) {
+            if (KingdomsData.getKing(kingdomID).equals(executor)) {
+                if (!newKingdomID.equals(kingdomID)) {
+                    KingdomProcedures.renameKingdom(kingdomID, newKingdomID, executor);
+                    for (UUID player : KingdomsData.getMembers(kingdomID)) {
+                        sendNotification(InterfaceTypes.COMMAND, player, kingdomID + " has been renamed to " + newKingdomID, NotificationTypes.EVENT);
+                    }
+                } sendNotification(platform, executor, "Your Nation is already called " + kingdomID, NotificationTypes.WARN);
+            } sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
+        } sendNotification(platform, executor, "You are not part of a kingdom", NotificationTypes.WARN);
+    }
 }

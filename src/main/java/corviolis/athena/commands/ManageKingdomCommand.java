@@ -3,6 +3,7 @@ package corviolis.athena.commands;
 import corviolis.athena.interfaces.PlayerEntityInf;
 import corviolis.athena.services.data.KingdomsData;
 import corviolis.athena.services.procedures.KingdomProcedureChecks;
+import corviolis.athena.services.procedures.KingdomProcedures;
 import corviolis.athena.util.InterfaceTypes;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -49,6 +50,9 @@ public class ManageKingdomCommand {
                 .then(CommandManager.literal("transfer")
                         .then(CommandManager.argument("Player", EntityArgumentType.player())
                                 .executes(context -> transferKingship(context, EntityArgumentType.getPlayer(context, "Player")))))
+                .then(CommandManager.literal("rename")
+                        .then(CommandManager.argument("New Nation name", StringArgumentType.string())
+                                .executes(context -> renameKingdom(context, StringArgumentType.getString(context, "New Nation name")))))
         );
     }
 
@@ -94,6 +98,12 @@ public class ManageKingdomCommand {
         if (executor == null || heir == null) return 1;
         UUID heirUUID = heir.getUuid();
         KingdomProcedureChecks.transferKingShip(InterfaceTypes.COMMAND, ((PlayerEntityInf) executor).getKingdomId(), executor.getUuid(), heirUUID);
+        return 1;
+    }
+
+    private static int renameKingdom(CommandContext<ServerCommandSource> context, String newKingdomName) throws CommandSyntaxException {
+        PlayerEntity executor = context.getSource().getPlayer();
+        KingdomProcedureChecks.renameKingdom(InterfaceTypes.COMMAND, ((PlayerEntityInf) executor).getKingdomId(), newKingdomName, executor.getUuid());
         return 1;
     }
 
