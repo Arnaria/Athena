@@ -22,14 +22,14 @@ import net.minecraft.util.Formatting;
 
 import java.util.UUID;
 
-public class ManageKingdomCommand {
+public class ManageTeamCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        dispatcher.register(CommandManager.literal("kingdom")
+        dispatcher.register(CommandManager.literal("team")
                 .then(CommandManager.literal("create")
                         .then(CommandManager.argument("KingdomID", StringArgumentType.string())
                                 .executes(context -> createNewKingdom(context, StringArgumentType.getString(context, "KingdomID")))))
                 .then(CommandManager.literal("disband")
-                        .executes(ManageKingdomCommand::disbandKingdom))
+                        .executes(ManageTeamCommand::disbandKingdom))
                 .then(CommandManager.literal("advisers")
                         .then(CommandManager.literal("add")
                                 .then(CommandManager.argument("Player", GameProfileArgumentType.gameProfile()).suggests(((context, builder) -> {
