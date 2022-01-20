@@ -65,13 +65,14 @@ public class Athena implements ModInitializer {
             });
 
             CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
-                LinkCommand.register(dispatcher);
+                // LinkCommand.register(dispatcher);
                 ClaimBannerCommand.register(dispatcher);
                 GetKingCommand.register(dispatcher);
-                ManageSelfCommand.register(dispatcher);
+                LeaveCommand.register(dispatcher);
+                JoinCommmand.register(dispatcher);
                 RevolutionCommand.register(dispatcher);
-                PopulationManagerCommands.register(dispatcher);
-                ManageKingdomCommand.register(dispatcher);
+                ManageMembersCommands.register(dispatcher);
+                ManageTeamCommand.register(dispatcher);
                 ClaimManagerCommands.register(dispatcher);
             });
 
