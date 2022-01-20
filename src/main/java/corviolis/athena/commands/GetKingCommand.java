@@ -13,7 +13,7 @@ import net.minecraft.server.command.ServerCommandSource;
 
 public class GetKingCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        dispatcher.register(CommandManager.literal("Leader")
+        dispatcher.register(CommandManager.literal("leader")
                 .then(CommandManager.argument("Kingdom", StringArgumentType.string())
                         .executes(context -> getLeader(context, StringArgumentType.getString(context,"Kingdom")))));
     }
