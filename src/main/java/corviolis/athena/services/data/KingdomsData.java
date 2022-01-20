@@ -81,4 +81,9 @@ public class KingdomsData {
         DataContainer kingdom = KingdomProcedures.kingdomData.get(kingdomId);
         return (ArrayList<String>) Arrays.asList(kingdom.getStringArray("CHALLENGE_QUE"));
     }
+
+    public static ArrayList<String> getCompletedChallenges(String kingdomId) {
+        DataContainer kingdom = KingdomProcedures.kingdomData.get(kingdomId);
+        return (ArrayList<String>) Arrays.asList(kingdom.getStringArray("COMPLETED_CHALLENGES"));
+    }
 }

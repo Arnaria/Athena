@@ -279,7 +279,7 @@ public class KingdomProcedures {
 
     public static void completeChallenge(String kingdomId, String challengeId) {
         DataContainer kingdom = kingdomData.get(kingdomId);
-        ArrayList<String> challenges = (ArrayList<String>) Arrays.asList(kingdom.getStringArray("CHALLENGE_QUE"));
+        ArrayList<String> challenges = (ArrayList<String>) Arrays.asList(kingdom.getStringArray("COMPLETED_CHALLENGES"));
         challenges.remove(challengeId);
 
         Challenge challenge = ChallengeManager.getChallenge(challengeId);
