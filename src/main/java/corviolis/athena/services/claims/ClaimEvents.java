@@ -4,6 +4,7 @@ import corviolis.athena.callbacks.BlockPlaceCallback;
 import corviolis.athena.interfaces.PlayerEntityInf;
 import arnaria.notifacaitonlib.NotificationManager;
 import arnaria.notifacaitonlib.NotificationTypes;
+import corviolis.athena.services.data.KingdomsData;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.block.*;
 import net.minecraft.nbt.NbtCompound;
@@ -42,6 +43,11 @@ public class ClaimEvents {
                     if (!kingdomId.isEmpty()) {
                         NbtCompound nbt = item.getNbt();
                         if (nbt != null && nbt.getBoolean("IS_CLAIM_MARKER")) {
+                            if (!((PlayerEntityInf)player).isKing() && !KingdomsData.getAdvisers(kingdomId).contains(player.getUuid())) {
+                                NotificationManager.send(player.getUuid(), "Only kings and advisors can claim land", NotificationTypes.ERROR);
+                                return false;
+                            }
+
                             if (!ClaimManager.validBannerPos(kingdomId, pos)) {
                                 NotificationManager.send(player.getUuid(), "You can't place a banner here", NotificationTypes.ERROR);
                                 return false;
