@@ -1,9 +1,11 @@
 package corviolis.athena.services.api;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import corviolis.athena.services.data.KingdomsData;
 import io.javalin.Javalin;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Objects;
 
 public class LeaderboardAPI {
 
@@ -11,14 +13,17 @@ public class LeaderboardAPI {
 
     public static void init(Javalin api) {
         api.get(url, ctx -> {
-            JsonArray kingdoms = new JsonArray();
+            ArrayList<HashMap<String, Object>> kingdoms = new ArrayList<>();
             for (String kingdomId :  KingdomsData.getKingdomIds()) {
-                JsonObject kingdom = new JsonObject();
-                kingdom.addProperty("kingdomId", kingdomId);
-                kingdom.addProperty("xp", KingdomsData.getXp(kingdomId));
-                kingdom.addProperty("color", KingdomsData.getColor(kingdomId));
+                if (!Objects.equals(kingdomId, "ADMIN")) {
+                    HashMap<String, Object> kingdom = new HashMap<>();
+                    kingdom.put("kingdomId", kingdomId);
+                    kingdom.put("xp", KingdomsData.getXp(kingdomId));
+                    kingdom.put("color", KingdomsData.getColor(kingdomId));
+                    kingdoms.add(kingdom);
+                }
             }
-            ctx.json(kingdoms.toString());
+            ctx.json(kingdoms);
         });
     }
 }
