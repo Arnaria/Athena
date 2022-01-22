@@ -17,7 +17,7 @@ import net.minecraft.text.LiteralText;
 public class ClaimBannerCommand {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        dispatcher.register(CommandManager.literal("make_banner")
+        dispatcher.register(CommandManager.literal("banner")
                 .executes(ClaimBannerCommand::makeClaimBanner));
     }
 

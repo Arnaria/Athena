@@ -26,8 +26,11 @@ public class ManageTeamCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("team")
                 .then(CommandManager.literal("create")
-                        .then(CommandManager.argument("KingdomID", StringArgumentType.string())
-                                .executes(context -> createNewKingdom(context, StringArgumentType.getString(context, "KingdomID")))))
+                        .then(CommandManager.argument("team", StringArgumentType.string()).suggests((context, builder) -> {
+                                    for (String kingdomId : KingdomsData.getKingdomIds()) builder.suggest(kingdomId);
+                                    return builder.buildFuture();
+                                })
+                                .executes(context -> createNewKingdom(context, StringArgumentType.getString(context, "team")))))
                 .then(CommandManager.literal("disband")
                         .executes(ManageTeamCommand::disbandKingdom))
                 .then(CommandManager.literal("advisers")
@@ -51,8 +54,8 @@ public class ManageTeamCommand {
                         .then(CommandManager.argument("Player", EntityArgumentType.player())
                                 .executes(context -> transferKingship(context, EntityArgumentType.getPlayer(context, "Player")))))
                 .then(CommandManager.literal("rename")
-                        .then(CommandManager.argument("New Nation name", StringArgumentType.string())
-                                .executes(context -> renameKingdom(context, StringArgumentType.getString(context, "New Nation name")))))
+                        .then(CommandManager.argument("New Team name", StringArgumentType.string())
+                                .executes(context -> renameKingdom(context, StringArgumentType.getString(context, "New Team name")))))
         );
     }
 

@@ -15,7 +15,10 @@ public class XpCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("xp")
                 .then(CommandManager.literal("add")
-                        .then(CommandManager.argument("team", StringArgumentType.string())
+                        .then(CommandManager.argument("team", StringArgumentType.string()).suggests((context, builder) -> {
+                                    for (String kingdomId : KingdomsData.getKingdomIds()) builder.suggest(kingdomId);
+                                    return builder.buildFuture();
+                                })
                             .then(CommandManager.argument("amount", IntegerArgumentType.integer())
                                     .executes(context -> add(context, StringArgumentType.getString(context, "team"), IntegerArgumentType.getInteger(context, "amount")))
                             )
@@ -23,7 +26,10 @@ public class XpCommand {
                 )
 
                 .then(CommandManager.literal("view")
-                        .then(CommandManager.argument("team", StringArgumentType.string())
+                        .then(CommandManager.argument("team", StringArgumentType.string()).suggests((context, builder) -> {
+                                    for (String kingdomId : KingdomsData.getKingdomIds()) builder.suggest(kingdomId);
+                                    return builder.buildFuture();
+                                })
                                 .executes(context -> view(context, StringArgumentType.getString(context, "team")))
                         )
                 )

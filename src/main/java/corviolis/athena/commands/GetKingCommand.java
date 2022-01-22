@@ -14,8 +14,11 @@ import net.minecraft.server.command.ServerCommandSource;
 public class GetKingCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("leader")
-                .then(CommandManager.argument("Kingdom", StringArgumentType.string())
-                        .executes(context -> getLeader(context, StringArgumentType.getString(context,"Kingdom")))));
+                .then(CommandManager.argument("team", StringArgumentType.string()).suggests((context, builder) -> {
+                            for (String kingdomId : KingdomsData.getKingdomIds()) builder.suggest(kingdomId);
+                            return builder.buildFuture();
+                        })
+                        .executes(context -> getLeader(context, StringArgumentType.getString(context,"team")))));
     }
 
     private static int getLeader(CommandContext<ServerCommandSource> context, String kingdomID) throws CommandSyntaxException {
