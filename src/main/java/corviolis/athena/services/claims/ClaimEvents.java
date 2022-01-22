@@ -34,7 +34,7 @@ public class ClaimEvents {
         BlockPlaceCallback.EVENT.register((world, player, pos, state, block, item) -> {
             if (world.getRegistryKey().equals(World.OVERWORLD)) {
                 if (!ClaimManager.actionAllowedAt(pos, player)) {
-                    NotificationManager.send(player.getUuid(), "You can't place blocks in other kingdoms claims", NotificationTypes.ERROR);
+                    NotificationManager.send(player.getUuid(), "You can't place blocks in other teams claims", NotificationTypes.ERROR);
                     return false;
                 }
 
@@ -44,7 +44,7 @@ public class ClaimEvents {
                         NbtCompound nbt = item.getNbt();
                         if (nbt != null && nbt.getBoolean("IS_CLAIM_MARKER")) {
                             if (!((PlayerEntityInf)player).isKing() && !KingdomsData.getAdvisers(kingdomId).contains(player.getUuid())) {
-                                NotificationManager.send(player.getUuid(), "Only kings and advisors can claim land", NotificationTypes.ERROR);
+                                NotificationManager.send(player.getUuid(), "Only captains and advisors can claim land", NotificationTypes.ERROR);
                                 return false;
                             }
 
@@ -54,7 +54,7 @@ public class ClaimEvents {
                             }
 
                             if (!ClaimManager.canAffordBanner(kingdomId)) {
-                                NotificationManager.send(player.getUuid(), "Your kingdom does not have enough xp", NotificationTypes.ERROR);
+                                NotificationManager.send(player.getUuid(), "Your team does not have enough xp", NotificationTypes.ERROR);
                                 return false;
                             }
 

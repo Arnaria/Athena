@@ -43,7 +43,7 @@ public class BucketMixin extends Item {
         BlockPos pos = blockHitResult.getBlockPos();
 
         if (!ClaimManager.actionAllowedAt(pos, user)) {
-            NotificationManager.send(user.getUuid(), "You can't use buckets in other kingdoms claims", NotificationTypes.ERROR);
+            NotificationManager.send(user.getUuid(), "You can't use buckets in other teams claims", NotificationTypes.ERROR);
             cir.setReturnValue(TypedActionResult.fail(itemStack));
         }
     }

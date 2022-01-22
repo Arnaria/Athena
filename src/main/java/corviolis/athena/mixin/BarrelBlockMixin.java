@@ -1,10 +1,10 @@
 package corviolis.athena.mixin;
 
-import corviolis.athena.services.claims.ClaimManager;
 import arnaria.notifacaitonlib.NotificationManager;
 import arnaria.notifacaitonlib.NotificationTypes;
+import corviolis.athena.services.claims.ClaimManager;
+import net.minecraft.block.BarrelBlock;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.LecternBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -16,13 +16,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(LecternBlock.class)
-public class LecternMixin {
+@Mixin(BarrelBlock.class)
+public class BarrelBlockMixin {
 
-    @Inject(method = "onUse", at = @At("HEAD"))
-    public void onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
+    @Inject(method = "onUse", at = @At("HEAD"), cancellable = true)
+    public void useOnBlock(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
         if (!ClaimManager.actionAllowedAt(pos, player)) {
-            NotificationManager.send(player.getUuid(), "You can't use other teams lecterns", NotificationTypes.ERROR);
+            NotificationManager.send(player.getUuid(), "You can't open other teams barrels", NotificationTypes.ERROR);
             cir.setReturnValue(ActionResult.FAIL);
         }
     }

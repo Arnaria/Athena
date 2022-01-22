@@ -19,7 +19,7 @@ public class FlintNStealMixin {
     public void useOnBlock(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
         PlayerEntity player = context.getPlayer();
         if (player != null && !ClaimManager.actionAllowedAt(context.getBlockPos(), player)) {
-            NotificationManager.send(player.getUuid(), "You can't use flint and steel in other kingdoms claims", NotificationTypes.ERROR);
+            NotificationManager.send(player.getUuid(), "You can't use flint and steel in other teams claims", NotificationTypes.ERROR);
             cir.setReturnValue(ActionResult.FAIL);
         }
     }
