@@ -15,7 +15,6 @@ public class Settings implements ConfigData {
 
     @Comment("Game Settings")
     public int REVOLUTION_DURATION = 15;
-    public int INVASION_DURATION = 15;
 
     @Comment("Dev Settings")
     public boolean CLEAR_DATABASE_ON_BOOT = false;

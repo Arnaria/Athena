@@ -1,6 +1,7 @@
 package corviolis.athena.services.api;
 
 import corviolis.athena.services.data.KingdomsData;
+import corviolis.athena.util.XpComparator;
 import io.javalin.Javalin;
 
 import java.util.ArrayList;
@@ -23,6 +24,8 @@ public class LeaderboardAPI {
                     kingdoms.add(kingdom);
                 }
             }
+
+            kingdoms.sort(new XpComparator());
             ctx.json(kingdoms);
         });
     }
