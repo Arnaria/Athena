@@ -10,16 +10,10 @@ import corviolis.athena.services.data.KingdomsData;
 import corviolis.athena.services.events.Challenge;
 import corviolis.athena.services.events.ChallengeManager;
 import corviolis.athena.services.procedures.KingdomProcedureChecks;
-import corviolis.athena.services.procedures.KingdomProcedures;
 import corviolis.athena.util.InterfaceTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-import org.apache.http.cookie.CommonCookieAttributeHandler;
-
-import javax.sql.CommonDataSource;
-import java.util.ArrayList;
-import java.util.UUID;
 
 public class ChallengeCommands {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {

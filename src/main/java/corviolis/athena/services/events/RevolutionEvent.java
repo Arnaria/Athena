@@ -40,6 +40,7 @@ public class RevolutionEvent extends Event {
 
     @Override
     protected void finish() {
+        KingdomProcedures.endRevolution(kingdomId);
         if (newKing != null) {
             for (ServerPlayerEntity participant : this.getParticipants()) {
                 if (!((PlayerEntityInf) participant).isKing()) NotificationManager.send(participant.getUuid(), "The Revolution was successful! " + newKing.getName() + " is now king!", NotificationTypes.ACHIEVEMENT);

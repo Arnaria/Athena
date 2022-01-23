@@ -7,6 +7,7 @@ import corviolis.athena.services.claims.ClaimManager;
 import corviolis.athena.services.data.KingdomsData;
 import corviolis.athena.services.events.Challenge;
 import corviolis.athena.services.events.ChallengeManager;
+import corviolis.athena.services.events.EventManager;
 import corviolis.athena.util.BetterPlayerManager;
 import corviolis.athena.services.api.BlueMapAPI;
 import arnaria.notifacaitonlib.NotificationManager;
@@ -70,6 +71,7 @@ public class KingdomProcedures {
         kingdomTeam.setFriendlyFireAllowed(false);
         Formatting color = Formatting.byColorIndex((int) (Math.random() * 15));
         kingdomTeam.setColor(color);
+        Date time = new Date();
 
         DataContainer kingdom = kingdomData.createDataContainer(kingdomId);
         if (color != null) kingdom.put("COLOR", color.getName());
@@ -80,6 +82,7 @@ public class KingdomProcedures {
         kingdom.put("REQUESTS", new JsonArray());
         kingdom.put("BLOCKED", new JsonArray());
         kingdom.put("ADVISERS", new JsonArray());
+        kingdom.put("endTimeOfLastRevolution", time.getTime());
 
         if (!uuid.equals(Util.NIL_UUID)) {
             kingdom.put("KING", uuid);
@@ -298,5 +301,15 @@ public class KingdomProcedures {
             if (!kingdomId.equals("ADMIN") && KingdomsData.getMembers(kingdomId).contains(uuid)) return kingdomId;
         }
         return null;
+    }
+
+    public static void startRevolution(String kingdomID) {
+        EventManager.startRevolution(kingdomID);
+    }
+
+    public static void endRevolution(String kingdomID) {
+        DataContainer kingdom = kingdomData.get(kingdomID);
+        Date time = new Date();
+        kingdom.put("endTimeOfLastRevolution", time.getTime());
     }
 }

@@ -3,7 +3,6 @@ package corviolis.athena.commands;
 import corviolis.athena.interfaces.PlayerEntityInf;
 import corviolis.athena.services.data.KingdomsData;
 import corviolis.athena.services.procedures.KingdomProcedureChecks;
-import corviolis.athena.services.procedures.KingdomProcedures;
 import corviolis.athena.util.InterfaceTypes;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
