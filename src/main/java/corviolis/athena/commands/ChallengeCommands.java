@@ -41,8 +41,10 @@ public class ChallengeCommands {
                                     }
                                     return builder.buildFuture();
                                 })
+                                .executes(context -> submitChallenge(context, StringArgumentType.getString(context, "challenge")))
 
-                        ))
+                        )
+
                 .then(CommandManager.literal("approve").requires(serverCommandSource -> serverCommandSource.hasPermissionLevel(4))
                         .then(CommandManager.argument("team", StringArgumentType.string())
                                 .then(CommandManager.argument("challenge", StringArgumentType.string())
@@ -50,7 +52,7 @@ public class ChallengeCommands {
                 .then(CommandManager.literal("decline").requires(serverCommandSource -> serverCommandSource.hasPermissionLevel(4))
                         .then(CommandManager.argument("team", StringArgumentType.string())
                                 .then(CommandManager.argument("challenge", StringArgumentType.string())
-                                        .executes(context -> declineChallenge(context, StringArgumentType.getString(context, "team"), StringArgumentType.getString(context, "challenge")))))));
+                                        .executes(context -> declineChallenge(context, StringArgumentType.getString(context, "team"), StringArgumentType.getString(context, "challenge"))))))));
     }
 
     private static int viewCompletedChallenges(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
