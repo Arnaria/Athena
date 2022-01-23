@@ -22,7 +22,6 @@
     "PlayerEntityMixin",
     "ScoreboardMixin",
     "ShovelMixin",
-    "TrappedChestBlockMixin",
     "WallBannerBlockMixin"
   ],
   "injectors": {
