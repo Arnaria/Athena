@@ -10,6 +10,7 @@ import corviolis.athena.services.data.KingdomsData;
 import corviolis.athena.services.events.Challenge;
 import corviolis.athena.services.events.ChallengeManager;
 import corviolis.athena.services.procedures.KingdomProcedureChecks;
+import corviolis.athena.services.procedures.KingdomProcedures;
 import corviolis.athena.util.InterfaceTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.CommandManager;
@@ -41,7 +42,15 @@ public class ChallengeCommands {
                                     return builder.buildFuture();
                                 })
 
-                        )));
+                        ))
+                .then(CommandManager.literal("approve").requires(serverCommandSource -> serverCommandSource.hasPermissionLevel(4))
+                        .then(CommandManager.argument("team", StringArgumentType.string())
+                                .then(CommandManager.argument("challenge", StringArgumentType.string())
+                                        .executes(context -> approveChallenge(context, StringArgumentType.getString(context, "team"), StringArgumentType.getString(context, "challenge"))))))
+                .then(CommandManager.literal("decline").requires(serverCommandSource -> serverCommandSource.hasPermissionLevel(4))
+                        .then(CommandManager.argument("team", StringArgumentType.string())
+                                .then(CommandManager.argument("challenge", StringArgumentType.string())
+                                        .executes(context -> declineChallenge(context, StringArgumentType.getString(context, "team"), StringArgumentType.getString(context, "challenge")))))));
     }
 
     private static int viewCompletedChallenges(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
@@ -58,10 +67,14 @@ public class ChallengeCommands {
         while (tier <= ChallengeManager.getMaxTier()) {
             KingdomProcedureChecks.sendNotification(InterfaceTypes.COMMAND, executor.getUuid(), String.valueOf(tier), NotificationTypes.INFO);
             boolean completedTier = true;
-            for (String challange : ChallengeManager.getChallengeIds(1)) {
-                if (!KingdomsData.getCompletedChallenges(((PlayerEntityInf) executor).getKingdomId()).contains(challange) || KingdomsData.getChallengeQue(((PlayerEntityInf) executor).getKingdomId()).contains(challange)) {
+            for (String challenge : ChallengeManager.getChallengeIds(tier)) {
+                if (!KingdomsData.getCompletedChallenges(((PlayerEntityInf) executor).getKingdomId()).contains(challenge) || !KingdomsData.getChallengeQue(((PlayerEntityInf) executor).getKingdomId()).contains(challenge)) {
                     completedTier = false;
-                    KingdomProcedureChecks.sendNotification(InterfaceTypes.COMMAND, executor.getUuid(), challange, NotificationTypes.INFO);
+                    Challenge challengeData = ChallengeManager.getChallenge(challenge);
+                    if (challengeData != null) {
+                        String message = challengeData.challengeId() + ", " + challengeData.description() + ", xp:" + challengeData.xp();
+                        KingdomProcedureChecks.sendNotification(InterfaceTypes.COMMAND, executor.getUuid(), message, NotificationTypes.INFO);
+                    }
                 }
             }
             if (completedTier) {
@@ -72,6 +85,18 @@ public class ChallengeCommands {
         return 1;
     }
 
-    private static int submitChallenge()
+    private static int submitChallenge(CommandContext<ServerCommandSource> context, String challenge) throws CommandSyntaxException {
+        PlayerEntity executor = context.getSource().getPlayer();
+        KingdomProcedureChecks.submitChallenge(InterfaceTypes.COMMAND, ((PlayerEntityInf) executor).getKingdomId(), executor.getUuid(), challenge);
+        return 1;
+    }
+
+    private static int approveChallenge(CommandContext<ServerCommandSource> context, String kingdomID ,String challenge) {
+        return 1;
+    }
+
+    private static int declineChallenge(CommandContext<ServerCommandSource> context, String kingdomId ,String challenge) {
+        return 1;
+    }
 
 }

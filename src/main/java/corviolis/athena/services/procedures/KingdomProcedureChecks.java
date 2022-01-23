@@ -2,6 +2,7 @@ package corviolis.athena.services.procedures;
 
 import corviolis.athena.Athena;
 import corviolis.athena.services.data.KingdomsData;
+import corviolis.athena.services.events.ChallengeManager;
 import corviolis.athena.util.BetterPlayerManager;
 import corviolis.athena.util.InterfaceTypes;
 import arnaria.notifacaitonlib.NotificationManager;
@@ -240,6 +241,18 @@ public class KingdomProcedureChecks {
                 } sendNotification(platform, executor, "Your Nation is already called " + kingdomID, NotificationTypes.WARN);
             } sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
         } sendNotification(platform, executor, "You are not part of a kingdom", NotificationTypes.WARN);
+    }
+
+    public static void submitChallenge(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, String challenge) {
+        if (!kingdomID.isEmpty()) {
+            if (KingdomsData.getKing(kingdomID).equals(executor) || KingdomsData.getAdvisers(kingdomID).contains(executor)) {
+                if (ChallengeManager.getChallenge(challenge) != null) {
+                    if (!KingdomsData.getCompletedChallenges(kingdomID).contains(challenge) || !KingdomsData.getChallengeQue(kingdomID).contains(challenge)) {
+                        KingdomProcedures.addChallengeToQue(kingdomID, challenge);
+                    } sendNotification(platform, executor, "this challenge is already completed", NotificationTypes.WARN);
+                } sendNotification(platform, executor, "This challenge does not exist", NotificationTypes.WARN);
+            } sendNotification(platform, executor, "Only a leader or adviser can run this command", NotificationTypes.WARN);
+        } sendNotification(platform, executor, "You are not part of a team", NotificationTypes.WARN);
     }
 
 }

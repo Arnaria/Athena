@@ -26,10 +26,7 @@ public class ManageTeamCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("team")
                 .then(CommandManager.literal("create")
-                        .then(CommandManager.argument("team", StringArgumentType.string()).suggests((context, builder) -> {
-                                    for (String kingdomId : KingdomsData.getKingdomIds()) builder.suggest(kingdomId);
-                                    return builder.buildFuture();
-                                })
+                        .then(CommandManager.argument("team", StringArgumentType.string())
                                 .executes(context -> createNewKingdom(context, StringArgumentType.getString(context, "team")))))
                 .then(CommandManager.literal("disband")
                         .executes(ManageTeamCommand::disbandKingdom))
