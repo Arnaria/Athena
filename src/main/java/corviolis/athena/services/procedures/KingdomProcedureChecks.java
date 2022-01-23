@@ -255,4 +255,32 @@ public class KingdomProcedureChecks {
         } sendNotification(platform, executor, "You are not part of a team", NotificationTypes.WARN);
     }
 
+    public static void acceptChallenge(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, String challenge) {
+        if (!kingdomID.isEmpty()) {
+            if (ChallengeManager.getChallenge(challenge) != null) {
+                if (KingdomsData.getChallengeQue(kingdomID).contains(challenge)) {
+                    KingdomProcedures.completeChallenge(kingdomID, challenge);
+                    for (UUID member : KingdomsData.getMembers(kingdomID)) {
+                        sendNotification(platform, executor, challenge + " has been approved", NotificationTypes.EVENT);
+                    }
+                    sendNotification(platform, executor, "Challenge has been approved", NotificationTypes.EVENT);
+                } sendNotification(platform, executor, "This challenge has not been submitted", NotificationTypes.WARN);
+            } sendNotification(platform, executor, "This challenge does not exist", NotificationTypes.WARN);
+        } sendNotification(platform, executor, "This Team does not exist", NotificationTypes.WARN);
+    }
+
+    public static void declineChallenge(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, String challenge) {
+        if (!kingdomID.isEmpty()) {
+            if (ChallengeManager.getChallenge(challenge) != null) {
+                if (KingdomsData.getChallengeQue(kingdomID).contains(challenge)) {
+                    KingdomProcedures.removeChallengeFromQue(kingdomID, challenge);
+                    for (UUID member : KingdomsData.getMembers(kingdomID)) {
+                        sendNotification(platform, executor, challenge + " has been declined", NotificationTypes.EVENT);
+                    }
+                    sendNotification(platform, executor, "Challenge has been approved", NotificationTypes.EVENT);
+                } sendNotification(platform, executor, "This challenge has not been submitted", NotificationTypes.WARN);
+            } sendNotification(platform, executor, "This challenge does not exist", NotificationTypes.WARN);
+        } sendNotification(platform, executor, "This Team does not exist", NotificationTypes.WARN);
+    }
+
 }

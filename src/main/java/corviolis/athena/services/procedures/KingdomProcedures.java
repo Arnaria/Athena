@@ -277,6 +277,13 @@ public class KingdomProcedures {
         kingdom.put("CHALLENGE_QUE", challenges.toArray(new String[]{}));
     }
 
+    public static void removeChallengeFromQue(String kingdomId, String challengeId) {
+        DataContainer kingdom = kingdomData.get(kingdomId);
+        ArrayList<String> challenges = (ArrayList<String>) Arrays.asList(kingdom.getStringArray("CHALLENGE_QUE"));
+        challenges.remove(challengeId);
+        kingdom.put("CHALLENGE_QUE", challenges.toArray(new String[]{}));
+    }
+
     public static void completeChallenge(String kingdomId, String challengeId) {
         DataContainer kingdom = kingdomData.get(kingdomId);
         ArrayList<String> challenges = (ArrayList<String>) Arrays.asList(kingdom.getStringArray("COMPLETED_CHALLENGES"));
