@@ -2,6 +2,7 @@ package corviolis.athena.commands;
 
 import arnaria.notifacaitonlib.NotificationTypes;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import corviolis.athena.interfaces.PlayerEntityInf;
@@ -27,7 +28,20 @@ public class ChallengeCommands {
                         .then(CommandManager.literal("completed")
                                 .executes(ChallengeCommands::viewCompletedChallenges)))
                 .then(CommandManager.literal("submit")
-                        .then(CommandManager.argument("challenge", ))));
+                        .then(CommandManager.argument("challenge", StringArgumentType.string()).suggests((context, builder) -> {
+                                    PlayerEntity executor = context.getSource().getPlayer();
+
+                                    for (int i = 1; i < ChallengeManager.getMaxTier(); i++) {
+                                        for (String challengeId : ChallengeManager.getChallengeIds(i)) {
+                                            if (!KingdomsData.getCompletedChallenges(((PlayerEntityInf) executor).getKingdomId()).contains(challengeId) || KingdomsData.getChallengeQue(((PlayerEntityInf) executor).getKingdomId()).contains(challengeId)) {
+                                                builder.suggest(challengeId);
+                                            }
+                                        }
+                                    }
+                                    return builder.buildFuture();
+                                })
+
+                        )));
     }
 
     private static int viewCompletedChallenges(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
