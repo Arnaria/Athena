@@ -86,4 +86,9 @@ public class KingdomsData {
         DataContainer kingdom = KingdomProcedures.kingdomData.get(kingdomId);
         return (ArrayList<String>) Arrays.asList(kingdom.getStringArray("COMPLETED_CHALLENGES"));
     }
+
+    public static long endTimeOfLastRevolution(String kingdomID) {
+        DataContainer kingdom = KingdomProcedures.kingdomData.get(kingdomID);
+        return kingdom.getLong("endTimeOfLastRevolution");
+    }
 }

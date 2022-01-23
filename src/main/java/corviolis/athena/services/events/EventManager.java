@@ -1,7 +1,6 @@
 package corviolis.athena.services.events;
 
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
 

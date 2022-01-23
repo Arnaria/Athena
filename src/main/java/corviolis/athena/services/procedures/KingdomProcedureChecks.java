@@ -3,6 +3,7 @@ package corviolis.athena.services.procedures;
 import corviolis.athena.Athena;
 import corviolis.athena.services.data.KingdomsData;
 import corviolis.athena.services.events.ChallengeManager;
+import corviolis.athena.services.events.EventManager;
 import corviolis.athena.util.BetterPlayerManager;
 import corviolis.athena.util.InterfaceTypes;
 import arnaria.notifacaitonlib.NotificationManager;
@@ -10,6 +11,7 @@ import arnaria.notifacaitonlib.NotificationTypes;
 import net.minecraft.util.Formatting;
 import org.apache.logging.log4j.Level;
 
+import java.util.Date;
 import java.util.UUID;
 
 public class KingdomProcedureChecks {
@@ -223,7 +225,7 @@ public class KingdomProcedureChecks {
             if (KingdomsData.getKing(kingdomID).equals(executor)){
                 if (KingdomsData.getBlockedPlayers(kingdomID).contains(player)){
                     KingdomProcedures.unblockPlayer(kingdomID, player);
-                    sendNotification(platform, executor, BetterPlayerManager.getName(player) + " has not unbanished from " + kingdomID, NotificationTypes.EVENT );
+                    sendNotification(platform, executor, BetterPlayerManager.getName(player) + " has not un-banished from " + kingdomID, NotificationTypes.EVENT );
                     sendNotification(InterfaceTypes.COMMAND, player, "You are no longer banished from " + kingdomID, NotificationTypes.EVENT);
                 } else sendNotification(platform, executor, BetterPlayerManager.getName(player) + " has not been banished from " + kingdomID, NotificationTypes.WARN );
             } else sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
@@ -261,7 +263,7 @@ public class KingdomProcedureChecks {
                 if (KingdomsData.getChallengeQue(kingdomID).contains(challenge)) {
                     KingdomProcedures.completeChallenge(kingdomID, challenge);
                     for (UUID member : KingdomsData.getMembers(kingdomID)) {
-                        sendNotification(platform, executor, challenge + " has been approved", NotificationTypes.EVENT);
+                        sendNotification(InterfaceTypes.COMMAND, member, challenge + " has been approved", NotificationTypes.EVENT);
                     }
                     sendNotification(platform, executor, "Challenge has been approved", NotificationTypes.EVENT);
                 } sendNotification(platform, executor, "This challenge has not been submitted", NotificationTypes.WARN);
@@ -275,12 +277,28 @@ public class KingdomProcedureChecks {
                 if (KingdomsData.getChallengeQue(kingdomID).contains(challenge)) {
                     KingdomProcedures.removeChallengeFromQue(kingdomID, challenge);
                     for (UUID member : KingdomsData.getMembers(kingdomID)) {
-                        sendNotification(platform, executor, challenge + " has been declined", NotificationTypes.EVENT);
+                        sendNotification(InterfaceTypes.COMMAND, member, challenge + " has been declined", NotificationTypes.EVENT);
                     }
                     sendNotification(platform, executor, "Challenge has been approved", NotificationTypes.EVENT);
                 } sendNotification(platform, executor, "This challenge has not been submitted", NotificationTypes.WARN);
             } sendNotification(platform, executor, "This challenge does not exist", NotificationTypes.WARN);
         } sendNotification(platform, executor, "This Team does not exist", NotificationTypes.WARN);
+    }
+
+    public static void startRevolution(Enum<InterfaceTypes> platform, String kingdomID, UUID executor) {
+        if (!kingdomID.isEmpty()) {
+            if (!KingdomsData.getKing(kingdomID).equals(executor)) {
+                if (!EventManager.isKingdomInRevolt(kingdomID)) {
+                    Date time = new Date();
+                    if (KingdomsData.endTimeOfLastRevolution(kingdomID)+7200000 <=time.getTime()) {
+                        KingdomProcedures.startRevolution(kingdomID);
+                        for (UUID member : KingdomsData.getMembers(kingdomID)) {
+                            sendNotification(InterfaceTypes.COMMAND, member, "A revolution has begun in your team!", NotificationTypes.EVENT);
+                        }
+                    } sendNotification(platform, executor, "There was a revolution in the last 2 hours, please wait to throw another revolution", NotificationTypes.WARN);
+                } sendNotification(platform, executor, "There is already a revolution happening", NotificationTypes.WARN);
+            } sendNotification(platform, executor, "You can't revolt against yourself", NotificationTypes.WARN);
+        } sendNotification(platform, executor, "You are not part of a team", NotificationTypes.WARN);
     }
 
 }
