@@ -23,12 +23,15 @@ public class EventManager {
         return false;
     }
 
-    public static void startRevolution(String kingdomId) {
-        activeEvents.add(new RevolutionEvent(kingdomId));
+    public static boolean isKingdomInRevolt(String kingdomId) {
+        for (Event event : activeEvents) {
+            if (event instanceof RevolutionEvent revolt && kingdomId.equals(revolt.getKingdomId())) return true;
+        }
+        return false;
     }
 
-    public static void startInvasion(String defendingKingdomId, String attackingKingdomId, BlockPos pos) {
-
+    public static void startRevolution(String kingdomId) {
+        activeEvents.add(new RevolutionEvent(kingdomId));
     }
 
     public static ArrayList<Event> getActiveEvents() {

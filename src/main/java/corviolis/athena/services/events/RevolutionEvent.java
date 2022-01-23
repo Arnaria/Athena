@@ -6,7 +6,10 @@ import corviolis.athena.services.data.KingdomsData;
 import corviolis.athena.services.procedures.KingdomProcedures;
 import arnaria.notifacaitonlib.NotificationManager;
 import arnaria.notifacaitonlib.NotificationTypes;
+import corviolis.athena.util.BetterPlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
+
+import java.util.UUID;
 
 public class RevolutionEvent extends Event {
 
@@ -16,7 +19,15 @@ public class RevolutionEvent extends Event {
     public RevolutionEvent(String kingdomId) {
         super(Athena.settings.REVOLUTION_DURATION, kingdomId + " | Revolution");
         this.kingdomId = kingdomId;
-        addPlayers(KingdomsData.getMembers(kingdomId));
+
+        for (UUID uuid : KingdomsData.getMembers(kingdomId)) {
+            ServerPlayerEntity player = BetterPlayerManager.getPlayer(uuid);
+            if (player != null) addPlayer(player);
+        }
+    }
+
+    public String getKingdomId() {
+        return kingdomId;
     }
 
     @Override
