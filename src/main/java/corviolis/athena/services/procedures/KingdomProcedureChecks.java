@@ -241,4 +241,5 @@ public class KingdomProcedureChecks {
             } sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
         } sendNotification(platform, executor, "You are not part of a kingdom", NotificationTypes.WARN);
     }
+
 }
