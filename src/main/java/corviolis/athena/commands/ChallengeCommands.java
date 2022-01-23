@@ -41,18 +41,36 @@ public class ChallengeCommands {
                                     }
                                     return builder.buildFuture();
                                 })
-                                .executes(context -> submitChallenge(context, StringArgumentType.getString(context, "challenge")))
-
                         )
-
+                        .executes(context -> submitChallenge(context, StringArgumentType.getString(context, "challenge")))
+                )
                 .then(CommandManager.literal("approve").requires(serverCommandSource -> serverCommandSource.hasPermissionLevel(4))
-                        .then(CommandManager.argument("team", StringArgumentType.string())
-                                .then(CommandManager.argument("challenge", StringArgumentType.string())
+                        .then(CommandManager.argument("team", StringArgumentType.string()).suggests((context, builder) -> {
+                                    for (String kingdomId : KingdomsData.getKingdomIds()) builder.suggest(kingdomId);
+                                    return builder.buildFuture();
+                                })
+                                .then(CommandManager.argument("challenge", StringArgumentType.string()).suggests((context, builder) -> {
+                                            String kingdomId = StringArgumentType.getString(context, "team");
+                                            if (KingdomsData.getKingdomIds().contains(kingdomId)) {
+                                                for (String challenge : KingdomsData.getChallengeQue(kingdomId)) builder.suggest(challenge);
+                                            }
+                                            return builder.buildFuture();
+                                        })
                                         .executes(context -> approveChallenge(context, StringArgumentType.getString(context, "team"), StringArgumentType.getString(context, "challenge"))))))
+
                 .then(CommandManager.literal("decline").requires(serverCommandSource -> serverCommandSource.hasPermissionLevel(4))
-                        .then(CommandManager.argument("team", StringArgumentType.string())
-                                .then(CommandManager.argument("challenge", StringArgumentType.string())
-                                        .executes(context -> declineChallenge(context, StringArgumentType.getString(context, "team"), StringArgumentType.getString(context, "challenge"))))))));
+                        .then(CommandManager.argument("team", StringArgumentType.string()).suggests((context, builder) -> {
+                                    for (String kingdomId : KingdomsData.getKingdomIds()) builder.suggest(kingdomId);
+                                    return builder.buildFuture();
+                                })
+                                .then(CommandManager.argument("challenge", StringArgumentType.string()).suggests((context, builder) -> {
+                                            String kingdomId = StringArgumentType.getString(context, "team");
+                                            if (KingdomsData.getKingdomIds().contains(kingdomId)) {
+                                                for (String challenge : KingdomsData.getChallengeQue(kingdomId)) builder.suggest(challenge);
+                                            }
+                                            return builder.buildFuture();
+                                        })
+                                        .executes(context -> declineChallenge(context, StringArgumentType.getString(context, "team"), StringArgumentType.getString(context, "challenge")))))));
     }
 
     private static int viewCompletedChallenges(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
