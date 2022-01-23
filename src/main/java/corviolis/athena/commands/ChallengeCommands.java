@@ -19,6 +19,7 @@ import org.apache.http.cookie.CommonCookieAttributeHandler;
 
 import javax.sql.CommonDataSource;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class ChallengeCommands {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
@@ -111,11 +112,15 @@ public class ChallengeCommands {
         return 1;
     }
 
-    private static int approveChallenge(CommandContext<ServerCommandSource> context, String kingdomID ,String challenge) {
+    private static int approveChallenge(CommandContext<ServerCommandSource> context, String kingdomID, String challenge) throws CommandSyntaxException {
+        PlayerEntity executor = context.getSource().getPlayer();
+        KingdomProcedureChecks.acceptChallenge(InterfaceTypes.COMMAND, kingdomID, executor.getUuid(), challenge);
         return 1;
     }
 
-    private static int declineChallenge(CommandContext<ServerCommandSource> context, String kingdomId ,String challenge) {
+    private static int declineChallenge(CommandContext<ServerCommandSource> context, String kingdomID, String challenge) throws CommandSyntaxException {
+        PlayerEntity executor = context.getSource().getPlayer();
+        KingdomProcedureChecks.declineChallenge(InterfaceTypes.COMMAND, kingdomID, executor.getUuid(), challenge);
         return 1;
     }
 
