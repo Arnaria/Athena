@@ -14,6 +14,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.UUID;
 
@@ -22,21 +23,51 @@ public class ManageMembersCommands {
         dispatcher.register(CommandManager.literal("members")
                 .then(CommandManager.literal("requests")
                         .then(CommandManager.literal("accept")
-                                .then(CommandManager.argument("Requester", StringArgumentType.string())
+                                .then(CommandManager.argument("Requester", StringArgumentType.string()).suggests((context, builder) -> {
+                                            ServerPlayerEntity executor = context.getSource().getPlayer();
+                                            for (UUID requester : KingdomsData.getJoinRequests(((PlayerEntityInf) executor).getKingdomId())) {
+                                                builder.suggest(BetterPlayerManager.getName(requester));
+                                            }
+                                            return builder.buildFuture();
+                                        })
                                         .executes(context -> acceptJoinRequest(context, StringArgumentType.getString(context, "Requester")))))
                         .then(CommandManager.literal("decline")
-                                .then(CommandManager.argument("Requester", StringArgumentType.string())
+                                .then(CommandManager.argument("Requester", StringArgumentType.string()).suggests((context, builder) -> {
+                                            ServerPlayerEntity executor = context.getSource().getPlayer();
+                                            for (UUID requester : KingdomsData.getJoinRequests(((PlayerEntityInf) executor).getKingdomId())) {
+                                                builder.suggest(BetterPlayerManager.getName(requester));
+                                            }
+                                            return builder.buildFuture();
+                                        })
                                         .executes(context -> declineJoinRequest(context, StringArgumentType.getString(context, "Requester")))))
                         .then(CommandManager.literal("view")
                                 .executes(ManageMembersCommands::viewJoinRequests)))
                 .then(CommandManager.literal("kick")
-                        .then(CommandManager.argument("Player", StringArgumentType.string())
+                        .then(CommandManager.argument("Player", StringArgumentType.string()).suggests((context, builder) -> {
+                                    ServerPlayerEntity executor = context.getSource().getPlayer();
+                                    for (UUID member : KingdomsData.getMembers(((PlayerEntityInf) executor).getKingdomId())) {
+                                        builder.suggest(BetterPlayerManager.getName(member));
+                                    }
+                                    return builder.buildFuture();
+                                })
                                 .executes(context -> kickMember(context, StringArgumentType.getString(context, "Player")))))
                 .then(CommandManager.literal("banish")
-                        .then(CommandManager.argument("Player", StringArgumentType.string())
+                        .then(CommandManager.argument("Player", StringArgumentType.string()).suggests((context, builder) -> {
+                                    ServerPlayerEntity executor = context.getSource().getPlayer();
+                                    for (UUID member : KingdomsData.getMembers(((PlayerEntityInf) executor).getKingdomId())) {
+                                        builder.suggest(BetterPlayerManager.getName(member));
+                                    }
+                                    return builder.buildFuture();
+                                })
                                 .executes(context -> banishMember(context, StringArgumentType.getString(context, "Player")))))
                 .then(CommandManager.literal("unbanish")
-                        .then(CommandManager.argument("Player", StringArgumentType.string())
+                        .then(CommandManager.argument("Player", StringArgumentType.string()).suggests((context, builder) -> {
+                                    ServerPlayerEntity executor = context.getSource().getPlayer();
+                                    for (UUID member : KingdomsData.getBlockedPlayers(((PlayerEntityInf) executor).getKingdomId())) {
+                                        builder.suggest(BetterPlayerManager.getName(member));
+                                    }
+                                    return builder.buildFuture();
+                                })
                                 .executes(context -> unbanishMember(context, StringArgumentType.getString(context, "Player")))))
                 .then(CommandManager.literal("view")
                         .executes(ManageMembersCommands::viewMembers)));
