@@ -27,6 +27,10 @@ public class KingdomProcedureChecks {
 
     public static void createKingdom(Enum<InterfaceTypes> platform, String kingdomID, UUID executor) {
         if (!kingdomID.isEmpty()) {
+            if (kingdomID.equals("ADMIN")) {
+                sendNotification(platform, executor, "Invalid Team Name", NotificationTypes.ERROR);
+                return;
+            }
             for (String kingdom : KingdomsData.getKingdomIds()) {
                 if (KingdomsData.getMembers(kingdom).contains(executor) && !kingdom.equals("ADMIN")) {
                     sendNotification(platform, executor, "You are already in a team", NotificationTypes.ERROR);
@@ -84,7 +88,6 @@ public class KingdomProcedureChecks {
                             sendNotification(InterfaceTypes.COMMAND, member, "Leadership of " + kingdomID + " has been transferred to " + BetterPlayerManager.getName(player), NotificationTypes.EVENT);
                         }
                     }
-                    sendNotification(platform, executor, "Leadership of " + kingdomID + " has been transferred to " + BetterPlayerManager.getName(player), NotificationTypes.EVENT);
                     sendNotification(InterfaceTypes.COMMAND, player, "You have been given leadership of " + kingdomID, NotificationTypes.EVENT);
                 }
             } else sendNotification(platform, executor, "You are not the leader of " + kingdomID, NotificationTypes.ERROR);

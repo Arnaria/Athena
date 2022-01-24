@@ -1,6 +1,5 @@
 package corviolis.athena.commands;
 
-import corviolis.athena.Athena;
 import corviolis.athena.services.data.KingdomsData;
 import arnaria.notifacaitonlib.NotificationManager;
 import arnaria.notifacaitonlib.NotificationTypes;
@@ -8,6 +7,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import corviolis.athena.util.BetterPlayerManager;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -22,7 +22,7 @@ public class GetKingCommand {
     }
 
     private static int getLeader(CommandContext<ServerCommandSource> context, String kingdomID) throws CommandSyntaxException {
-        NotificationManager.send(context.getSource().getPlayer().getUuid(), Athena.playerManager.getPlayer(KingdomsData.getKing(kingdomID)) + " is the Leader of " + kingdomID, NotificationTypes.INFO);
+        NotificationManager.send(context.getSource().getPlayer().getUuid(), BetterPlayerManager.getName(KingdomsData.getKing(kingdomID)) + " is the Leader of " + kingdomID, NotificationTypes.INFO);
         return 1;
     }
 }
