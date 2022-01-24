@@ -70,6 +70,10 @@ public class ChallengeCommands {
 
     private static int viewCompletedChallenges(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         PlayerEntity executor = context.getSource().getPlayer();
+        if (((PlayerEntityInf) executor).getKingdomId().isEmpty()) {
+            KingdomProcedureChecks.sendNotification(InterfaceTypes.COMMAND, executor.getUuid(), "You are not part of a team", NotificationTypes.WARN);
+            return 1;
+        }
         for (String Challenge: KingdomsData.getCompletedChallenges(((PlayerEntityInf) executor).getKingdomId())) {
             KingdomProcedureChecks.sendNotification(InterfaceTypes.COMMAND, executor.getUuid(), Challenge, NotificationTypes.INFO);
         }
@@ -78,7 +82,7 @@ public class ChallengeCommands {
 
     private static int viewChallenges(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         PlayerEntity executor = context.getSource().getPlayer();
-        if (((PlayerEntityInf) executor).getKingdomId() == null) {
+        if (((PlayerEntityInf) executor).getKingdomId().isEmpty()) {
             KingdomProcedureChecks.sendNotification(InterfaceTypes.COMMAND, executor.getUuid(), "You are not part of a team", NotificationTypes.WARN);
             return 1;
         }
