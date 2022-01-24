@@ -79,12 +79,20 @@ public class KingdomsData {
 
     public static ArrayList<String> getChallengeQue(String kingdomId) {
         DataContainer kingdom = KingdomProcedures.kingdomData.get(kingdomId);
-        return (ArrayList<String>) Arrays.asList(kingdom.getStringArray("CHALLENGE_QUE"));
+        ArrayList<String> challenges = new ArrayList<>();
+        for (JsonElement challenge : kingdom.getJson("CHALLENGE_QUE").getAsJsonArray()) {
+            challenges.add(challenge.getAsString());
+        }
+        return challenges;
     }
 
     public static ArrayList<String> getCompletedChallenges(String kingdomId) {
         DataContainer kingdom = KingdomProcedures.kingdomData.get(kingdomId);
-        return (ArrayList<String>) Arrays.asList(kingdom.getStringArray("COMPLETED_CHALLENGES"));
+        ArrayList<String> challenges = new ArrayList<>();
+        for (JsonElement challenge : kingdom.getJson("COMPLETED_CHALLENGES").getAsJsonArray()) {
+            challenges.add(challenge.getAsString());
+        }
+        return challenges;
     }
 
     public static long endTimeOfLastRevolution(String kingdomID) {
