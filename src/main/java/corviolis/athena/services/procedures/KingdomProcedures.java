@@ -82,6 +82,8 @@ public class KingdomProcedures {
         kingdom.put("REQUESTS", new JsonArray());
         kingdom.put("BLOCKED", new JsonArray());
         kingdom.put("ADVISERS", new JsonArray());
+        kingdom.put("COMPLETED_CHALLENGES", new JsonArray());
+        kingdom.put("CHALLENGE_QUE", new JsonArray());
         kingdom.put("endTimeOfLastRevolution", time.getTime());
 
         if (!uuid.equals(Util.NIL_UUID)) {
