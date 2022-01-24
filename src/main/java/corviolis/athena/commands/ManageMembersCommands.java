@@ -96,42 +96,37 @@ public class ManageMembersCommands {
     }
 
     private static int acceptJoinRequest(CommandContext<ServerCommandSource> context, String requester) throws CommandSyntaxException {
-        PlayerEntity request = Athena.playerManager.getPlayer(requester);
         PlayerEntity executor = context.getSource().getPlayer();
-        if (executor == null || request == null) return 1;
-        KingdomProcedureChecks.acceptJoinRequest(InterfaceTypes.COMMAND, ((PlayerEntityInf) executor).getKingdomId(), request.getUuid(), executor.getUuid());
+        if (executor == null) return 1;
+        KingdomProcedureChecks.acceptJoinRequest(InterfaceTypes.COMMAND, ((PlayerEntityInf) executor).getKingdomId(), BetterPlayerManager.getUuid(requester), executor.getUuid());
         return 1;
     }
 
     private static int declineJoinRequest(CommandContext<ServerCommandSource> context, String requester) throws CommandSyntaxException {
         PlayerEntity executor = context.getSource().getPlayer();
-        PlayerEntity request = Athena.playerManager.getPlayer(requester);
-        if (executor == null || request == null) return 1;
-        KingdomProcedureChecks.declineJoinRequest(InterfaceTypes.COMMAND, ((PlayerEntityInf) executor).getKingdomId(), request.getUuid(), executor.getUuid());
+        if (executor == null) return 1;
+        KingdomProcedureChecks.declineJoinRequest(InterfaceTypes.COMMAND, ((PlayerEntityInf) executor).getKingdomId(), BetterPlayerManager.getUuid(requester), executor.getUuid());
         return 1;
     }
 
     private static int kickMember(CommandContext<ServerCommandSource> context, String member) throws CommandSyntaxException {
         PlayerEntity executor = context.getSource().getPlayer();
-        PlayerEntity player = Athena.playerManager.getPlayer(member);
-        if (executor == null || player == null) return 1;
-        KingdomProcedureChecks.removePlayer(InterfaceTypes.COMMAND, ((PlayerEntityInf) executor).getKingdomId(), player.getUuid(), executor.getUuid());
+        if (executor == null) return 1;
+        KingdomProcedureChecks.removePlayer(InterfaceTypes.COMMAND, ((PlayerEntityInf) executor).getKingdomId(), BetterPlayerManager.getUuid(member), executor.getUuid());
         return 1;
     }
 
     private static int banishMember(CommandContext<ServerCommandSource> context, String member) throws CommandSyntaxException {
         PlayerEntity executor = context.getSource().getPlayer();
-        PlayerEntity player = Athena.playerManager.getPlayer(member);
-        if (executor == null || player == null) return 1;
-        KingdomProcedureChecks.banishPlayer(InterfaceTypes.COMMAND, ((PlayerEntityInf) executor).getKingdomId(), player.getUuid(), executor.getUuid());
+        if (executor == null) return 1;
+        KingdomProcedureChecks.banishPlayer(InterfaceTypes.COMMAND, ((PlayerEntityInf) executor).getKingdomId(), BetterPlayerManager.getUuid(member), executor.getUuid());
         return 1;
     }
 
     private static int unbanishMember(CommandContext<ServerCommandSource> context, String member) throws CommandSyntaxException {
         PlayerEntity executor = context.getSource().getPlayer();
-        PlayerEntity player = Athena.playerManager.getPlayer(member);
-        if (executor == null || player == null) return 1;
-        KingdomProcedureChecks.unBanishPlayer(InterfaceTypes.COMMAND, ((PlayerEntityInf) executor).getKingdomId(), player.getUuid(), executor.getUuid());
+        if (executor == null) return 1;
+        KingdomProcedureChecks.unBanishPlayer(InterfaceTypes.COMMAND, ((PlayerEntityInf) executor).getKingdomId(), BetterPlayerManager.getUuid(member), executor.getUuid());
         return 1;
     }
 }
