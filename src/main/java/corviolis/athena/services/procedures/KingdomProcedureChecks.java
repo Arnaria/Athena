@@ -151,7 +151,7 @@ public class KingdomProcedureChecks {
                 if (KingdomsData.getJoinRequests(kingdomID).contains(player)) {
                     KingdomProcedures.addMember(kingdomID, player);
                     for (String kingdom : KingdomsData.getKingdomIds()) {
-                        if (KingdomsData.getJoinRequests(kingdomID).contains(player)) KingdomProcedures.removeJoinRequest(kingdom, player);
+                        if (KingdomsData.getJoinRequests(kingdom).contains(player)) KingdomProcedures.removeJoinRequest(kingdom, player);
                     }
                     sendNotification(platform, executor, BetterPlayerManager.getName(player) + " has joined your team", NotificationTypes.EVENT);
                     sendNotification(platform, player, "You have been accepted into " + kingdomID, NotificationTypes.EVENT);
