@@ -77,7 +77,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerEn
     @Inject(method = "attack", at = @At("HEAD"), cancellable = true)
     public void stopAttackInClaims(Entity target, CallbackInfo ci) {
         ServerPlayerEntity player = BetterPlayerManager.getPlayer(this.uuid);
-        if (!(target instanceof HostileEntity) && ClaimManager.actionAllowedAt(target.getBlockPos(), player)) ci.cancel();
+        if ((target instanceof HostileEntity) && ClaimManager.actionAllowedAt(target.getBlockPos(), player)) ci.cancel();
     }
 
     @Inject(method = "tick", at = @At("HEAD"))

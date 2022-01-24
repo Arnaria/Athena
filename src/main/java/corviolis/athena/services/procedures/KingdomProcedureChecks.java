@@ -29,7 +29,7 @@ public class KingdomProcedureChecks {
         if (!kingdomID.isEmpty()) {
             for (String kingdom : KingdomsData.getKingdomIds()) {
                 if (KingdomsData.getMembers(kingdom).contains(executor) && !kingdom.equals("ADMIN")) {
-                    sendNotification(platform, executor, "You are already in a kingdom", NotificationTypes.ERROR);
+                    sendNotification(platform, executor, "You are already in a team", NotificationTypes.ERROR);
                     return;
                 }
 
@@ -41,8 +41,8 @@ public class KingdomProcedureChecks {
 
             KingdomProcedures.createKingdom(kingdomID, executor);
             KingdomProcedures.addMember(kingdomID, executor);
-            sendNotification(platform, executor, "You have been crowned king of " + kingdomID, NotificationTypes.ACHIEVEMENT);
-        } else sendNotification(platform, executor, "Please provide a kingdom name", NotificationTypes.ERROR);
+            sendNotification(platform, executor, "You are now the leader of " + kingdomID, NotificationTypes.ACHIEVEMENT);
+        } else sendNotification(platform, executor, "Please provide a team name", NotificationTypes.ERROR);
     }
 
     public static void disbandKingdom(Enum<InterfaceTypes> platform, String kingdomId, UUID executor) {
@@ -53,7 +53,7 @@ public class KingdomProcedureChecks {
                 }
                 KingdomProcedures.removeKingdom(kingdomId);
             } else sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
-        } else sendNotification(platform, executor, "You are not in a kingdom", NotificationTypes.WARN);
+        } else sendNotification(platform, executor, "You are not in a team", NotificationTypes.WARN);
     }
 
     public static void transferKingShip(Enum<InterfaceTypes> platform, String kingdomID, UUID player, UUID executor) {
@@ -68,7 +68,7 @@ public class KingdomProcedureChecks {
                                 KingdomProcedures.combineKingdoms(kingdomID, kingdom);
                                 return;
                             }
-                            sendNotification(platform, executor, "You can only transfer your kingdom to a player in your kingdom, not aligned with a kingdom, or the king of another kingdom", NotificationTypes.ERROR);
+                            sendNotification(platform, executor, "You can only transfer your team to a player in your team, not aligned with a team, or the leader of another team", NotificationTypes.ERROR);
                             return;
                         }
                     }
@@ -89,7 +89,7 @@ public class KingdomProcedureChecks {
                 }
             } else sendNotification(platform, executor, "You are not the leader of " + kingdomID, NotificationTypes.ERROR);
 
-        } else sendNotification(platform, executor, "You are not in a kingdom", NotificationTypes.ERROR);
+        } else sendNotification(platform, executor, "You are not in a team", NotificationTypes.ERROR);
     }
 
     public static void addAdviser(Enum<InterfaceTypes> platform, String kingdomID, UUID player, UUID executor) {
@@ -100,10 +100,10 @@ public class KingdomProcedureChecks {
                         KingdomProcedures.addAdviser(kingdomID, player);
                         sendNotification(platform, executor, BetterPlayerManager.getName(player) + " has been made a adviser of " + kingdomID, NotificationTypes.EVENT);
                         sendNotification(InterfaceTypes.COMMAND, player, "You have been made a Adviser of " + kingdomID, NotificationTypes.EVENT);
-                    } else sendNotification(platform, executor, "You can only make a member of your kingdom a adviser", NotificationTypes.WARN);
+                    } else sendNotification(platform, executor, "You can only make a member of your team a adviser", NotificationTypes.WARN);
                 } else sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
             } else sendNotification(platform, executor, "You can not make your self an adviser", NotificationTypes.WARN);
-        } else sendNotification(platform, executor, "You are not part of a kingdom", NotificationTypes.WARN);
+        } else sendNotification(platform, executor, "You are not part of a team", NotificationTypes.WARN);
     }
 
     public static void removeAdviser(Enum<InterfaceTypes> platform, String kingdomID, UUID player, UUID executor) {
@@ -117,7 +117,7 @@ public class KingdomProcedureChecks {
                     } else sendNotification(platform, executor, BetterPlayerManager.getName(player) + " is not a adviser for " + kingdomID, NotificationTypes.WARN);
                 } else sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
             } else sendNotification(platform, executor, "You can not remove yourself as a adviser", NotificationTypes.WARN);
-        } else sendNotification(platform, executor, "You are not part of a kingdom", NotificationTypes.WARN);
+        } else sendNotification(platform, executor, "You are not part of a team", NotificationTypes.WARN);
     }
 
     public static void setColour(Enum<InterfaceTypes> platform, String kingdomID, Formatting color, UUID executor) {
@@ -127,11 +127,11 @@ public class KingdomProcedureChecks {
                 sendNotification(platform, executor, kingdomID + "'s colour is now " + color.name(), NotificationTypes.EVENT);
 
             } else sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
-        } else sendNotification(platform, executor, "You are not in a kingdom", NotificationTypes.WARN);
+        } else sendNotification(platform, executor, "You are not in a team", NotificationTypes.WARN);
     }
 
     public static void addJoinRequest(Enum<InterfaceTypes> platform, String kingdomID, UUID executor) {
-        if (kingdomID.isEmpty()) {
+        if (!kingdomID.isEmpty()) {
             if (!KingdomsData.getMembers(kingdomID).contains(executor)) {
                 if (!KingdomsData.getBlockedPlayers(kingdomID).contains(executor)) {
                     KingdomProcedures.addJoinRequest(kingdomID, executor);
@@ -140,25 +140,24 @@ public class KingdomProcedureChecks {
                     for (UUID advisers : KingdomsData.getAdvisers(kingdomID)) {
                         sendNotification(InterfaceTypes.COMMAND, advisers, BetterPlayerManager.getName(executor) + " has requested to join " + kingdomID, NotificationTypes.EVENT);
                     }
-                } else sendNotification(platform, executor, kingdomID + " has banished you from their kingdom", NotificationTypes.WARN);
+                } else sendNotification(platform, executor, kingdomID + " has banished you from their team", NotificationTypes.WARN);
             } else sendNotification(platform, executor, "You are already in " + kingdomID, NotificationTypes.WARN);
-        } else sendNotification(platform, executor, "Please select a Kingdom", NotificationTypes.WARN);
+        } else sendNotification(platform, executor, "Please select a team", NotificationTypes.WARN);
     }
 
     public static void acceptJoinRequest(Enum<InterfaceTypes> platform, String kingdomID, UUID player, UUID executor) {
         if (!kingdomID.isEmpty()) {
             if (KingdomsData.getKing(kingdomID).equals(executor) || KingdomsData.getAdvisers(kingdomID).contains(executor)){
-                if (!KingdomsData.getJoinRequests(kingdomID).contains(player)) {
+                if (KingdomsData.getJoinRequests(kingdomID).contains(player)) {
                     KingdomProcedures.addMember(kingdomID, player);
-                    KingdomProcedures.removeJoinRequest(kingdomID, player);
                     for (String kingdom : KingdomsData.getKingdomIds()) {
                         if (KingdomsData.getJoinRequests(kingdomID).contains(player)) KingdomProcedures.removeJoinRequest(kingdom, player);
                     }
-                    sendNotification(platform, executor, BetterPlayerManager.getName(player) + " has joined your kingdom", NotificationTypes.EVENT);
+                    sendNotification(platform, executor, BetterPlayerManager.getName(player) + " has joined your team", NotificationTypes.EVENT);
                     sendNotification(platform, player, "You have been accepted into " + kingdomID, NotificationTypes.EVENT);
-                }
+                } else sendNotification(platform, executor, "This player has not requested to join your team", NotificationTypes.WARN);
             } else sendNotification(platform, executor, "Only a leader or adviser can accept new members", NotificationTypes.WARN);
-        }
+        } else sendNotification(platform, executor, "You are not in a team", NotificationTypes.WARN);
     }
 
     public static void declineJoinRequest(Enum<InterfaceTypes> platform, String kingdomID, UUID player, UUID executor) {
@@ -170,7 +169,7 @@ public class KingdomProcedureChecks {
                     sendNotification(platform, player, "Your request to join " + kingdomID + " has been declined", NotificationTypes.WARN);
                 } else sendNotification(platform, executor, BetterPlayerManager.getName(player) + " request has been declined", NotificationTypes.WARN);
             } else sendNotification(platform, executor, "Only a leader or adviser can decline join requests", NotificationTypes.WARN);
-        } else sendNotification(platform, executor, "You are not part of a kingdom", NotificationTypes.WARN);
+        } else sendNotification(platform, executor, "You are not part of a team", NotificationTypes.WARN);
     }
 
     public static void removePlayer(Enum<InterfaceTypes> platform, String kingdomID, UUID player, UUID executor) {
@@ -188,10 +187,10 @@ public class KingdomProcedureChecks {
                         if (KingdomsData.getJoinRequests(kingdomID).contains(player)) KingdomProcedures.removeJoinRequest(kingdomID, player);
                         sendNotification(platform, executor, BetterPlayerManager.getName(player) + " has been removed from" + kingdomID, NotificationTypes.EVENT);
                         sendNotification(InterfaceTypes.COMMAND, player, "You have been removed from" + kingdomID, NotificationTypes.WARN);
-                    } else sendNotification(platform, executor, "Only the king can remove advisers", NotificationTypes.WARN);
-                } else sendNotification(platform, executor, "Only a king or adviser can rus with command", NotificationTypes.WARN);
+                    } else sendNotification(platform, executor, "Only the leader can remove advisers", NotificationTypes.WARN);
+                } else sendNotification(platform, executor, "Only a leader or adviser can rus with command", NotificationTypes.WARN);
             } else sendNotification(platform, executor, "You cant not remove yourself", NotificationTypes.ERROR);
-        } else sendNotification(platform, executor, "You are not part of a kingdom", NotificationTypes.ERROR);
+        } else sendNotification(platform, executor, "You are not part of a team", NotificationTypes.ERROR);
     }
 
     public static void leaveKingdom(Enum<InterfaceTypes> platform, String kingdomID, UUID executor) {
@@ -200,9 +199,9 @@ public class KingdomProcedureChecks {
                 if (!KingdomsData.getKing(kingdomID).equals(executor)) {
                     KingdomProcedures.removeMember(kingdomID, executor);
                     sendNotification(platform, executor, "You have left " + kingdomID, NotificationTypes.EVENT);
-                } else sendNotification(platform, executor, "A leader can not leave their kingdom, they must either disband their kingdom or transfer their leadership", NotificationTypes.WARN);
-            } else sendNotification(platform, executor, "You are not part of this kingdom", NotificationTypes.WARN);
-        } else sendNotification(platform, executor, "You are not in a kingdom", NotificationTypes.WARN);
+                } else sendNotification(platform, executor, "A leader can not leave their team, they must either disband their team or transfer their leadership", NotificationTypes.WARN);
+            } else sendNotification(platform, executor, "You are not part of this team", NotificationTypes.WARN);
+        } else sendNotification(platform, executor, "You are not in a team", NotificationTypes.WARN);
     }
 
     public static void banishPlayer(Enum<InterfaceTypes> platform, String kingdomID, UUID player, UUID executor) {
@@ -217,7 +216,7 @@ public class KingdomProcedureChecks {
                     sendNotification(InterfaceTypes.COMMAND, player, "You have been banished from " + kingdomID, NotificationTypes.WARN);
                 } else sendNotification(platform, executor, "You can not banish yourself", NotificationTypes.WARN);
             } else sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
-        } else sendNotification(platform, executor, "You are not in a kingdom", NotificationTypes.WARN);
+        } else sendNotification(platform, executor, "You are not in a team", NotificationTypes.WARN);
     }
 
     public static void unBanishPlayer(Enum<InterfaceTypes> platform, String kingdomID, UUID player, UUID executor) {
@@ -229,7 +228,7 @@ public class KingdomProcedureChecks {
                     sendNotification(InterfaceTypes.COMMAND, player, "You are no longer banished from " + kingdomID, NotificationTypes.EVENT);
                 } else sendNotification(platform, executor, BetterPlayerManager.getName(player) + " has not been banished from " + kingdomID, NotificationTypes.WARN );
             } else sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
-        } else sendNotification(platform, executor, "You are not in a kingdom", NotificationTypes.WARN);
+        } else sendNotification(platform, executor, "You are not in a team", NotificationTypes.WARN);
     }
 
     public static void renameKingdom(Enum<InterfaceTypes> platform, String kingdomID, String newKingdomID, UUID executor) {
@@ -240,9 +239,9 @@ public class KingdomProcedureChecks {
                     for (UUID player : KingdomsData.getMembers(kingdomID)) {
                         sendNotification(InterfaceTypes.COMMAND, player, kingdomID + " has been renamed to " + newKingdomID, NotificationTypes.EVENT);
                     }
-                } sendNotification(platform, executor, "Your Nation is already called " + kingdomID, NotificationTypes.WARN);
+                } sendNotification(platform, executor, "Your team is already called " + kingdomID, NotificationTypes.WARN);
             } sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
-        } sendNotification(platform, executor, "You are not part of a kingdom", NotificationTypes.WARN);
+        } sendNotification(platform, executor, "You are not part of a team", NotificationTypes.WARN);
     }
 
     public static void submitChallenge(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, String challenge) {
