@@ -121,7 +121,6 @@ public class KingdomProcedures {
             if (player.getUuid().equals(king)) {
                 addMember(kingdomID, king);
                 ((PlayerEntityInf) player).setKingship(true);
-                NotificationManager.send(king, "You are now the leader of " + kingdomID + "!", NotificationTypes.ACHIEVEMENT);
             }
         }
     }

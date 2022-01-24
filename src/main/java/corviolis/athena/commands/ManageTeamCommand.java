@@ -95,8 +95,7 @@ public class ManageTeamCommand {
     private static int transferKingship(CommandContext<ServerCommandSource> context, ServerPlayerEntity heir) throws CommandSyntaxException {
         PlayerEntity executor = context.getSource().getPlayer();
         if (executor == null || heir == null) return 1;
-        UUID heirUUID = heir.getUuid();
-        KingdomProcedureChecks.transferKingShip(InterfaceTypes.COMMAND, ((PlayerEntityInf) executor).getKingdomId(), executor.getUuid(), heirUUID);
+        KingdomProcedureChecks.transferKingShip(InterfaceTypes.COMMAND, ((PlayerEntityInf) executor).getKingdomId(), heir.getUuid(), executor.getUuid());
         return 1;
     }
 
