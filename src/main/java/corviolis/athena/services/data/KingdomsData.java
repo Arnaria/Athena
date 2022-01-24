@@ -12,7 +12,9 @@ import java.util.UUID;
 public class KingdomsData {
 
     public static ArrayList<String> getKingdomIds() {
-        return (ArrayList<String>) KingdomProcedures.kingdomData.getIds();
+        ArrayList<String> kingdomIds = (ArrayList<String>) KingdomProcedures.kingdomData.getIds();
+        kingdomIds.remove("ADMIN");
+        return kingdomIds;
     }
 
     public static UUID getKing(String kingdomId) {
