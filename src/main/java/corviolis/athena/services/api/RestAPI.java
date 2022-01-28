@@ -15,7 +15,6 @@ public class RestAPI {
             server.createContext("/leaderboard", new LeaderboardHttpHandler());
             server.setExecutor(Executors.newFixedThreadPool(10));
             server.start();
-
             Athena.log(Level.INFO, "Internal http server started");
         } catch (IOException e) {
             e.printStackTrace();

@@ -78,7 +78,7 @@ public class ChallengeCommands {
 
     private static int viewChallenges(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         PlayerEntity executor = context.getSource().getPlayer();
-        if (((PlayerEntityInf) executor).getKingdomId() == null) {
+        if (((PlayerEntityInf) executor).getKingdomId().isEmpty()) {
             KingdomProcedureChecks.sendNotification(InterfaceTypes.COMMAND, executor.getUuid(), "You are not part of a team", NotificationTypes.WARN);
             return 1;
         }
