@@ -134,7 +134,7 @@ public class KingdomProcedureChecks {
     }
 
     public static void addJoinRequest(Enum<InterfaceTypes> platform, String kingdomID, UUID executor) {
-        if (!kingdomID.isEmpty()) {
+        if (!kingdomID.isEmpty() && !kingdomID.equals("ADMIN")) {
             if (!KingdomsData.getMembers(kingdomID).contains(executor)) {
                 if (!KingdomsData.getBlockedPlayers(kingdomID).contains(executor)) {
                     KingdomProcedures.addJoinRequest(kingdomID, executor);
