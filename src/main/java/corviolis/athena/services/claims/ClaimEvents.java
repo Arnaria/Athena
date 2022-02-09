@@ -24,8 +24,9 @@ public class ClaimEvents {
                 if (!ClaimManager.actionAllowedAt(pos, player)) return false;
                 if (state.getBlock() instanceof AbstractBannerBlock && ClaimManager.isClaimMarker(pos)) {
                     if (!ClaimManager.canBreakClaim(pos)) return false;
-                    ClaimManager.dropClaim(pos);
-                    return true;
+                    if (((PlayerEntityInf) player).isKing() || KingdomsData.getAdvisers(((PlayerEntityInf) player).getKingdomId()).contains(player.getUuid())) {
+                        ClaimManager.dropClaim(pos);
+                    }
                 }
             }
             return true;
