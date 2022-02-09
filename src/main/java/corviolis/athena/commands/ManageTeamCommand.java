@@ -1,5 +1,6 @@
 package corviolis.athena.commands;
 
+import arnaria.notifacaitonlib.NotificationTypes;
 import corviolis.athena.interfaces.PlayerEntityInf;
 import corviolis.athena.services.data.KingdomsData;
 import corviolis.athena.services.procedures.KingdomProcedureChecks;
@@ -54,6 +55,9 @@ public class ManageTeamCommand {
     }
 
     private static int createNewKingdom(CommandContext<ServerCommandSource> context, String name) throws CommandSyntaxException {
+        if (name.length() >= 50) {
+            KingdomProcedureChecks.sendNotification(InterfaceTypes.COMMAND, context.getSource().getPlayer().getUuid(), "This team name is to long" ,NotificationTypes.ERROR);
+        }
         KingdomProcedureChecks.createKingdom(InterfaceTypes.COMMAND, name, context.getSource().getPlayer().getUuid());
         return 1;
     }
