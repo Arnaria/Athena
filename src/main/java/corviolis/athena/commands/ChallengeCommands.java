@@ -29,15 +29,15 @@ public class ChallengeCommands {
 
                                     for (int i = 1; i < ChallengeManager.getMaxTier(); i++) {
                                         for (String challengeId : ChallengeManager.getChallengeIds(i)) {
-                                            if (!KingdomsData.getCompletedChallenges(((PlayerEntityInf) executor).getKingdomId()).contains(challengeId) || KingdomsData.getChallengeQue(((PlayerEntityInf) executor).getKingdomId()).contains(challengeId)) {
+                                            if (!KingdomsData.getCompletedChallenges(((PlayerEntityInf) executor).getKingdomId()).contains(challengeId) && !KingdomsData.getChallengeQue(((PlayerEntityInf) executor).getKingdomId()).contains(challengeId)) {
                                                 builder.suggest(challengeId);
                                             }
                                         }
                                     }
                                     return builder.buildFuture();
                                 })
+                                .executes(context -> submitChallenge(context, StringArgumentType.getString(context, "challenge")))
                         )
-                        .executes(context -> submitChallenge(context, StringArgumentType.getString(context, "challenge")))
                 )
                 .then(CommandManager.literal("approve").requires(serverCommandSource -> serverCommandSource.hasPermissionLevel(4))
                         .then(CommandManager.argument("team", StringArgumentType.string()).suggests((context, builder) -> {
@@ -88,7 +88,7 @@ public class ChallengeCommands {
         }
         int tier = 1;
         while (tier <= ChallengeManager.getMaxTier()) {
-            KingdomProcedureChecks.sendNotification(InterfaceTypes.COMMAND, executor.getUuid(), "Tier " + String.valueOf(tier), NotificationTypes.INFO);
+            KingdomProcedureChecks.sendNotification(InterfaceTypes.COMMAND, executor.getUuid(), "Tier " + tier, NotificationTypes.INFO);
             boolean completedTier = true;
             for (String challenge : ChallengeManager.getChallengeIds(tier)) {
                 if (!KingdomsData.getCompletedChallenges(((PlayerEntityInf) executor).getKingdomId()).contains(challenge) || !KingdomsData.getChallengeQue(((PlayerEntityInf) executor).getKingdomId()).contains(challenge)) {
