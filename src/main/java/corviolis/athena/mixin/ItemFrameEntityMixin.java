@@ -7,6 +7,8 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.entity.decoration.ItemFrameEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,6 +21,11 @@ public abstract class ItemFrameEntityMixin extends AbstractDecorationEntity {
 
     protected ItemFrameEntityMixin(EntityType<? extends AbstractDecorationEntity> entityType, World world) {
         super(entityType, world);
+    }
+
+    @Inject(method = "interact", at = @At("HEAD"), cancellable = true)
+    public void interact(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
+        if (!ClaimManager.actionAllowedAt(this.getBlockPos(), player)) cir.setReturnValue(ActionResult.FAIL);
     }
 
     @Inject(method = "damage", at = @At("HEAD"), cancellable = true)
