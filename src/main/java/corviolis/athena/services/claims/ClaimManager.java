@@ -180,11 +180,12 @@ public class ClaimManager {
             ArrayList<ChunkPos> chunks = claim.getValue();
             if (chunks.contains(pos)) {
                 chunks.remove(pos);
-                owners.remove(pos);
 
                 if (chunks.isEmpty()) claims.remove(claim.getKey());
 
                 String kingdomId = owners.get(new ChunkPos(claim.getKey()));
+                owners.remove(pos);
+
                 ClaimRenderer.updateRenderMap(kingdomId, chunks);
                 BlueMapAPI.removeMarker(kingdomId, claims.get(claim.getKey()));
                 BlueMapAPI.createMarker(kingdomId, chunks);
