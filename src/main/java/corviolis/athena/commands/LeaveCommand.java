@@ -23,5 +23,4 @@ public class LeaveCommand {
         KingdomProcedureChecks.leaveKingdom(InterfaceTypes.COMMAND, ((PlayerEntityInf) executor).getKingdomId(), executor.getUuid());
         return 1;
     }
-
 }

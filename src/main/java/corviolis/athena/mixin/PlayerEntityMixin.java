@@ -60,6 +60,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerEn
         this.allowedToEditIn.add(kingdomId);
     }
 
+    public void removeAllowedToEditIn(String kingdomId) {
+        this.allowedToEditIn.remove(kingdomId);
+    }
+
     public boolean allowedToEditIn(String kingdomId) {
         return this.allowedToEditIn.contains(kingdomId);
     }
