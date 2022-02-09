@@ -88,7 +88,7 @@ public class ChallengeCommands {
         }
         int tier = 1;
         while (tier <= ChallengeManager.getMaxTier()) {
-            KingdomProcedureChecks.sendNotification(InterfaceTypes.COMMAND, executor.getUuid(), String.valueOf(tier), NotificationTypes.INFO);
+            KingdomProcedureChecks.sendNotification(InterfaceTypes.COMMAND, executor.getUuid(), "Tier " + String.valueOf(tier), NotificationTypes.INFO);
             boolean completedTier = true;
             for (String challenge : ChallengeManager.getChallengeIds(tier)) {
                 if (!KingdomsData.getCompletedChallenges(((PlayerEntityInf) executor).getKingdomId()).contains(challenge) || !KingdomsData.getChallengeQue(((PlayerEntityInf) executor).getKingdomId()).contains(challenge)) {

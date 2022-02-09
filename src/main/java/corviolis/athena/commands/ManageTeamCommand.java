@@ -19,11 +19,9 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Formatting;
 
-import java.util.UUID;
-
 public class ManageTeamCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        dispatcher.register(CommandManager.literal("team")
+        dispatcher.register(CommandManager.literal("nation")
                 .then(CommandManager.literal("create")
                         .then(CommandManager.argument("team", StringArgumentType.string())
                                 .executes(context -> createNewKingdom(context, StringArgumentType.getString(context, "team")))))

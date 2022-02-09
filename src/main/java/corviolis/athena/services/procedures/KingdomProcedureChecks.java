@@ -242,9 +242,9 @@ public class KingdomProcedureChecks {
                     for (UUID player : KingdomsData.getMembers(kingdomID)) {
                         sendNotification(InterfaceTypes.COMMAND, player, kingdomID + " has been renamed to " + newKingdomID, NotificationTypes.EVENT);
                     }
-                } sendNotification(platform, executor, "Your team is already called " + kingdomID, NotificationTypes.WARN);
-            } sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
-        } sendNotification(platform, executor, "You are not part of a team", NotificationTypes.WARN);
+                } else sendNotification(platform, executor, "Your team is already called " + kingdomID, NotificationTypes.WARN);
+            } else sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
+        } else sendNotification(platform, executor, "You are not part of a team", NotificationTypes.WARN);
     }
 
     public static void submitChallenge(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, String challenge) {
@@ -253,10 +253,10 @@ public class KingdomProcedureChecks {
                 if (ChallengeManager.getChallenge(challenge) != null) {
                     if (!KingdomsData.getCompletedChallenges(kingdomID).contains(challenge) || !KingdomsData.getChallengeQue(kingdomID).contains(challenge)) {
                         KingdomProcedures.addChallengeToQue(kingdomID, challenge);
-                    } sendNotification(platform, executor, "this challenge is already completed", NotificationTypes.WARN);
-                } sendNotification(platform, executor, "This challenge does not exist", NotificationTypes.WARN);
-            } sendNotification(platform, executor, "Only a leader or adviser can run this command", NotificationTypes.WARN);
-        } sendNotification(platform, executor, "You are not part of a team", NotificationTypes.WARN);
+                    } else sendNotification(platform, executor, "this challenge is already completed", NotificationTypes.WARN);
+                } else sendNotification(platform, executor, "This challenge does not exist", NotificationTypes.WARN);
+            } else sendNotification(platform, executor, "Only a leader or adviser can run this command", NotificationTypes.WARN);
+        } else sendNotification(platform, executor, "You are not part of a team", NotificationTypes.WARN);
     }
 
     public static void acceptChallenge(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, String challenge) {
@@ -268,9 +268,9 @@ public class KingdomProcedureChecks {
                         sendNotification(InterfaceTypes.COMMAND, member, challenge + " has been approved", NotificationTypes.EVENT);
                     }
                     sendNotification(platform, executor, "Challenge has been approved", NotificationTypes.EVENT);
-                } sendNotification(platform, executor, "This challenge has not been submitted", NotificationTypes.WARN);
-            } sendNotification(platform, executor, "This challenge does not exist", NotificationTypes.WARN);
-        } sendNotification(platform, executor, "This Team does not exist", NotificationTypes.WARN);
+                } else sendNotification(platform, executor, "This challenge has not been submitted", NotificationTypes.WARN);
+            } else sendNotification(platform, executor, "This challenge does not exist", NotificationTypes.WARN);
+        } else sendNotification(platform, executor, "This Team does not exist", NotificationTypes.WARN);
     }
 
     public static void declineChallenge(Enum<InterfaceTypes> platform, String kingdomID, UUID executor, String challenge) {
@@ -282,9 +282,9 @@ public class KingdomProcedureChecks {
                         sendNotification(InterfaceTypes.COMMAND, member, challenge + " has been declined", NotificationTypes.EVENT);
                     }
                     sendNotification(platform, executor, "Challenge has been approved", NotificationTypes.EVENT);
-                } sendNotification(platform, executor, "This challenge has not been submitted", NotificationTypes.WARN);
-            } sendNotification(platform, executor, "This challenge does not exist", NotificationTypes.WARN);
-        } sendNotification(platform, executor, "This Team does not exist", NotificationTypes.WARN);
+                } else sendNotification(platform, executor, "This challenge has not been submitted", NotificationTypes.WARN);
+            } else sendNotification(platform, executor, "This challenge does not exist", NotificationTypes.WARN);
+        } else sendNotification(platform, executor, "This Team does not exist", NotificationTypes.WARN);
     }
 
     public static void startRevolution(Enum<InterfaceTypes> platform, String kingdomID, UUID executor) {
@@ -297,10 +297,10 @@ public class KingdomProcedureChecks {
                         for (UUID member : KingdomsData.getMembers(kingdomID)) {
                             sendNotification(InterfaceTypes.COMMAND, member, "A revolution has begun in your team!", NotificationTypes.EVENT);
                         }
-                    } sendNotification(platform, executor, "There was a revolution in the last 2 hours, please wait to throw another revolution", NotificationTypes.WARN);
-                } sendNotification(platform, executor, "There is already a revolution happening", NotificationTypes.WARN);
-            } sendNotification(platform, executor, "You can't revolt against yourself", NotificationTypes.WARN);
-        } sendNotification(platform, executor, "You are not part of a team", NotificationTypes.WARN);
+                    } else sendNotification(platform, executor, "There was a revolution in the last 2 hours, please wait to throw another revolution", NotificationTypes.WARN);
+                } else sendNotification(platform, executor, "There is already a revolution happening", NotificationTypes.WARN);
+            } else sendNotification(platform, executor, "You can't revolt against yourself", NotificationTypes.WARN);
+        } else sendNotification(platform, executor, "You are not part of a team", NotificationTypes.WARN);
     }
 
 }
