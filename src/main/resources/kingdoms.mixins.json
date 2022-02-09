@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "AbstractDecorationEntityMixin",
+    "AbstractFurnaceBlockMixin",
     "ArmorStandEntityMixin",
     "ArmorStandItemMixin",
     "AxeMixin",
@@ -13,15 +14,19 @@
     "BlockItemMixin",
     "BucketMixin",
     "ChestBlockMixin",
+    "DispenserBlockMixin",
     "ExplosionMixin",
     "FlintNStealMixin",
+    "FurnaceMinecartEntityMixin",
     "HoeMixin",
+    "HopperBlockMixin",
     "ItemFrameEntityMixin",
     "ItemFrameMixin",
     "LecternMixin",
     "PlayerEntityMixin",
     "ScoreboardMixin",
     "ShovelMixin",
+    "StorageMinecartEntityMixin",
     "WallBannerBlockMixin"
   ],
   "injectors": {
