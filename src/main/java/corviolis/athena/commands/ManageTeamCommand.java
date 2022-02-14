@@ -35,7 +35,7 @@ public class ManageTeamCommand {
                         .executes(ManageTeamCommand::disbandKingdom))
                 .then(CommandManager.literal("advisers")
                         .then(CommandManager.literal("add")
-                                .then(CommandManager.argument("Player", GameProfileArgumentType.gameProfile()).suggests(((context, builder) -> {
+                                .then(CommandManager.argument("Player", StringArgumentType.string()).suggests(((context, builder) -> {
                                             PlayerEntity player =  context.getSource().getPlayer();
                                             String kingdomId = ((PlayerEntityInf) player).getKingdomId();
 
@@ -46,7 +46,7 @@ public class ManageTeamCommand {
                                             }
                                             return builder.buildFuture();
                                         }))
-                                        .executes(context -> addAdviser(context, GameProfileArgumentType.getProfileArgument(context, "Player")))))
+                                        .executes(context -> addAdviser(context, StringArgumentType.getString(context, "Player")))))
                         .then(CommandManager.literal("remove")
                                 .then(CommandManager.argument("Player", GameProfileArgumentType.gameProfile())
                                         .executes(context -> removeAdviser(context, GameProfileArgumentType.getProfileArgument(context, "Player"))))))
@@ -77,27 +77,23 @@ public class ManageTeamCommand {
         return 1;
     }
 
-    private static int addAdviser(CommandContext<ServerCommandSource> context, Collection<GameProfile> advisers) throws CommandSyntaxException {
+    private static int addAdviser(CommandContext<ServerCommandSource> context, String adviser) throws CommandSyntaxException {
         PlayerEntity executor = context.getSource().getPlayer();
 
-        for (GameProfile adviser : advisers) {
-            if (executor == null || adviser == null) return 1;
-            Enum<InterfaceTypes> platform = InterfaceTypes.COMMAND;
-            String kingdom = ((PlayerEntityInf) executor).getKingdomId();
-            KingdomProcedureChecks.addAdviser(platform, kingdom, adviser.getId(), executor.getUuid());
-        }
+        if (executor == null || adviser == null) return 1;
+        Enum<InterfaceTypes> platform = InterfaceTypes.COMMAND;
+        String kingdom = ((PlayerEntityInf) executor).getKingdomId();
+        KingdomProcedureChecks.addAdviser(platform, kingdom, BetterPlayerManager.getUuid(adviser), executor.getUuid());
         return 1;
     }
 
-    private static int removeAdviser(CommandContext<ServerCommandSource> context, Collection<GameProfile> advisers) throws CommandSyntaxException {
+    private static int removeAdviser(CommandContext<ServerCommandSource> context, String adviser) throws CommandSyntaxException {
         PlayerEntity executor = context.getSource().getPlayer();
 
-        for (GameProfile adviser : advisers) {
-            if (executor == null || adviser == null) return 1;
-            Enum<InterfaceTypes> platform = InterfaceTypes.COMMAND;
-            String kingdom = ((PlayerEntityInf) executor).getKingdomId();
-            KingdomProcedureChecks.removeAdviser(platform, kingdom, adviser.getId(), executor.getUuid());
-        }
+        if (executor == null || adviser == null) return 1;
+        Enum<InterfaceTypes> platform = InterfaceTypes.COMMAND;
+        String kingdom = ((PlayerEntityInf) executor).getKingdomId();
+        KingdomProcedureChecks.removeAdviser(platform, kingdom, BetterPlayerManager.getUuid(adviser), executor.getUuid());
         return 1;
     }
 
