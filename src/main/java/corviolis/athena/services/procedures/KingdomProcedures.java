@@ -228,6 +228,10 @@ public class KingdomProcedures {
         kingdom.put("MEMBERS", members);
         scoreboard.removePlayerFromTeam(BetterPlayerManager.getName(uuid), scoreboard.getTeam(kingdomID));
 
+        if (KingdomsData.getAdvisers(kingdomID).contains(uuid)) {
+            removeAdviser(kingdomID, uuid);
+        }
+
         PlayerEntity player = BetterPlayerManager.getPlayer(uuid);
         if (player != null) ((PlayerEntityInf) player).removeAllowedToEditIn(kingdomID);
     }
