@@ -4,7 +4,6 @@ import corviolis.athena.services.claims.ClaimManager;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.projectile.WitherSkullEntity;
 import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import org.spongepowered.asm.mixin.Mixin;

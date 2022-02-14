@@ -26,10 +26,12 @@ public class ChallengeCommands {
                 .then(CommandManager.literal("submit")
                         .then(CommandManager.argument("challenge", StringArgumentType.string()).suggests((context, builder) -> {
                                     PlayerEntity executor = context.getSource().getPlayer();
-                                    if (!((PlayerEntityInf) executor).getKingdomId().isEmpty()) {
-                                        for (int i = 1; i < ChallengeManager.getMaxTier(); i++) {
-                                            for (String challengeId : ChallengeManager.getChallengeIds(i)) {
-                                                if (!KingdomsData.getCompletedChallenges(((PlayerEntityInf) executor).getKingdomId()).contains(challengeId) && !KingdomsData.getChallengeQue(((PlayerEntityInf) executor).getKingdomId()).contains(challengeId)) {
+                                    String kingdomId = ((PlayerEntityInf) executor).getKingdomId();
+
+                                    if (!kingdomId.isEmpty()) {
+                                        for (int i = 0; i < ChallengeManager.getMaxTier(); i++) {
+                                            for (String challengeId : ChallengeManager.getChallengeIds(i +  1)) {
+                                                if (!KingdomsData.getCompletedChallenges(kingdomId).contains(challengeId) && !KingdomsData.getChallengeQue(kingdomId).contains(challengeId)) {
                                                     builder.suggest(challengeId);
                                                 }
                                             }
