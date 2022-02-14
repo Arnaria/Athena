@@ -39,16 +39,28 @@ public class ManageTeamCommand {
                                             PlayerEntity player =  context.getSource().getPlayer();
                                             String kingdomId = ((PlayerEntityInf) player).getKingdomId();
 
-                                            for (UUID uuid : KingdomsData.getMembers(kingdomId)) {
-                                                if (!player.getUuid().equals(uuid)) {
-                                                    builder.suggest(BetterPlayerManager.getName(uuid));
+                                            if (!kingdomId.isEmpty()) {
+                                                for (UUID uuid : KingdomsData.getMembers(kingdomId)) {
+                                                    if (!player.getUuid().equals(uuid)) {
+                                                        builder.suggest(BetterPlayerManager.getName(uuid));
+                                                    }
                                                 }
                                             }
                                             return builder.buildFuture();
                                         }))
                                         .executes(context -> addAdviser(context, StringArgumentType.getString(context, "Player")))))
                         .then(CommandManager.literal("remove")
-                                .then(CommandManager.argument("Player", GameProfileArgumentType.gameProfile())
+                                .then(CommandManager.argument("Player", StringArgumentType.string()).suggests((context, builder) -> {
+                                            PlayerEntity player =  context.getSource().getPlayer();
+                                            String kingdomId = ((PlayerEntityInf) player).getKingdomId();
+
+                                            if (!kingdomId.isEmpty()) {
+                                                for (UUID uuid : KingdomsData.getAdvisers(kingdomId)) {
+                                                    builder.suggest(BetterPlayerManager.getName(uuid));
+                                                }
+                                            }
+                                            return builder.buildFuture();
+                                        })
                                         .executes(context -> removeAdviser(context, StringArgumentType.getString(context, "Player"))))))
                 .then(CommandManager.literal("colour")
                         .then(CommandManager.argument("Colour", ColorArgumentType.color())
