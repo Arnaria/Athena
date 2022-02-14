@@ -26,7 +26,7 @@ public class ClaimEvents {
                     if (!ClaimManager.canBreakClaim(pos)) return false;
                     if (((PlayerEntityInf) player).isKing() || KingdomsData.getAdvisers(((PlayerEntityInf) player).getKingdomId()).contains(player.getUuid())) {
                         ClaimManager.dropClaim(pos);
-                    }
+                    } else return false;
                 }
             }
             return true;
