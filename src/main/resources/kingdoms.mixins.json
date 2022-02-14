@@ -22,7 +22,6 @@
     "HopperBlockMixin",
     "ItemFrameEntityMixin",
     "ItemFrameMixin",
-    "LecternMixin",
     "PlayerEntityMixin",
     "ScoreboardMixin",
     "ShovelMixin",

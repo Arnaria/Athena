@@ -179,11 +179,14 @@ public class ClaimManager {
         for (Map.Entry<BlockPos, ArrayList<ChunkPos>> claim : claims.entrySet()) {
             ArrayList<ChunkPos> chunks = claim.getValue();
             if (chunks.contains(pos)) {
+                String kingdomId = owners.get(new ChunkPos(claim.getKey()));
+
+
                 chunks.remove(pos);
 
                 if (chunks.isEmpty()) claims.remove(claim.getKey());
 
-                String kingdomId = owners.get(new ChunkPos(claim.getKey()));
+
                 owners.remove(pos);
 
                 ClaimRenderer.updateRenderMap(kingdomId, chunks);
