@@ -49,7 +49,7 @@ public class ManageTeamCommand {
                                         .executes(context -> addAdviser(context, StringArgumentType.getString(context, "Player")))))
                         .then(CommandManager.literal("remove")
                                 .then(CommandManager.argument("Player", GameProfileArgumentType.gameProfile())
-                                        .executes(context -> removeAdviser(context, GameProfileArgumentType.getProfileArgument(context, "Player"))))))
+                                        .executes(context -> removeAdviser(context, StringArgumentType.getString(context, "Player"))))))
                 .then(CommandManager.literal("colour")
                         .then(CommandManager.argument("Colour", ColorArgumentType.color())
                                 .executes(context -> setKingdomColour(context, ColorArgumentType.getColor(context, "Colour")))))
