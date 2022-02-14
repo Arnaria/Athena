@@ -27,7 +27,8 @@
     "ScoreboardMixin",
     "ShovelMixin",
     "StorageMinecartEntityMixin",
-    "WallBannerBlockMixin"
+    "WallBannerBlockMixin",
+    "WitherSkullEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
