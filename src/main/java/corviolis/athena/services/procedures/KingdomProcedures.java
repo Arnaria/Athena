@@ -229,7 +229,7 @@ public class KingdomProcedures {
         scoreboard.removePlayerFromTeam(BetterPlayerManager.getName(uuid), scoreboard.getTeam(kingdomID));
 
         PlayerEntity player = BetterPlayerManager.getPlayer(uuid);
-        if (player != null) ((PlayerEntityInf) player).removeAllowedToEditin(kingdomID);
+        if (player != null) ((PlayerEntityInf) player).removeAllowedToEditIn(kingdomID);
     }
 
     public static void blockPlayer(String kingdomID, UUID player) {
