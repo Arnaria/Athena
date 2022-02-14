@@ -279,23 +279,30 @@ public class KingdomProcedures {
 
     public static void addChallengeToQue(String kingdomId, String challengeId) {
         DataContainer kingdom = kingdomData.get(kingdomId);
-        ArrayList<String> challenges = (ArrayList<String>) Arrays.asList(kingdom.getStringArray("CHALLENGE_QUE"));
-        challenges.add(challengeId);
-        kingdom.put("CHALLENGE_QUE", challenges.toArray(new String[]{}));
+        JsonArray challengeQue = kingdom.getJson("CHALLENGE_QUE").getAsJsonArray();
+        challengeQue.add(challengeId);
+        kingdom.put("CHALLENGE_QUE", challengeQue);
     }
 
     public static void removeChallengeFromQue(String kingdomId, String challengeId) {
         DataContainer kingdom = kingdomData.get(kingdomId);
-        ArrayList<String> challenges = (ArrayList<String>) Arrays.asList(kingdom.getStringArray("CHALLENGE_QUE"));
-        challenges.remove(challengeId);
-        kingdom.put("CHALLENGE_QUE", challenges.toArray(new String[]{}));
+        JsonArray challengeQue = kingdom.getJson("CHALLENGE_QUE").getAsJsonArray();
+
+        int count = 0;
+        for (JsonElement challenge : challengeQue) {
+            if (challenge.getAsString().equals(challengeId)) break;
+            count++;
+        }
+
+        challengeQue.remove(count);
+        kingdom.put("CHALLENGE_QUE", challengeQue);
     }
 
     public static void completeChallenge(String kingdomId, String challengeId) {
         DataContainer kingdom = kingdomData.get(kingdomId);
-        ArrayList<String> challenges = (ArrayList<String>) Arrays.asList(kingdom.getStringArray("COMPLETED_CHALLENGES"));
-        challenges.remove(challengeId);
-
+        JsonArray completedChallenges = kingdom.getJson("COMPLETED_CHALLENGES").getAsJsonArray();
+        removeChallengeFromQue(kingdomId, challengeId);
+        completedChallenges.add(challengeId);
         Challenge challenge = ChallengeManager.getChallenge(challengeId);
         if (challenge != null) addXp(kingdomId, challenge.xp());
     }
