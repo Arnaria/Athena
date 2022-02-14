@@ -1,9 +1,11 @@
 package corviolis.athena.commands;
 
 import arnaria.notifacaitonlib.NotificationTypes;
+import com.mojang.authlib.GameProfile;
 import corviolis.athena.interfaces.PlayerEntityInf;
 import corviolis.athena.services.data.KingdomsData;
 import corviolis.athena.services.procedures.KingdomProcedureChecks;
+import corviolis.athena.util.BetterPlayerManager;
 import corviolis.athena.util.InterfaceTypes;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -20,6 +22,9 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Formatting;
 
+import java.util.Collection;
+import java.util.UUID;
+
 public class ManageTeamCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("nation")
@@ -31,17 +36,20 @@ public class ManageTeamCommand {
                 .then(CommandManager.literal("advisers")
                         .then(CommandManager.literal("add")
                                 .then(CommandManager.argument("Player", GameProfileArgumentType.gameProfile()).suggests(((context, builder) -> {
-                                            PlayerManager playerManager = context.getSource().getServer().getPlayerManager();
-                                            String kingdomID = ((PlayerEntityInf) context.getSource().getPlayer()).getKingdomId();
-                                            return CommandSource.suggestMatching(playerManager.getPlayerList().stream().filter((player) -> {
-                                                KingdomsData.getMembers(kingdomID);
-                                                return false;
-                                            }).map((player) -> player.getGameProfile().getName()), builder);
+                                            PlayerEntity player =  context.getSource().getPlayer();
+                                            String kingdomId = ((PlayerEntityInf) player).getKingdomId();
+
+                                            for (UUID uuid : KingdomsData.getMembers(kingdomId)) {
+                                                if (!player.getUuid().equals(uuid)) {
+                                                    builder.suggest(BetterPlayerManager.getName(uuid));
+                                                }
+                                            }
+                                            return builder.buildFuture();
                                         }))
-                                        .executes(context -> addAdviser(context, EntityArgumentType.getPlayer(context, "Player")))))
+                                        .executes(context -> addAdviser(context, GameProfileArgumentType.getProfileArgument(context, "Player")))))
                         .then(CommandManager.literal("remove")
-                                .then(CommandManager.argument("Player", EntityArgumentType.player())
-                                        .executes(context -> removeAdviser(context, EntityArgumentType.getPlayer(context, "Player"))))))
+                                .then(CommandManager.argument("Player", GameProfileArgumentType.gameProfile())
+                                        .executes(context -> removeAdviser(context, GameProfileArgumentType.getProfileArgument(context, "Player"))))))
                 .then(CommandManager.literal("colour")
                         .then(CommandManager.argument("Colour", ColorArgumentType.color())
                                 .executes(context -> setKingdomColour(context, ColorArgumentType.getColor(context, "Colour")))))
@@ -69,21 +77,27 @@ public class ManageTeamCommand {
         return 1;
     }
 
-    private static int addAdviser(CommandContext<ServerCommandSource> context, ServerPlayerEntity adviser) throws CommandSyntaxException {
+    private static int addAdviser(CommandContext<ServerCommandSource> context, Collection<GameProfile> advisers) throws CommandSyntaxException {
         PlayerEntity executor = context.getSource().getPlayer();
-        if (executor == null || adviser == null) return 1;
-        Enum<InterfaceTypes> platform = InterfaceTypes.COMMAND;
-        String kingdom = ((PlayerEntityInf) executor).getKingdomId();
-        KingdomProcedureChecks.addAdviser(platform, kingdom, adviser.getUuid(), executor.getUuid());
+
+        for (GameProfile adviser : advisers) {
+            if (executor == null || adviser == null) return 1;
+            Enum<InterfaceTypes> platform = InterfaceTypes.COMMAND;
+            String kingdom = ((PlayerEntityInf) executor).getKingdomId();
+            KingdomProcedureChecks.addAdviser(platform, kingdom, adviser.getId(), executor.getUuid());
+        }
         return 1;
     }
 
-    private static int removeAdviser(CommandContext<ServerCommandSource> context, ServerPlayerEntity adviser) throws CommandSyntaxException {
+    private static int removeAdviser(CommandContext<ServerCommandSource> context, Collection<GameProfile> advisers) throws CommandSyntaxException {
         PlayerEntity executor = context.getSource().getPlayer();
-        if (executor == null || adviser == null) return 1;
-        Enum<InterfaceTypes> platform = InterfaceTypes.COMMAND;
-        String kingdom = ((PlayerEntityInf) executor).getKingdomId();
-        KingdomProcedureChecks.removeAdviser(platform, kingdom, adviser.getUuid(), executor.getUuid());
+
+        for (GameProfile adviser : advisers) {
+            if (executor == null || adviser == null) return 1;
+            Enum<InterfaceTypes> platform = InterfaceTypes.COMMAND;
+            String kingdom = ((PlayerEntityInf) executor).getKingdomId();
+            KingdomProcedureChecks.removeAdviser(platform, kingdom, adviser.getId(), executor.getUuid());
+        }
         return 1;
     }
 
