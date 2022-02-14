@@ -23,11 +23,4 @@ public class WitherSkullEntityMixin {
             }
         }
     }
-
-    @Inject(method = "onCollision", at = @At("HEAD"), cancellable = true)
-    protected void onCollision(HitResult hitResult, CallbackInfo ci) {
-        if (ClaimManager.claimExistsAt(new ChunkPos(new BlockPos(hitResult.getPos())))) {
-            ci.cancel();
-        }
-    }
 }

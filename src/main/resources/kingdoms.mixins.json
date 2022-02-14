@@ -27,6 +27,7 @@
     "ShovelMixin",
     "StorageMinecartEntityMixin",
     "WallBannerBlockMixin",
+    "WitherEntityMixin",
     "WitherSkullEntityMixin"
   ],
   "injectors": {
