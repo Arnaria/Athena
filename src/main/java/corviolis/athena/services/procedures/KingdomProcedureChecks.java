@@ -97,7 +97,7 @@ public class KingdomProcedureChecks {
 
     public static void addAdviser(Enum<InterfaceTypes> platform, String kingdomID, UUID player, UUID executor) {
         if(!kingdomID.isEmpty()) {
-            if (player.equals(executor)) {
+            if (!player.equals(executor)) {
                 if (KingdomsData.getKing(kingdomID).equals(executor)) {
                     if (KingdomsData.getMembers(kingdomID).contains(player)) {
                         KingdomProcedures.addAdviser(kingdomID, player);
@@ -111,15 +111,13 @@ public class KingdomProcedureChecks {
 
     public static void removeAdviser(Enum<InterfaceTypes> platform, String kingdomID, UUID player, UUID executor) {
         if(!kingdomID.isEmpty()) {
-            if (player.equals(executor)) {
-                if (KingdomsData.getKing(kingdomID).equals(executor)) {
-                    if (KingdomsData.getAdvisers(kingdomID).contains(player)) {
-                        KingdomProcedures.removeAdviser(kingdomID, player);
-                        sendNotification(platform, executor, BetterPlayerManager.getName(player) + "is no longer a adviser of " + kingdomID, NotificationTypes.WARN);
-                        sendNotification(InterfaceTypes.COMMAND, player, "You have been removed as a adviser of " + kingdomID, NotificationTypes.WARN);
-                    } else sendNotification(platform, executor, BetterPlayerManager.getName(player) + " is not a adviser for " + kingdomID, NotificationTypes.WARN);
-                } else sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
-            } else sendNotification(platform, executor, "You can not remove yourself as a adviser", NotificationTypes.WARN);
+            if (KingdomsData.getKing(kingdomID).equals(executor)) {
+                if (KingdomsData.getAdvisers(kingdomID).contains(player)) {
+                    KingdomProcedures.removeAdviser(kingdomID, player);
+                    sendNotification(platform, executor, BetterPlayerManager.getName(player) + "is no longer a adviser of " + kingdomID, NotificationTypes.WARN);
+                    sendNotification(InterfaceTypes.COMMAND, player, "You have been removed as a adviser of " + kingdomID, NotificationTypes.WARN);
+                } else sendNotification(platform, executor, BetterPlayerManager.getName(player) + " is not a adviser for " + kingdomID, NotificationTypes.WARN);
+            } else sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
         } else sendNotification(platform, executor, "You are not part of a team", NotificationTypes.WARN);
     }
 
@@ -182,14 +180,14 @@ public class KingdomProcedureChecks {
                     KingdomProcedures.removeMember(kingdomID, player);
                     if (KingdomsData.getAdvisers(kingdomID).contains(player)) KingdomProcedures.removeAdviser(kingdomID, player);
                     if (KingdomsData.getJoinRequests(kingdomID).contains(player)) KingdomProcedures.removeJoinRequest(kingdomID, player);
-                    sendNotification(platform, executor, BetterPlayerManager.getName(player) + " has been removed from" + kingdomID, NotificationTypes.EVENT);
+                    sendNotification(platform, executor, BetterPlayerManager.getName(player) + " has been removed from " + kingdomID, NotificationTypes.EVENT);
                     sendNotification(InterfaceTypes.COMMAND, player, "You have been removed from" + kingdomID, NotificationTypes.WARN);
                 } else if (KingdomsData.getAdvisers(kingdomID).contains(executor)) {
-                    if (KingdomsData.getAdvisers(kingdomID).contains(player)) {
+                    if (!KingdomsData.getAdvisers(kingdomID).contains(player)) {
                         KingdomProcedures.removeMember(kingdomID, player);
                         if (KingdomsData.getJoinRequests(kingdomID).contains(player)) KingdomProcedures.removeJoinRequest(kingdomID, player);
-                        sendNotification(platform, executor, BetterPlayerManager.getName(player) + " has been removed from" + kingdomID, NotificationTypes.EVENT);
-                        sendNotification(InterfaceTypes.COMMAND, player, "You have been removed from" + kingdomID, NotificationTypes.WARN);
+                        sendNotification(platform, executor, BetterPlayerManager.getName(player) + " has been removed from " + kingdomID, NotificationTypes.EVENT);
+                        sendNotification(InterfaceTypes.COMMAND, player, "You have been removed from " + kingdomID, NotificationTypes.WARN);
                     } else sendNotification(platform, executor, "Only the leader can remove advisers", NotificationTypes.WARN);
                 } else sendNotification(platform, executor, "Only a leader or adviser can rus with command", NotificationTypes.WARN);
             } else sendNotification(platform, executor, "You cant not remove yourself", NotificationTypes.ERROR);
@@ -227,7 +225,7 @@ public class KingdomProcedureChecks {
             if (KingdomsData.getKing(kingdomID).equals(executor)){
                 if (KingdomsData.getBlockedPlayers(kingdomID).contains(player)){
                     KingdomProcedures.unblockPlayer(kingdomID, player);
-                    sendNotification(platform, executor, BetterPlayerManager.getName(player) + " has not un-banished from " + kingdomID, NotificationTypes.EVENT );
+                    sendNotification(platform, executor, BetterPlayerManager.getName(player) + " has un-banished from " + kingdomID, NotificationTypes.EVENT );
                     sendNotification(InterfaceTypes.COMMAND, player, "You are no longer banished from " + kingdomID, NotificationTypes.EVENT);
                 } else sendNotification(platform, executor, BetterPlayerManager.getName(player) + " has not been banished from " + kingdomID, NotificationTypes.WARN );
             } else sendNotification(platform, executor, "Only the leader can run this command", NotificationTypes.WARN);
@@ -281,7 +279,7 @@ public class KingdomProcedureChecks {
                     for (UUID member : KingdomsData.getMembers(kingdomID)) {
                         sendNotification(InterfaceTypes.COMMAND, member, challenge + " has been declined", NotificationTypes.EVENT);
                     }
-                    sendNotification(platform, executor, "Challenge has been approved", NotificationTypes.EVENT);
+                    sendNotification(platform, executor, "Challenge has been decline", NotificationTypes.EVENT);
                 } else sendNotification(platform, executor, "This challenge has not been submitted", NotificationTypes.WARN);
             } else sendNotification(platform, executor, "This challenge does not exist", NotificationTypes.WARN);
         } else sendNotification(platform, executor, "This Team does not exist", NotificationTypes.WARN);

@@ -98,8 +98,10 @@ public class ChallengeCommands {
                     completedTier = false;
                     Challenge challengeData = ChallengeManager.getChallenge(challenge);
                     if (challengeData != null) {
-                        String message = challengeData.challengeId() + ", " + challengeData.description() + ", xp:" + challengeData.xp();
-                        KingdomProcedureChecks.sendNotification(InterfaceTypes.COMMAND, executor.getUuid(), message, NotificationTypes.INFO);
+                        // String message = challengeData.challengeId() + ", " + challengeData.description() + ", xp:" + challengeData.xp();
+                        KingdomProcedureChecks.sendNotification(InterfaceTypes.COMMAND, executor.getUuid(), challengeData.challengeId() +":", NotificationTypes.EVENT);
+                        KingdomProcedureChecks.sendNotification(InterfaceTypes.COMMAND, executor.getUuid(), challengeData.description(), NotificationTypes.INFO);
+                        KingdomProcedureChecks.sendNotification(InterfaceTypes.COMMAND, executor.getUuid(), "Reward, XP:" + challengeData.xp(), NotificationTypes.ACHIEVEMENT);
                     }
                 }
             }
