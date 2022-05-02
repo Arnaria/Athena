@@ -60,14 +60,14 @@ public class ClaimRenderer {
         for (Pair<BlockPos, BlockPos> line : renderMap) {
             BlockPos pos = line.getLeft().add(0, y, 0);
             if (line.getLeft().getZ() == line.getRight().getZ()) {
-                for (int i = 0; i <= 16; i += 2) {
+                for (int i = 0; i <= 16; i += 4) {
                     spawnParticle(player, pos, color, range);
-                    pos = pos.add(-2, 0, 0);
+                    pos = pos.add(-4, 0, 0);
                 }
             } else {
-                for (int i = 0; i <= 16; i += 2) {
+                for (int i = 0; i <= 16; i += 4) {
                     spawnParticle(player, pos, color, range);
-                    pos = pos.add(0, 0, -2);
+                    pos = pos.add(0, 0, -4);
                 }
             }
         }
