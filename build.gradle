@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.11-SNAPSHOT'
+    id 'fabric-loom' version '0.12-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -25,7 +25,7 @@ repositories {
         name = 'opencollab-snapshot-repo'
         url = 'https://repo.opencollab.dev/maven-snapshots/'
     }
-    //maven { url 'https://maven.bymartrixx.me' }
+    maven { url 'https://maven.bymartrixx.me' }
 }
 
 dependencies {
@@ -35,7 +35,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     //dev env
-    //modImplementation 'me.bymartrixx:wdmcf:1.0.2'
+    modImplementation 'me.bymartrixx:wdmcf:1.0.2'
 
     //Lib Mods
     include(modImplementation("com.github.MrNavaStar:SQLib:${project.sqlib_version}"))
