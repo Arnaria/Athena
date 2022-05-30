@@ -8,4 +8,12 @@ public interface PlayerEntityInf {
     void allowToEditIn(String kingdomId);
     void removeAllowedToEditIn(String kingdomId);
     boolean allowedToEditIn(String kingdomId);
+    void addWin();
+    void addLoss();
+    int getWins();
+    int getLosses();
+    void addStreak();
+    void resetStreak();
+    int getStreak();
+    boolean canDuelForXp();
 }

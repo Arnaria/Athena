@@ -33,6 +33,10 @@ public class EventManager {
         activeEvents.add(new RevolutionEvent(kingdomId));
     }
 
+    public static void startDuel(ServerPlayerEntity player1, ServerPlayerEntity player2, boolean isXpDuel) {
+        activeEvents.add(new DuelEvent(player1, player2, isXpDuel, kingdom11));
+    }
+
     public static ArrayList<Event> getActiveEvents() {
         return activeEvents;
     }

@@ -24,6 +24,7 @@
     "ItemFrameMixin",
     "PlayerEntityMixin",
     "ScoreboardMixin",
+    "ServerPlayerEntityMixin",
     "ShovelMixin",
     "StorageMinecartEntityMixin",
     "WallBannerBlockMixin",

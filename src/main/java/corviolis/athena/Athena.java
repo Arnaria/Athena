@@ -76,6 +76,7 @@ public class Athena implements ModInitializer {
                 ClaimManagerCommands.register(dispatcher);
                 XpCommand.register(dispatcher);
                 ChallengeCommands.register(dispatcher);
+                DuelCommands.register(dispatcher);
             });
 
             ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> KingdomProcedures.setupPlayer(handler.getPlayer()));
