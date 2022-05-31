@@ -49,6 +49,11 @@ public abstract class Event {
         this.participants.add(player);
     }
 
+    protected void removePlayer(ServerPlayerEntity player) {
+        this.bossBar.removePlayer(player);
+        this.participants.remove(player);
+    }
+
     public abstract void onDeath(ServerPlayerEntity player, ServerPlayerEntity killer);
 
     protected abstract void finish();

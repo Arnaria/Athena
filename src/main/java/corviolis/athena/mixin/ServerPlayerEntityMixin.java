@@ -27,21 +27,21 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Se
 
     @Shadow public abstract void setCameraEntity(@Nullable net.minecraft.entity.Entity entity);
 
-    private Entity trackedEntity;
+
+    @Shadow public abstract Entity getCameraEntity();
 
     public void trackEntity(Entity entity) {
-        trackedEntity = entity;
         changeGameMode(GameMode.SPECTATOR);
-        setCameraEntity(trackedEntity);
+        setCameraEntity(entity);
     }
 
-    public void stopTackingEntity() {
-        trackedEntity = null;
+    public void stopTrackingEntity() {
         setCameraEntity(null);
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void tick(CallbackInfo ci) {
+        Entity trackedEntity = getCameraEntity();
         if (trackedEntity != null && !getCameraBlockPos().equals(trackedEntity.getCameraBlockPos())) {
             setCameraEntity(trackedEntity);
         }

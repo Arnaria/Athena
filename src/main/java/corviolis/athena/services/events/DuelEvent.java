@@ -3,11 +3,12 @@ package corviolis.athena.services.events;
 import corviolis.athena.interfaces.PlayerEntityInf;
 import corviolis.athena.interfaces.ServerPlayerEntityInf;
 import corviolis.athena.services.procedures.KingdomProcedures;
+import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.GameMode;
+import net.minecraft.util.Formatting;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DuelEvent extends Event {
@@ -15,6 +16,8 @@ public class DuelEvent extends Event {
     private final boolean isXpDuel;
     private final List<ServerPlayerEntity> kingdom1;
     private final List<ServerPlayerEntity> kingdom2;
+    private final List<ServerPlayerEntity> kingdom1dead = new ArrayList<>();
+    private final List<ServerPlayerEntity> kingdom2dead = new ArrayList<>();
 
     public DuelEvent(List<ServerPlayerEntity> kingdom1, List<ServerPlayerEntity> kingdom2, boolean isXpDuel) {
         super(6, "Duel");
@@ -30,41 +33,58 @@ public class DuelEvent extends Event {
     public void onDeath(ServerPlayerEntity player, ServerPlayerEntity killer) {
         this.stopEvent();
 
-        if (kingdom1.contains(player) && kingdom1.size() > 2) {
+        if (kingdom1.contains(player)) {
             kingdom1.remove(player);
+            kingdom1dead.add(player);
             ((ServerPlayerEntityInf) player).trackEntity(kingdom1.get(0));
-        }
-        else if (kingdom2.size() > 2) {
+        } else {
             kingdom2.remove(player);
+            kingdom2dead.add(player);
             ((ServerPlayerEntityInf) player).trackEntity(kingdom2.get(0));
         }
-        else {
-            BlockPos spawn = player.getSpawnPointPosition();
-            if (spawn != null) player.requestTeleport(spawn.getX(), spawn.getY(), spawn.getZ());
-        }
 
-        String loserMessage = "You lost the duel!";
-        if (((PlayerEntityInf) player).getStreak() > 0) loserMessage += " Streak of " + ((PlayerEntityInf) player).getStreak() + " lost!";
-        player.sendMessage(new LiteralText(loserMessage), false);
-
-        ((PlayerEntityInf) player).addLoss();
-        ((PlayerEntityInf) player).resetStreak();
-        ((PlayerEntityInf) killer).addWin();
-        ((PlayerEntityInf) killer).addStreak();
-
-        //TODO: make xp on a scale based on streak (capped)
-        String winnerMessage = "You won the duel!";
-        if (isXpDuel) winnerMessage += " Gained 15 xp for your kingdom!";
-        killer.sendMessage(new LiteralText(winnerMessage), false);
-        KingdomProcedures.addXp(((PlayerEntityInf) killer).getKingdomId(), 15);
+        if (kingdom1.size() == 0 || kingdom2.size() == 0) stopEvent();
     }
 
     @Override
     protected void finish() {
+        List<ServerPlayerEntity> winningKingdom;
+        List<ServerPlayerEntity> deadKingdom;
+        if (kingdom1.size() < kingdom2.size()) {
+            kingdom2.addAll(kingdom2dead);
+            winningKingdom = kingdom2;
+            deadKingdom = kingdom1dead;
+        } else {
+            kingdom1.addAll(kingdom1dead);
+            winningKingdom = kingdom1;
+            deadKingdom = kingdom2dead;
+        }
 
+        for (ServerPlayerEntity player : winningKingdom) {
+            TitleS2CPacket packet = new TitleS2CPacket(new LiteralText("Victory!").formatted(Formatting.GREEN).formatted(Formatting.BOLD));
+            player.networkHandler.sendPacket(packet);
+
+            ((ServerPlayerEntityInf) player).stopTrackingEntity();
+            ((PlayerEntityInf) player).addWin();
+            ((PlayerEntityInf) player).addStreak();
+            if (isXpDuel) KingdomProcedures.addXp(((PlayerEntityInf) player).getKingdomId(), 15);
+        }
+
+        for (ServerPlayerEntity player : deadKingdom) {
+            TitleS2CPacket packet = new TitleS2CPacket(new LiteralText("Defeat").formatted(Formatting.RED).formatted(Formatting.BOLD));
+            player.networkHandler.sendPacket(packet);
+
+            ((ServerPlayerEntityInf) player).stopTrackingEntity();
+            ((PlayerEntityInf) player).addLoss();
+            ((PlayerEntityInf) player).resetStreak();
+        }
     }
 
-    public void cancel() {
-
+    public void cancel(ServerPlayerEntity executor) {
+        if ((kingdom1.remove(executor) && kingdom1.size() != 0) || (kingdom2.remove(executor) && kingdom2.size() != 0)) {
+            kingdom1dead.remove(executor);
+            kingdom2dead.remove(executor);
+            removePlayer(executor);
+        } else stopEvent();
     }
 }

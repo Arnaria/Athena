@@ -3,6 +3,7 @@ package corviolis.athena.services.events;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class EventManager {
 
@@ -33,8 +34,8 @@ public class EventManager {
         activeEvents.add(new RevolutionEvent(kingdomId));
     }
 
-    public static void startDuel(ServerPlayerEntity player1, ServerPlayerEntity player2, boolean isXpDuel) {
-        activeEvents.add(new DuelEvent(player1, player2, isXpDuel, kingdom11));
+    public static void startDuel(List<ServerPlayerEntity> kingdom1, List<ServerPlayerEntity> kingdom2, boolean isXpDuel) {
+        activeEvents.add(new DuelEvent(kingdom1, kingdom2, isXpDuel));
     }
 
     public static ArrayList<Event> getActiveEvents() {
