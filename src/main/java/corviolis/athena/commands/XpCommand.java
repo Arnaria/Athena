@@ -8,7 +8,7 @@ import corviolis.athena.services.data.KingdomsData;
 import corviolis.athena.services.procedures.KingdomProcedures;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 
 public class XpCommand {
 
@@ -38,14 +38,14 @@ public class XpCommand {
 
     private static int view(CommandContext<ServerCommandSource> context, String kingdomId) {
         ServerCommandSource source = context.getSource();
-        source.sendFeedback(new LiteralText(kingdomId + " has " + KingdomsData.getXp(kingdomId) + " xp"), false);
+        source.sendFeedback(Text.literal(kingdomId + " has " + KingdomsData.getXp(kingdomId) + " xp"), false);
         return 1;
     }
 
     private static int add(CommandContext<ServerCommandSource> context, String kingdomId, int amount) {
         ServerCommandSource source = context.getSource();
         KingdomProcedures.addXp(kingdomId, amount);
-        source.sendFeedback(new LiteralText("Added " + amount + " xp to " + kingdomId), false);
+        source.sendFeedback(Text.literal("Added " + amount + " xp to " + kingdomId), false);
         return 1;
     }
 }

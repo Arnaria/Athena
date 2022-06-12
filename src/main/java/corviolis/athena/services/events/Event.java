@@ -3,7 +3,7 @@ package corviolis.athena.services.events;
 import net.minecraft.entity.boss.BossBar;
 import net.minecraft.entity.boss.ServerBossBar;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ public abstract class Event {
     public Event(int min, String bossBarText) {
         this.min = min;
 
-        this.bossBar = new ServerBossBar(new LiteralText(bossBarText).formatted(Formatting.BOLD), BossBar.Color.RED, BossBar.Style.PROGRESS);
+        this.bossBar = new ServerBossBar(Text.literal(bossBarText).formatted(Formatting.BOLD), BossBar.Color.RED, BossBar.Style.PROGRESS);
         this.bossBar.setPercent(1.0F);
 
         Runnable stopEvent = this::stopEvent;

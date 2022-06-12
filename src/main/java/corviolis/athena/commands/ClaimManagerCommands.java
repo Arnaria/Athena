@@ -7,7 +7,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 
 //I'm tired shut up
 public class ClaimManagerCommands {
@@ -28,8 +28,8 @@ public class ClaimManagerCommands {
 
         if (!ClaimManager.claimExistsAt(executor.getChunkPos())) {
             ClaimManager.addAdminClaim(executor.getChunkPos());
-            executor.sendMessage(new LiteralText("Yeah she good boss man"), false);
-        } else executor.sendMessage(new LiteralText("Yeah there is already a claim there dumbass"), false);
+            executor.sendMessage(Text.literal("Yeah she good boss man"), false);
+        } else executor.sendMessage(Text.literal("Yeah there is already a claim there dumbass"), false);
 
         return 1;
     }
@@ -37,7 +37,7 @@ public class ClaimManagerCommands {
     public static int removeClaim(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         ServerPlayerEntity executor = context.getSource().getPlayer();
         ClaimManager.dropChunk(executor.getChunkPos());
-        executor.sendMessage(new LiteralText("Cya looser"), false);
+        executor.sendMessage(Text.literal("Cya looser"), false);
         return 1;
     }
 }

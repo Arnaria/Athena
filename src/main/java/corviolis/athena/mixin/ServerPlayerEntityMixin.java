@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import corviolis.athena.interfaces.ServerPlayerEntityInf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.encryption.PlayerPublicKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameMode;
@@ -19,8 +20,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin extends PlayerEntity implements ServerPlayerEntityInf {
 
-    public ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile profile) {
-        super(world, pos, yaw, profile);
+    public ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile, @Nullable PlayerPublicKey publicKey) {
+        super(world, pos, yaw, gameProfile, publicKey);
     }
 
     @Shadow public abstract boolean changeGameMode(GameMode gameMode);
@@ -39,11 +40,11 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Se
         setCameraEntity(null);
     }
 
-    @Inject(method = "tick", at = @At("HEAD"))
+/*    @Inject(method = "tick", at = @At("HEAD"))
     private void tick(CallbackInfo ci) {
         Entity trackedEntity = getCameraEntity();
-        if (trackedEntity != null && !getCameraBlockPos().equals(trackedEntity.getCameraBlockPos())) {
+        if (trackedEntity != null && !getCameraBlockPos().equals(trackedEntity.getC)) {
             setCameraEntity(trackedEntity);
         }
-    }
+    }*/
 }

@@ -7,7 +7,6 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import corviolis.athena.services.procedures.KingdomProcedureChecks;
-import corviolis.athena.services.procedures.KingdomProcedures;
 import corviolis.athena.util.InterfaceTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BannerItem;
@@ -15,7 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 
 public class ClaimBannerCommand {
 
@@ -33,7 +32,8 @@ public class ClaimBannerCommand {
             NbtCompound nbt = new NbtCompound();
             nbt.putBoolean("IS_CLAIM_MARKER", true);
             itemStack.setNbt(nbt);
-            itemStack.setCustomName(new LiteralText(kingdomId.toUpperCase() + " CLAIM MARKER"));
+            itemStack.setCustomName(Text.literal(kingdomId.toUpperCase() + " CLAIM MARKER"));
+
 
         } else {
             if (kingdomId.isEmpty()) {

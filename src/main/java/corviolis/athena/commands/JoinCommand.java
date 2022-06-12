@@ -14,7 +14,7 @@ import net.minecraft.server.command.ServerCommandSource;
 public class JoinCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("join")
-                    .then(CommandManager.argument("team", StringArgumentType.string()).suggests((context, builder) -> {
+                    .then(CommandManager.argument("nation", StringArgumentType.string()).suggests((context, builder) -> {
                                 for (String kingdomId : KingdomsData.getKingdomIds()) builder.suggest(kingdomId);
                                 return builder.buildFuture();
                             })

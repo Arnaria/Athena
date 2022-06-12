@@ -11,7 +11,8 @@ import mrnavastar.sqlib.api.Table;
 import net.minecraft.block.BannerBlock;
 import net.minecraft.block.WallBannerBlock;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -81,7 +82,7 @@ public class ClaimManager {
 
             if (hologram != null) {
                 holograms.put(pos, hologram);
-                LiteralText claimTag = new LiteralText(kingdomId.toUpperCase());
+                MutableText claimTag = Text.literal(kingdomId.toUpperCase());
                 Formatting formatting = Formatting.byName(KingdomsData.getColor(kingdomId));
                 if (formatting != null) claimTag.formatted(formatting);
                 hologram.addText(claimTag);
@@ -107,7 +108,7 @@ public class ClaimManager {
             WorldHologram hologram = new WorldHologram(Athena.overworld, new Vec3d(pos.getX(), pos.getY(), pos.getZ()).add(labelOffset));
             holograms.put(pos, hologram);
 
-            LiteralText claimTag = new LiteralText(kingdomId.toUpperCase());
+            MutableText claimTag = Text.literal(kingdomId.toUpperCase());
             Formatting formatting = Formatting.byName(KingdomsData.getColor(kingdomId));
             if (formatting != null) claimTag.formatted(formatting);
             hologram.addText(claimTag);
@@ -202,7 +203,7 @@ public class ClaimManager {
         holograms.forEach((pos, hologram) -> {
             if (owners.get(new ChunkPos(pos)).equals(kingdomId)) {
                 hologram.removeElement(0);
-                hologram.addText(new LiteralText(kingdomId.toUpperCase()).formatted(Formatting.byName(color)));
+                hologram.addText(Text.literal(kingdomId.toUpperCase()).formatted(Formatting.byName(color)));
 
                 ArrayList<ChunkPos> chunks = claims.get(pos);
                 BlueMapAPI.removeMarker(kingdomId, chunks);

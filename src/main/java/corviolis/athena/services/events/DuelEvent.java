@@ -5,7 +5,7 @@ import corviolis.athena.interfaces.ServerPlayerEntityInf;
 import corviolis.athena.services.procedures.KingdomProcedures;
 import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 import java.util.ArrayList;
@@ -31,8 +31,6 @@ public class DuelEvent extends Event {
 
     @Override
     public void onDeath(ServerPlayerEntity player, ServerPlayerEntity killer) {
-        this.stopEvent();
-
         if (kingdom1.contains(player)) {
             kingdom1.remove(player);
             kingdom1dead.add(player);
@@ -61,7 +59,7 @@ public class DuelEvent extends Event {
         }
 
         for (ServerPlayerEntity player : winningKingdom) {
-            TitleS2CPacket packet = new TitleS2CPacket(new LiteralText("Victory!").formatted(Formatting.GREEN).formatted(Formatting.BOLD));
+            TitleS2CPacket packet = new TitleS2CPacket(Text.literal("Victory!").formatted(Formatting.GREEN).formatted(Formatting.BOLD));
             player.networkHandler.sendPacket(packet);
 
             ((ServerPlayerEntityInf) player).stopTrackingEntity();
@@ -71,7 +69,7 @@ public class DuelEvent extends Event {
         }
 
         for (ServerPlayerEntity player : deadKingdom) {
-            TitleS2CPacket packet = new TitleS2CPacket(new LiteralText("Defeat").formatted(Formatting.RED).formatted(Formatting.BOLD));
+            TitleS2CPacket packet = new TitleS2CPacket(Text.literal("Defeat").formatted(Formatting.RED).formatted(Formatting.BOLD));
             player.networkHandler.sendPacket(packet);
 
             ((ServerPlayerEntityInf) player).stopTrackingEntity();

@@ -12,7 +12,7 @@ import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import mrnavastar.sqlib.api.databases.Database;
 import mrnavastar.sqlib.api.databases.SQLiteDatabase;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.scoreboard.Scoreboard;
@@ -64,7 +64,7 @@ public class Athena implements ModInitializer {
                 RestAPI.init();
             });
 
-            CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
+            CommandRegistrationCallback.EVENT.register((dispatcher, commandRegistryAccess, registrationEnvironment) -> {
                 // LinkCommand.register(dispatcher);
                 ClaimBannerCommand.register(dispatcher);
                 GetKingCommand.register(dispatcher);
